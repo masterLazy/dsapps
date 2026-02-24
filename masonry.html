@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>瀑布视图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1e1e1e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 顶部工具栏 */
+        .toolbar {
+            padding: 20px 24px 12px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .folder-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            background: #f5f5f5;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #2d2d2d;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+            border: 1px solid #eaeaea;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background: #ebebeb;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 260px;
+            max-width: 500px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: 1px solid #e0e0e0;
+            background: #ffffff;
+            font-size: 0.95rem;
+            transition: border 0.2s, box-shadow 0.2s;
+            outline: none;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .search-box input:focus {
+            border-color: #aaa;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.02);
+        }
+
+        .counter {
+            font-size: 0.9rem;
+            color: #6b6b6b;
+            background: #f9f9f9;
+            padding: 10.5px 20px;
+            border-radius: 30px;
+            white-space: nowrap;
+            border: 1px solid #ededed;
+        }
+
+        /* 瀑布流容器 */
+        .gallery {
+            padding: 24px;
+            column-width: 230px;
+            column-count: auto;
+            column-gap: 16px;
+            flex: 1;
+            transition: opacity 0.2s;
+        }
+
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 16px;
+            border-radius: 18px;
+            background: #c7cacf;          /* 柔和占位背景 */
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.02), 0 1px 4px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #f0f0f0;
+            cursor: pointer;
+            min-height: 150px;             /* 图片加载前的最小高度 */
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 28px -8px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: transparent;       /* 让卡片背景透出，直至图片加载完成 */
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .item-filename {
+            padding: 10px 14px 12px 14px;
+            font-size: 0.8rem;
+            color: #2b2b2b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: white;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            letter-spacing: 0.2px;
+        }
+
+        /* 空状态提示 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #aaa;
+            font-size: 1rem;
+            background: #fcfcfc;
+            margin: 40px;
+            border-radius: 48px;
+            border: 1px dashed #ddd;
+        }
+
+        /* 模态框 (弹窗) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(3px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 36px;
+            max-width: 1100px;
+            width: 90%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: row;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.5);
+            animation: modalPop 0.2s ease;
+        }
+
+        @keyframes modalPop {
+            0% { opacity: 0.6; transform: scale(0.96); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-left {
+            flex: 1 1 50%;
+            background: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .modal-left img {
+            width: 100%;
+            height: auto;
+            max-height: calc(90vh - 40px);
+            object-fit: contain;
+            border-radius: 24px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+        }
+
+        .modal-right {
+            flex: 1 1 50%;
+            padding: 32px 28px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+        }
+
+        .modal-right h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            letter-spacing: -0.3px;
+            color: #111;
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+
+        .meta-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border-bottom: 1px solid #efefef;
+            padding-bottom: 20px;
+        }
+
+        .meta-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #8a8a8a;
+        }
+
+        .meta-value {
+            font-size: 1.05rem;
+            font-weight: 450;
+            color: #222;
+            background: #f9f9f9;
+            padding: 10px 16px;
+            border-radius: 20px;
+            border: 1px solid #efefef;
+            word-break: break-word;
+        }
+
+        .close-btn {
+            background: #f5f5f5;
+            border: none;
+            padding: 14px 0;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.15s;
+            border: 1px solid #e0e0e0;
+        }
+
+        .close-btn:hover {
+            background: #ebebeb;
+        }
+
+        /* 辅助 */
+        .hidden {
+            display: none;
+        }
+
+        /* 标签按钮 */
+        .tag-btn {
+            background: hsl(0,0%,95%);
+            border: 1px solid #eaeaea;
+            border-radius: 16px;
+            padding: 12px 8px;
+            font-size: 0.85rem;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
+        }
+        .tag-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.04);
+        }
+        .tag-btn.selected {
+            border: 2px solid #5695f3 !important;
+            font-weight: 600;
+        }
+
+        .aspect-percent {
+            color: #aaa;      /* 淡灰色 */
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <div class="folder-section">
+            <button class="btn" id="selectFolderBtn">📁 选择参考图文件夹</button>
+            <div class="counter" id="imageCounter">0 张图片</div>
+            <button class="btn" id="showTagsBtn">🏷️ 标签</button>
+        </div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 搜索文件名..." autocomplete="off" />
+        </div>
+    </div>
+
+    <!-- 瀑布流容器 -->
+    <div id="gallery" class="gallery"></div>
+
+    <!-- 图片模态框 -->
+    <div id="modal" class="modal">
+        <div class="modal-card">
+            <div class="modal-left">
+                <img id="modalImage" src="" alt="preview" />
+            </div>
+            <div class="modal-right">
+                <h3 id="modalFileName">filename.jpg</h3>
+                <div class="meta-row">
+                    <span class="meta-label">📂 相对路径</span>
+                    <span class="meta-value" id="modalFilePath">—</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">🖼️ 分辨率</span>
+                    <span class="meta-value" id="modalResolution">加载中…</span>
+                </div>
+                <div class="meta-row">
+                    <span class="meta-label">📐 比例</span>
+                    <span class="meta-value" id="modalAspectRatio">—</span>
+                </div>
+                <button class="close-btn" id="closeModalBtn">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 标签模态框 -->
+    <div id="tagModal" class="modal">
+        <div class="modal-card" style="max-width: 700px;">
+            <div class="modal-right" style="padding: 24px;">
+                <h3 style="margin-bottom: 16px;">🏷️ 所有标签</h3>
+                <div id="tagContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; max-height: 60vh; overflow-y: auto; padding: 4px;"></div>
+                <div style="display: flex; gap: 12px; margin-top: 16px;">
+                    <button class="btn" id="clearTagsBtn" style="flex: 0 0 auto; font-size: 1.2rem; padding: 10px 16px;">🧹</button>
+                    <button class="close-btn" id="closeTagModalBtn" style="flex: 1; margin-top:0;">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ========== 检测 API 支持 ==========
+            if (!window.showDirectoryPicker) {
+                alert('您的浏览器不支持 File System Access API，请使用最新版 Edge 或 Chrome 并确保在 HTTPS/localhost 下运行。');
+            }
+
+            // ========== DOM 元素 ==========
+            const selectBtn = document.getElementById('selectFolderBtn');
+            const searchInput = document.getElementById('searchInput');
+            const galleryDiv = document.getElementById('gallery');
+            const imageCounter = document.getElementById('imageCounter');
+            const modal = document.getElementById('modal');
+            const modalImg = document.getElementById('modalImage');
+            const modalFileName = document.getElementById('modalFileName');
+            const modalFilePath = document.getElementById('modalFilePath');
+            const modalResolution = document.getElementById('modalResolution');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+
+            // ========== 全局状态 ==========
+            let imagesData = [];                // 所有图片数据对象
+            let currentObjectUrls = [];         // 用于释放的URL数组
+            let currentModalData = null;         // 当前弹窗对应的图片数据
+            let pendingResolutionLoad = false;    // 避免重复加载分辨率
+            let currentDirHandle = null;          // 当前文件夹句柄 (用于权限保持)
+
+            let selectedTags = [];                 // 当前选中的标签
+            let tagModal = document.getElementById('tagModal');
+            let tagContainer = document.getElementById('tagContainer');
+            let showTagsBtn = document.getElementById('showTagsBtn');
+            let closeTagModalBtn = document.getElementById('closeTagModalBtn');
+
+            // ========== IndexedDB 封装 ==========
+            const DB_NAME = 'FolderPickerDB';
+            const STORE_NAME = 'handles';
+            const DB_VERSION = 1;
+
+            function openDB() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(DB_NAME, DB_VERSION);
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains(STORE_NAME)) {
+                            db.createObjectStore(STORE_NAME);
+                        }
+                    };
+                });
+            }
+
+            // ========== 比例 ==========
+            const aspectRatioMap = [
+                { ratio: 1, name: "1 : 1 - 方形" },
+                { ratio: 4/3, name: "4 : 3" },
+                { ratio: 3/2, name: "3 : 2" },
+                { ratio: 16/9, name: "16 : 9" },
+                { ratio: 2, name: "2 : 1" },
+                { ratio: 21/9, name: "21 : 9" },
+                { ratio: 1.6180339887, name: "1.618 : 1 - 黄金比例" },
+                { ratio: 1.4142135623, name: "1.414 : 1 - 白银比例" },
+                // 可根据需要继续添加
+            ];
+
+            function getClosestAspectRatio(width, height) {
+                if (!width || !height) return null;
+                const longSide = Math.max(width, height);
+                const shortSide = Math.min(width, height);
+                const actualRatio = longSide / shortSide;
+
+                let bestMatch = aspectRatioMap[0];
+                let minDiff = Math.abs(actualRatio - bestMatch.ratio);
+
+                for (let i = 1; i < aspectRatioMap.length; i++) {
+                    const diff = Math.abs(actualRatio - aspectRatioMap[i].ratio);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        bestMatch = aspectRatioMap[i];
+                    }
+                }
+
+                const relativeError = minDiff / bestMatch.ratio;
+                const rawPercent = (1 - relativeError) * 100;
+                const percentRounded = Math.round(rawPercent * 10) / 10; // 保留一位小数
+                const clampedPercent = Math.min(100, Math.max(0, percentRounded));
+                return { name: bestMatch.name, percent: clampedPercent };
+            }
+
+            async function saveDirectoryHandle(handle) {
+                const db = await openDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(STORE_NAME, 'readwrite');
+                    const store = tx.objectStore(STORE_NAME);
+                    const request = store.put(handle, 'dirHandle');
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+            }
+
+            async function loadDirectoryHandle() {
+                const db = await openDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(STORE_NAME, 'readonly');
+                    const store = tx.objectStore(STORE_NAME);
+                    const request = store.get('dirHandle');
+                    request.onsuccess = () => resolve(request.result || null);
+                    request.onerror = () => reject(request.error);
+                });
+            }
+
+            // ========== 工具函数 ==========
+            function isImageFile(filename) {
+                return /\.(jpg|jpeg|png|gif|bmp|webp|svg|avif)$/i.test(filename);
+            }
+
+            // 释放之前创建的object URL
+            function revokePreviousUrls() {
+                currentObjectUrls.forEach(url => URL.revokeObjectURL(url));
+                currentObjectUrls = [];
+            }
+
+            // 清空画廊，重置数据
+            function resetGallery() {
+                galleryDiv.innerHTML = '';
+                imagesData = [];
+                revokePreviousUrls();
+                updateCounter(0);
+            }
+
+            // 更新图片计数 (显示 可见/总数)
+            function updateCounter(visibleCount) {
+                const total = imagesData.length;
+                if (visibleCount !== undefined) {
+                    imageCounter.textContent = `${visibleCount} / ${total} 张图片`;
+                } else {
+                    const visible = document.querySelectorAll('.gallery-item:not([style*="display: none"])').length;
+                    imageCounter.textContent = `${visible} / ${total} 张图片`;
+                }
+            }
+
+            // 过滤图片 (基于搜索关键词)
+            function filterImages(keyword) {
+                const lowerKeyword = keyword.trim().toLowerCase();
+                let visibleCount = 0;
+
+                imagesData.forEach(item => {
+                    let match = true;
+
+                    // 1. 标签筛选（多选与）
+                    if (selectedTags.length > 0) {
+                        const baseName = item.name.replace(/\.[^/.]+$/, '');
+                        const parts = baseName.split('-').map(s => s.trim()).filter(s => s);
+                        match = selectedTags.every(tag => parts.includes(tag));
+                    }
+
+                    // 2. 关键词筛选
+                    if (match && lowerKeyword) {
+                        match = item.name.toLowerCase().includes(lowerKeyword);
+                    }
+
+                    if (item.element) {
+                        item.element.style.display = match ? '' : 'none';
+                    }
+                    if (match) visibleCount++;
+                });
+                updateCounter(visibleCount);
+                updateTagPanelBasedOnFilter();
+            }
+
+            // 根据当前可见图片计算标签统计
+            function updateTagPanelBasedOnFilter() {
+                if (!window.tagData) return; // 无原始数据时不处理
+
+                const visibleItems = imagesData.filter(item => 
+                    item.element && item.element.style.display !== 'none'
+                );
+
+                const tagCounts = {};
+                visibleItems.forEach(item => {
+                    const baseName = item.name.replace(/\.[^/.]+$/, '');
+                    const parts = baseName.split('-').map(s => s.trim()).filter(s => s);
+                    parts.forEach(tag => {
+                        if (/^\d+$/.test(tag)) return;
+                        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                    });
+                });
+
+                window.filteredTagData = Object.entries(tagCounts)
+                    .sort((a, b) => {
+                        if (b[1] !== a[1]) return b[1] - a[1];
+                        return a[0].localeCompare(b[0]);
+                    })
+                    .map(([tag, count]) => ({ tag, count }));
+
+                // 如果标签面板当前是打开的，则重新渲染
+                if (tagModal.style.display === 'flex') {
+                    renderTagPanel();
+                }
+            }
+
+            // ========== 渲染瀑布流 ==========
+            function renderGallery() {
+                galleryDiv.innerHTML = '';
+                if (imagesData.length === 0) {
+                    galleryDiv.innerHTML = '<div class="empty-state">✨ 点击上方按钮，选择你的参考图文件夹</div>';
+                    imageCounter.textContent = '0 张图片';
+                    return;
+                }
+
+                const fragment = document.createDocumentFragment();
+                imagesData.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'gallery-item';
+                    card.dataset.index = index;
+
+                    const img = document.createElement('img');
+                    img.src = item.url;
+                    img.alt = item.name;
+                    img.loading = 'lazy';
+                    img.onload = function() {
+                        const naturalW = this.naturalWidth;
+                        const naturalH = this.naturalHeight;
+                        if (naturalW && naturalH) {
+                            item.width = naturalW;
+                            item.height = naturalH;
+                        }
+                        // 图片加载完成后，移除卡片的固定最小高度，避免背景露出
+                        if (item.element) {
+                            item.element.style.minHeight = 'auto';
+                        }
+                    };
+
+                    card.appendChild(img);
+                    card.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openModal(item, img);
+                    });
+
+                    fragment.appendChild(card);
+                    item.element = card;
+                    item.imgElement = img;
+                });
+
+                galleryDiv.appendChild(fragment);
+                updateCounter(imagesData.length);
+            }
+
+            // ========== 递归读取目录 ==========
+            async function readDirectoryRecursively(dirHandle, basePath = '') {
+                let results = [];
+                for await (const entry of dirHandle.values()) {
+                    if (entry.kind === 'file') {
+                        const name = entry.name;
+                        if (isImageFile(name)) {
+                            const file = await entry.getFile();
+                            results.push({
+                                handle: entry,           // 保留句柄以备后用
+                                file: file,
+                                name: file.name,
+                                path: basePath ? `${basePath}/${file.name}` : file.name,
+                                displayPath: basePath ? `${basePath}/${file.name}` : file.name,
+                                width: null,
+                                height: null,
+                                element: null,
+                                imgElement: null
+                            });
+                        }
+                    } else if (entry.kind === 'directory') {
+                        const subPath = basePath ? `${basePath}/${entry.name}` : entry.name;
+                        const subResults = await readDirectoryRecursively(entry, subPath);
+                        results.push(...subResults);
+                    }
+                }
+                return results;
+            }
+
+            // ========== 从句柄加载图片 ==========
+            async function loadImagesFromHandle(dirHandle) {
+                resetGallery(); // 清空旧数据并释放URL
+
+                try {
+                    // 请求读取权限（如果尚未授予）
+                    const permission = await dirHandle.requestPermission({ mode: 'read' });
+                    if (permission !== 'granted') {
+                        alert('需要读取权限才能显示图片');
+                        return;
+                    }
+
+                    // 递归读取所有图片
+                    let imageEntries = await readDirectoryRecursively(dirHandle);
+
+                    // ---------- 按路径升序排序，保证固定顺序 ----------
+                    imageEntries.sort((a, b) => a.path.localeCompare(b.path));
+
+                    if (imageEntries.length === 0) {
+                        alert('该文件夹内没有图片文件');
+                        return;
+                    }
+
+                    // 创建 object URL
+                    for (const entry of imageEntries) {
+                        const url = URL.createObjectURL(entry.file);
+                        currentObjectUrls.push(url);
+                        entry.url = url;
+                    }
+
+                    imagesData = imageEntries;
+                    renderGallery();
+                    searchInput.value = ''; // 清空搜索
+
+                    // 统计标签
+                    const tagCounts = {};
+                    imageEntries.forEach(item => {
+                        // 去掉扩展名，按 '-' 分割
+                        const baseName = item.name.replace(/\.[^/.]+$/, ''); // 移除扩展名
+                        const parts = baseName.split('-').map(s => s.trim()).filter(s => s);
+                        parts.forEach(tag => {
+                            if (/^\d+$/.test(tag)) return;
+                            tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                        });
+                    });
+                    // 将标签数据保存到全局或某个地方（例如 window.tagData）
+                    window.tagData = Object.entries(tagCounts)
+                        .sort((a, b) => {
+                            if (b[1] !== a[1]) return b[1] - a[1];
+                            return a[0].localeCompare(b[0]);
+                        })
+                        .map(([tag, count]) => ({ tag, count }));
+                } catch (err) {
+                    console.error('读取文件夹失败', err);
+                    alert('读取文件夹失败：' + err.message);
+                }
+            }
+
+            // ========== 选择新文件夹 ==========
+            async function pickDirectory() {
+                try {
+                    const dirHandle = await window.showDirectoryPicker();
+                    currentDirHandle = dirHandle;
+                    // 保存句柄到 IndexedDB
+                    await saveDirectoryHandle(dirHandle);
+                    // 加载图片
+                    await loadImagesFromHandle(dirHandle);
+                } catch (err) {
+                    if (err.name === 'AbortError') return; // 用户取消选择
+                    console.error('选择文件夹失败', err);
+                    alert('无法选择文件夹：' + err.message);
+                }
+            }
+
+            // ========== 尝试恢复上次的文件夹 ==========
+            async function tryRestoreDirectory() {
+                try {
+                    const savedHandle = await loadDirectoryHandle();
+                    if (!savedHandle) return; // 没有保存的句柄
+
+                    // 验证句柄是否还可访问（权限可能已过期）
+                    const permission = await savedHandle.queryPermission({ mode: 'read' });
+                    if (permission === 'granted') {
+                        currentDirHandle = savedHandle;
+                        await loadImagesFromHandle(savedHandle);
+                    } else {
+                        // 权限未授予，需要重新请求（可以通过再次调用 requestPermission）
+                        // 这里静默失败，让用户手动点击按钮重新选择
+                        console.log('上次的文件夹权限已过期，请重新选择');
+                    }
+                } catch (err) {
+                    console.warn('恢复文件夹失败', err);
+                }
+            }
+
+            // ========== 打开模态框 ==========
+            function openModal(item, imgEl) {
+                function updateAspectRatio() {
+                    const w = currentModalData.width;
+                    const h = currentModalData.height;
+                    const aspectSpan = document.getElementById('modalAspectRatio');
+                    if (w && h) {
+                        const match = getClosestAspectRatio(w, h);
+                        // 使用 flex 布局，名称左，百分比右
+                        aspectSpan.innerHTML = `<span class="aspect-name">${match.name}</span><span class="aspect-percent">${match.percent.toFixed(1)}%</span>`;
+                        aspectSpan.style.display = 'flex';
+                        aspectSpan.style.justifyContent = 'space-between';
+                        aspectSpan.style.alignItems = 'center';
+                    } else {
+                        aspectSpan.textContent = '等待加载…';
+                        // 恢复默认样式
+                        aspectSpan.style.display = '';
+                        aspectSpan.style.justifyContent = '';
+                    }
+                }
+
+                currentModalData = item;
+
+                modalFileName.textContent = item.name;
+                modalFilePath.textContent = item.displayPath || item.path || '—';
+                modalImg.src = item.url;
+
+                function setResolutionText(text) {
+                    modalResolution.textContent = text;
+                }
+
+                if (item.width && item.height) {
+                    setResolutionText(`${item.width} x ${item.height}`);
+                    updateAspectRatio();
+                } else if (imgEl && imgEl.complete && imgEl.naturalWidth) {
+                    item.width = imgEl.naturalWidth;
+                    item.height = imgEl.naturalHeight;
+                    setResolutionText(`${item.width} x ${item.height}`);
+                    updateAspectRatio();
+                } else {
+                    setResolutionText('读取中…');
+                    if (pendingResolutionLoad) return;
+
+                    const loader = new Image();
+                    loader.src = item.url;
+                    loader.onload = () => {
+                        if (currentModalData === item) {
+                            item.width = loader.naturalWidth;
+                            item.height = loader.naturalHeight;
+                            setResolutionText(`${item.width} x ${item.height}`);
+                            updateAspectRatio();
+                        }
+                        pendingResolutionLoad = false;
+                    };
+                    loader.onerror = () => {
+                        if (currentModalData === item) {
+                            setResolutionText('无法读取');
+                        }
+                        pendingResolutionLoad = false;
+                    };
+                    pendingResolutionLoad = true;
+                }
+
+                modal.style.display = 'flex';
+            }
+
+            // ========== 关闭模态框 ==========
+            function closeModal() {
+                modal.style.display = 'none';
+                currentModalData = null;
+            }
+
+            // ========== 渲染标签面板 ==========
+            function renderTagPanel() {
+                const data = selectedTags.length>0 ? window.filteredTagData : window.tagData;
+                if (!data) return;
+
+                tagContainer.innerHTML = '';
+                data.forEach(({ tag, count }) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'tag-btn';
+                    if (selectedTags.includes(tag)) btn.classList.add('selected');
+
+                    // 根据标签内容生成柔和背景色
+                    const hue = Math.abs(hashCode(tag) % 360);
+                    const sat = 30; // 饱和度 %
+                    const light = 85; // 明度 %
+                    btn.style.backgroundColor = `hsl(${hue}, ${sat}%, ${light}%)`;
+                    btn.style.border = selectedTags.includes(tag) ? '2px solid #333' : '1px solid #ddd';
+                    btn.style.borderRadius = '16px';
+                    btn.style.padding = '12px 8px';
+                    btn.style.fontSize = '0.85rem';
+                    btn.style.color = '#2c3e50';
+                    btn.style.fontWeight = '500';
+                    btn.style.cursor = 'pointer';
+                    btn.style.transition = 'all 0.1s';
+                    btn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.02)';
+                    btn.style.display = 'flex';
+                    btn.style.flexDirection = 'column';
+                    btn.style.alignItems = 'center';
+                    btn.style.justifyContent = 'center';
+                    btn.style.lineHeight = '1.4';
+                    btn.innerHTML = `<span style="font-weight:600;">${tag}</span><span style="font-size:0.75rem; opacity:0.8;">${count}</span>`;
+
+                    btn.addEventListener('click', () => {
+                        const index = selectedTags.indexOf(tag);
+                        if (index === -1) {
+                            selectedTags.push(tag);       // 添加标签
+                        } else {
+                            selectedTags.splice(index, 1); // 移除标签
+                        }
+                        filterImages(searchInput.value);   // 重新过滤
+                        renderTagPanel();                  // 刷新面板（更新选中状态）
+                    });
+                    tagContainer.appendChild(btn);
+                });
+            }
+
+            // 辅助哈希函数
+            function hashCode(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                    hash |= 0; // 转换为32位整数
+                }
+                return Math.abs(hash);
+            }
+
+            // ========== 事件绑定 ==========
+            selectBtn.addEventListener('click', pickDirectory);
+
+            searchInput.addEventListener('input', (e) => {
+                filterImages(e.target.value);
+            });
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.style.display === 'flex') {
+                    closeModal();
+                }
+            });
+
+            // 打开标签模态框
+            showTagsBtn.addEventListener('click', () => {
+                renderTagPanel();
+                tagModal.style.display = 'flex';
+            });
+
+            // 关闭标签模态框
+            closeTagModalBtn.addEventListener('click', () => {
+                tagModal.style.display = 'none';
+            });
+            tagModal.addEventListener('click', (e) => {
+                if (e.target === tagModal) tagModal.style.display = 'none';
+            });
+
+            document.getElementById('clearTagsBtn').addEventListener('click', () => {
+                selectedTags = [];
+                filterImages(searchInput.value);
+            });
+
+            // ========== 初始化 ==========
+            resetGallery(); // 显示空状态
+            tryRestoreDirectory(); // 尝试恢复上次的文件夹
+        })();
+    </script>
+</body>
+</html>
