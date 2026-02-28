@@ -652,8 +652,15 @@
                     // 递归读取所有图片
                     let imageEntries = await readDirectoryRecursively(dirHandle);
 
-                    // ---------- 按路径升序排序，保证固定顺序 ----------
-                    imageEntries.sort((a, b) => a.path.localeCompare(b.path));
+                    // ---------- 随机打乱图片顺序 ----------
+                    function shuffleArray(array) {
+                        for (let i = array.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [array[i], array[j]] = [array[j], array[i]];
+                        }
+                        return array;
+                    }
+                    imageEntries = shuffleArray(imageEntries);
 
                     if (imageEntries.length === 0) {
                         alert('该文件夹内没有图片文件');
@@ -755,7 +762,7 @@
 
                 currentModalData = item;
 
-                modalFileName.textContent = item.name;
+                modalFileName.textContent = item.name.replace(/\.[^/.]+$/, '');
                 modalFilePath.textContent = item.displayPath || item.path || '—';
                 modalImg.src = item.url;
 
