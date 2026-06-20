@@ -1,913 +1,770 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>瀑布视图</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dsapps | 瀑布视图</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-        body {
-            background-color: #ffffff;
-            color: #1e1e1e;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+    :root {
+      --primary: #4f7c9e;
+      --on-primary: #fff;
+      --primary-container: #d1e4f5;
+      --on-primary-container: #1a3a4f;
+      --secondary: #6b7d8e;
+      --secondary-container: #d5e1eb;
+      --on-secondary-container: #1f2e3c;
+      --surface: #f8fafc;
+      --surface-dim: #dde3e9;
+      --surface-container: #edf1f5;
+      --surface-container-high: #e2e8ee;
+      --on-surface: #1b1c1e;
+      --on-surface-variant: #44474a;
+      --outline: #7b8086;
+      --outline-variant: #c2c7cd;
+      --elevation1: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --elevation2: 0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.04);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --duration: 0.2s;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+    }
 
-        /* 顶部工具栏 */
-        .toolbar {
-            padding: 20px 24px 12px 24px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 16px;
-            background: white;
-            border-bottom: 1px solid #f0f0f0;
-        }
+    body {
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--on-surface);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column
+    }
 
-        .folder-section {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    /* 顶栏 */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--outline-variant);
+      position: sticky;
+      top: 0;
+      z-index: 100
+    }
 
-        .btn {
-            background: #f5f5f5;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: #2d2d2d;
-            cursor: pointer;
-            transition: background 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-            border: 1px solid #eaeaea;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
+    .top-bar__left {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
 
-        .btn:hover {
-            background: #ebebeb;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
-        }
+    .top-bar__title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      letter-spacing: -0.01em
+    }
 
-        .btn:active {
-            transform: scale(0.98);
-        }
+    .top-bar__right {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
 
-        .search-box {
-            flex: 1;
-            min-width: 260px;
-            max-width: 500px;
-        }
+    .top-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--primary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      transition: background var(--duration)
+    }
 
-        .search-box input {
-            width: 100%;
-            padding: 10px 20px;
-            border-radius: 40px;
-            border: 1px solid #e0e0e0;
-            background: #ffffff;
-            font-size: 0.95rem;
-            transition: border 0.2s, box-shadow 0.2s;
-            outline: none;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
-        }
+    .top-link:hover {
+      background: color-mix(in srgb, var(--primary) 10%, transparent)
+    }
 
-        .search-box input:focus {
-            border-color: #aaa;
-            box-shadow: 0 0 0 3px rgba(0,0,0,0.02);
-        }
+    .top-link .material-symbols-outlined {
+      font-size: 20px
+    }
 
-        .counter {
-            font-size: 0.9rem;
-            color: #6b6b6b;
-            background: #f9f9f9;
-            padding: 10.5px 20px;
-            border-radius: 30px;
-            white-space: nowrap;
-            border: 1px solid #ededed;
-        }
+    /* 工具栏 */
+    .toolbar {
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--outline-variant)
+    }
 
-        /* 瀑布流容器 */
-        .gallery {
-            padding: 24px;
-            column-width: 230px;
-            column-count: auto;
-            column-gap: 16px;
-            flex: 1;
-            transition: opacity 0.2s;
-        }
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap
+    }
 
-        .gallery-item {
-            break-inside: avoid;
-            margin-bottom: 16px;
-            border-radius: 18px;
-            background: #c7cacf;          /* 柔和占位背景 */
-            overflow: hidden;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.02), 0 1px 4px rgba(0, 0, 0, 0.02);
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid #f0f0f0;
-            cursor: pointer;
-            min-height: 150px;             /* 图片加载前的最小高度 */
-        }
+    .toolbar-right {
+      flex: 1;
+      min-width: 200px;
+      max-width: 400px;
+      margin-left: auto
+    }
 
-        .gallery-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 28px -8px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
-        }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 18px;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 500;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: all var(--duration);
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+      border: 1px solid var(--outline-variant)
+    }
 
-        .gallery-item img {
-            width: 100%;
-            height: auto;
-            display: block;
-            background: transparent;       /* 让卡片背景透出，直至图片加载完成 */
-            border-bottom: 1px solid #f0f0f0;
-        }
+    .btn:hover {
+      background: var(--surface-dim);
+      box-shadow: var(--elevation1)
+    }
 
-        .item-filename {
-            padding: 10px 14px 12px 14px;
-            font-size: 0.8rem;
-            color: #2b2b2b;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            background: white;
-            border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px;
-            letter-spacing: 0.2px;
-        }
+    .btn:active {
+      transform: scale(0.97)
+    }
 
-        /* 空状态提示 */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #aaa;
-            font-size: 1rem;
-            background: #fcfcfc;
-            margin: 40px;
-            border-radius: 48px;
-            border: 1px dashed #ddd;
-        }
+    .btn--primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary)
+    }
 
-        /* 模态框 (弹窗) */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(3px);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
+    .btn--primary:hover {
+      background: color-mix(in srgb, var(--primary) 88%, #000)
+    }
 
-        .modal-card {
-            background: white;
-            border-radius: 36px;
-            max-width: 1100px;
-            width: 90%;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: row;
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.5);
-            animation: modalPop 0.2s ease;
-        }
+    .counter {
+      font-size: 0.85rem;
+      color: var(--on-surface-variant);
+      background: var(--surface-container);
+      padding: 9px 16px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--outline-variant);
+      white-space: nowrap
+    }
 
-        @keyframes modalPop {
-            0% { opacity: 0.6; transform: scale(0.96); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+    /* 搜索 */
+    .search-wrap {
+      display: flex;
+      align-items: center;
+      background: var(--surface-container-high);
+      border-radius: var(--radius-full);
+      padding: 0 14px;
+      gap: 6px;
+      border: 1px solid var(--outline-variant);
+      transition: border-color var(--duration)
+    }
 
-        .modal-left {
-            flex: 1 1 50%;
-            background: #f8f8f8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-        }
+    .search-wrap:focus-within {
+      border-color: var(--primary);
+      background: var(--surface)
+    }
 
-        .modal-left img {
-            width: 100%;
-            height: auto;
-            max-height: calc(90vh - 40px);
-            object-fit: contain;
-            border-radius: 24px;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.04);
-        }
+    .search-wrap input {
+      border: none;
+      background: transparent;
+      padding: 9px 0;
+      font-family: var(--font);
+      font-size: 0.875rem;
+      color: var(--on-surface);
+      outline: none;
+      flex: 1;
+      min-width: 0
+    }
 
-        .modal-right {
-            flex: 1 1 50%;
-            padding: 32px 28px;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            overflow-y: auto;
-        }
+    .search-wrap input::placeholder {
+      color: var(--on-surface-variant);
+      opacity: 0.7
+    }
 
-        .modal-right h3 {
-            font-size: 1.5rem;
-            font-weight: 500;
-            letter-spacing: -0.3px;
-            color: #111;
-            margin-bottom: 4px;
-            word-break: break-word;
-        }
+    /* 瀑布流 */
+    .gallery {
+      padding: 24px;
+      column-width: 280px;
+      column-count: auto;
+      column-gap: 16px;
+      flex: 1
+    }
 
-        .meta-row {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            border-bottom: 1px solid #efefef;
-            padding-bottom: 20px;
-        }
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--elevation1);
+      transition: transform var(--duration), box-shadow var(--duration);
+      cursor: pointer;
+      background: var(--surface-container);
+      border: 1px solid var(--outline-variant)
+    }
 
-        .meta-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #8a8a8a;
-        }
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--elevation2)
+    }
 
-        .meta-value {
-            font-size: 1.05rem;
-            font-weight: 450;
-            color: #222;
-            background: #f9f9f9;
-            padding: 10px 16px;
-            border-radius: 20px;
-            border: 1px solid #efefef;
-            word-break: break-word;
-        }
+    .gallery-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: var(--surface-dim)
+    }
 
-        .close-btn {
-            background: #f5f5f5;
-            border: none;
-            padding: 14px 0;
-            border-radius: 40px;
-            font-size: 1rem;
-            font-weight: 500;
-            color: #333;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: background 0.15s;
-            border: 1px solid #e0e0e0;
-        }
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--on-surface-variant);
+      font-size: 0.95rem;
+      background: var(--surface-container);
+      margin: 24px;
+      border-radius: var(--radius-lg);
+      border: 1px dashed var(--outline-variant)
+    }
 
-        .close-btn:hover {
-            background: #ebebeb;
-        }
+    /* 模态框 */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(3px);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px
+    }
 
-        /* 辅助 */
-        .hidden {
-            display: none;
-        }
+    .modal-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      max-width: 960px;
+      width: 90%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: row;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      animation: pop .2s ease
+    }
 
-        /* 标签按钮 */
-        .tag-btn {
-            background: hsl(0,0%,95%);
-            border: 1px solid #eaeaea;
-            border-radius: 16px;
-            padding: 12px 8px;
-            font-size: 0.85rem;
-            color: #2c3e50;
-            cursor: pointer;
-            transition: all 0.1s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.4;
-        }
-        .tag-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.04);
-        }
-        .tag-btn.selected {
-            border: 2px solid #5695f3 !important;
-            font-weight: 600;
-        }
+    @keyframes pop {
+      0% {
+        opacity: .6;
+        transform: scale(.96)
+      }
 
-        .aspect-percent {
-            color: #aaa;      /* 淡灰色 */
-            font-weight: 400;
-        }
-    </style>
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+    }
+
+    .modal-left {
+      flex: 1;
+      min-width: 0;
+      background: var(--surface-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      overflow: hidden
+    }
+
+    .modal-left img {
+      max-width: 100%;
+      max-height: calc(90vh - 80px);
+      object-fit: contain;
+      border-radius: var(--radius-md);
+      display: block
+    }
+
+    .modal-right {
+      flex: 0 0 340px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto
+    }
+
+    .modal-right h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      word-break: break-word
+    }
+
+    .meta-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      border-bottom: 1px solid var(--outline-variant);
+      padding-bottom: 12px
+    }
+
+    .meta-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--on-surface-variant);
+      display: flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    .meta-label .material-symbols-outlined {
+      font-size: 14px
+    }
+
+    .meta-value {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--on-surface);
+      background: var(--surface-container);
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--outline-variant);
+      word-break: break-word
+    }
+
+    .close-btn {
+      width: 100%;
+      padding: 12px 0;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 0.9rem;
+      font-weight: 500;
+      font-family: var(--font);
+      cursor: pointer;
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+      transition: background var(--duration)
+    }
+
+    .close-btn:hover {
+      background: var(--surface-dim)
+    }
+
+    /* 标签模态 */
+    .tag-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px;
+      max-height: 55vh;
+      overflow-y: auto;
+      padding: 4px
+    }
+
+    .tag-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 6px;
+      border-radius: var(--radius-md);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .1s;
+      border: 1px solid var(--outline-variant);
+      background: var(--surface-container);
+      color: var(--on-surface);
+      font-family: var(--font);
+      line-height: 1.4
+    }
+
+    .tag-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--elevation1)
+    }
+
+    .tag-btn.selected {
+      border: 2px solid var(--primary);
+      font-weight: 600
+    }
+
+    .tag-btn .tag-count {
+      font-size: 0.7rem;
+      opacity: .7;
+      margin-top: 2px
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 16px 24px;
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+      border-top: 1px solid var(--outline-variant);
+      background: var(--surface)
+    }
+
+    @media(max-width:820px) {
+      .modal-card {
+        flex-direction: column
+      }
+
+      .modal-right {
+        flex: none;
+        padding: 16px;
+        gap: 10px
+      }
+
+      .modal-left {
+        max-height: 45vh;
+        padding: 8px
+      }
+
+      .modal-left img {
+        max-height: calc(45vh - 16px)
+      }
+    }
+
+    @media(max-width:740px) {
+
+      .top-bar,
+      .toolbar {
+        padding: 10px 16px
+      }
+
+      .gallery {
+        padding: 16px;
+        column-width: 200px
+      }
+
+      .toolbar-right {
+        max-width: 100%;
+        margin-left: 0
+      }
+    }
+
+    @media(max-width:480px) {
+      .gallery {
+        padding: 12px;
+        column-width: 1;
+        column-gap: 0
+      }
+
+      .gallery-item {
+        margin-bottom: 12px
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <div class="toolbar">
-        <div class="folder-section">
-            <button class="btn" id="selectFolderBtn">📁 选择参考图文件夹</button>
-            <div class="counter" id="imageCounter">0 张图片</div>
-            <button class="btn" id="showTagsBtn">🏷️ 标签</button>
-        </div>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="🔍 搜索文件名..." autocomplete="off" />
-        </div>
+
+  <!-- 顶栏 -->
+  <div class="top-bar">
+    <div class="top-bar__left">
+      <span class="top-bar__title">dsapps</span>
+      <a href="https://masterlazy.github.io/dsapps/" class="top-link"
+        aria-label="返回应用列表">
+        <span class="material-symbols-outlined">home</span>
+      </a>
     </div>
+  </div>
 
-    <!-- 瀑布流容器 -->
-    <div id="gallery" class="gallery"></div>
-
-    <!-- 图片模态框 -->
-    <div id="modal" class="modal">
-        <div class="modal-card">
-            <div class="modal-left">
-                <img id="modalImage" src="" alt="preview" />
-            </div>
-            <div class="modal-right">
-                <h3 id="modalFileName">filename.jpg</h3>
-                <div class="meta-row">
-                    <span class="meta-label">📂 相对路径</span>
-                    <span class="meta-value" id="modalFilePath">—</span>
-                </div>
-                <div class="meta-row">
-                    <span class="meta-label">🖼️ 分辨率</span>
-                    <span class="meta-value" id="modalResolution">加载中…</span>
-                </div>
-                <div class="meta-row">
-                    <span class="meta-label">📐 比例</span>
-                    <span class="meta-value" id="modalAspectRatio">—</span>
-                </div>
-                <button class="close-btn" id="closeModalBtn">关闭</button>
-            </div>
-        </div>
+  <!-- 工具栏 -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <button class="btn" id="selectFolderBtn"><span
+          class="material-symbols-outlined" style="font-size:18px">folder</span>
+        选择参考图文件夹</button>
+      <span class="counter" id="imageCounter">0 张图片</span>
+      <button class="btn" id="showTagsBtn"><span
+          class="material-symbols-outlined" style="font-size:18px">label</span>
+        标签</button>
     </div>
-
-    <!-- 标签模态框 -->
-    <div id="tagModal" class="modal">
-        <div class="modal-card" style="max-width: 700px;">
-            <div class="modal-right" style="padding: 24px;">
-                <h3 style="margin-bottom: 16px;">🏷️ 所有标签</h3>
-                <div id="tagContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; max-height: 60vh; overflow-y: auto; padding: 4px;"></div>
-                <div style="display: flex; gap: 12px; margin-top: 16px;">
-                    <button class="btn" id="clearTagsBtn" style="flex: 0 0 auto; font-size: 1.2rem; padding: 10px 16px;">🧹</button>
-                    <button class="close-btn" id="closeTagModalBtn" style="flex: 1; margin-top:0;">关闭</button>
-                </div>
-            </div>
-        </div>
+    <div class="toolbar-right">
+      <div class="search-wrap">
+        <span class="material-symbols-outlined"
+          style="font-size:18px;color:var(--on-surface-variant)">search</span>
+        <input type="text" id="searchInput" placeholder="搜索文件名..."
+          autocomplete="off">
+      </div>
     </div>
-
-    <script>
-        (function() {
-            // ========== 检测 API 支持 ==========
-            if (!window.showDirectoryPicker) {
-                alert('您的浏览器不支持 File System Access API，请使用最新版 Edge 或 Chrome 并确保在 HTTPS/localhost 下运行。');
-            }
-
-            // ========== DOM 元素 ==========
-            const selectBtn = document.getElementById('selectFolderBtn');
-            const searchInput = document.getElementById('searchInput');
-            const galleryDiv = document.getElementById('gallery');
-            const imageCounter = document.getElementById('imageCounter');
-            const modal = document.getElementById('modal');
-            const modalImg = document.getElementById('modalImage');
-            const modalFileName = document.getElementById('modalFileName');
-            const modalFilePath = document.getElementById('modalFilePath');
-            const modalResolution = document.getElementById('modalResolution');
-            const closeModalBtn = document.getElementById('closeModalBtn');
-
-            // ========== 全局状态 ==========
-            let imagesData = [];                // 所有图片数据对象
-            let currentObjectUrls = [];         // 用于释放的URL数组
-            let currentModalData = null;         // 当前弹窗对应的图片数据
-            let pendingResolutionLoad = false;    // 避免重复加载分辨率
-            let currentDirHandle = null;          // 当前文件夹句柄 (用于权限保持)
-
-            let selectedTags = [];                 // 当前选中的标签
-            let tagModal = document.getElementById('tagModal');
-            let tagContainer = document.getElementById('tagContainer');
-            let showTagsBtn = document.getElementById('showTagsBtn');
-            let closeTagModalBtn = document.getElementById('closeTagModalBtn');
-
-            // ========== IndexedDB 封装 ==========
-            const DB_NAME = 'FolderPickerDB';
-            const STORE_NAME = 'handles';
-            const DB_VERSION = 1;
-
-            function openDB() {
-                return new Promise((resolve, reject) => {
-                    const request = indexedDB.open(DB_NAME, DB_VERSION);
-                    request.onerror = () => reject(request.error);
-                    request.onsuccess = () => resolve(request.result);
-                    request.onupgradeneeded = (e) => {
-                        const db = e.target.result;
-                        if (!db.objectStoreNames.contains(STORE_NAME)) {
-                            db.createObjectStore(STORE_NAME);
-                        }
-                    };
-                });
-            }
-
-            // ========== 比例 ==========
-            const aspectRatioMap = [
-                { ratio: 1, name: "1 : 1 - 方形" },
-                { ratio: 4/3, name: "4 : 3" },
-                { ratio: 3/2, name: "3 : 2" },
-                { ratio: 16/9, name: "16 : 9" },
-                { ratio: 2, name: "2 : 1" },
-                { ratio: 21/9, name: "21 : 9" },
-                { ratio: 1.6180339887, name: "1.618 : 1 - 黄金比例" },
-                { ratio: 1.4142135623, name: "1.414 : 1 - 白银比例" },
-                // 可根据需要继续添加
-            ];
-
-            function getClosestAspectRatio(width, height) {
-                if (!width || !height) return null;
-                const longSide = Math.max(width, height);
-                const shortSide = Math.min(width, height);
-                const actualRatio = longSide / shortSide;
-
-                let bestMatch = aspectRatioMap[0];
-                let minDiff = Math.abs(actualRatio - bestMatch.ratio);
-
-                for (let i = 1; i < aspectRatioMap.length; i++) {
-                    const diff = Math.abs(actualRatio - aspectRatioMap[i].ratio);
-                    if (diff < minDiff) {
-                        minDiff = diff;
-                        bestMatch = aspectRatioMap[i];
-                    }
-                }
-
-                const relativeError = minDiff / bestMatch.ratio;
-                const rawPercent = (1 - relativeError) * 100;
-                const percentRounded = Math.round(rawPercent * 10) / 10; // 保留一位小数
-                const clampedPercent = Math.min(100, Math.max(0, percentRounded));
-                return { name: bestMatch.name, percent: clampedPercent };
-            }
-
-            async function saveDirectoryHandle(handle) {
-                const db = await openDB();
-                return new Promise((resolve, reject) => {
-                    const tx = db.transaction(STORE_NAME, 'readwrite');
-                    const store = tx.objectStore(STORE_NAME);
-                    const request = store.put(handle, 'dirHandle');
-                    request.onsuccess = () => resolve();
-                    request.onerror = () => reject(request.error);
-                });
-            }
-
-            async function loadDirectoryHandle() {
-                const db = await openDB();
-                return new Promise((resolve, reject) => {
-                    const tx = db.transaction(STORE_NAME, 'readonly');
-                    const store = tx.objectStore(STORE_NAME);
-                    const request = store.get('dirHandle');
-                    request.onsuccess = () => resolve(request.result || null);
-                    request.onerror = () => reject(request.error);
-                });
-            }
-
-            // ========== 工具函数 ==========
-            function isImageFile(filename) {
-                return /\.(jpg|jpeg|png|gif|bmp|webp|svg|avif)$/i.test(filename);
-            }
-
-            // 释放之前创建的object URL
-            function revokePreviousUrls() {
-                currentObjectUrls.forEach(url => URL.revokeObjectURL(url));
-                currentObjectUrls = [];
-            }
-
-            // 清空画廊，重置数据
-            function resetGallery() {
-                galleryDiv.innerHTML = '';
-                imagesData = [];
-                revokePreviousUrls();
-                updateCounter(0);
-            }
-
-            // 更新图片计数 (显示 可见/总数)
-            function updateCounter(visibleCount) {
-                const total = imagesData.length;
-                if (visibleCount !== undefined) {
-                    imageCounter.textContent = `${visibleCount} / ${total} 张图片`;
-                } else {
-                    const visible = document.querySelectorAll('.gallery-item:not([style*="display: none"])').length;
-                    imageCounter.textContent = `${visible} / ${total} 张图片`;
-                }
-            }
-
-            // 过滤图片 (基于搜索关键词)
-            function filterImages(keyword) {
-                const lowerKeyword = keyword.trim().toLowerCase();
-                let visibleCount = 0;
-
-                imagesData.forEach(item => {
-                    let match = true;
-
-                    // 1. 标签筛选（多选与）
-                    if (selectedTags.length > 0) {
-                        const baseName = item.name.replace(/\.[^/.]+$/, '');
-                        const parts = baseName.split('-').map(s => s.trim()).filter(s => s);
-                        match = selectedTags.every(tag => parts.includes(tag));
-                    }
-
-                    // 2. 关键词筛选
-                    if (match && lowerKeyword) {
-                        match = item.name.toLowerCase().includes(lowerKeyword);
-                    }
-
-                    if (item.element) {
-                        item.element.style.display = match ? '' : 'none';
-                    }
-                    if (match) visibleCount++;
-                });
-                updateCounter(visibleCount);
-                updateTagPanelBasedOnFilter();
-            }
-
-            // 根据当前可见图片计算标签统计
-            function updateTagPanelBasedOnFilter() {
-                if (!window.tagData) return; // 无原始数据时不处理
-
-                const visibleItems = imagesData.filter(item => 
-                    item.element && item.element.style.display !== 'none'
-                );
-
-                const tagCounts = {};
-                visibleItems.forEach(item => {
-                    const baseName = item.name.replace(/\.[^/.]+$/, '');
-                    const parts = baseName.split('-').map(s => s.trim()).filter(s => s);
-                    parts.forEach(tag => {
-                        if (/^\d+$/.test(tag)) return;
-                        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-                    });
-                });
-
-                window.filteredTagData = Object.entries(tagCounts)
-                    .sort((a, b) => {
-                        if (b[1] !== a[1]) return b[1] - a[1];
-                        return a[0].localeCompare(b[0]);
-                    })
-                    .map(([tag, count]) => ({ tag, count }));
-
-                // 如果标签面板当前是打开的，则重新渲染
-                if (tagModal.style.display === 'flex') {
-                    renderTagPanel();
-                }
-            }
-
-            // ========== 渲染瀑布流 ==========
-            function renderGallery() {
-                galleryDiv.innerHTML = '';
-                if (imagesData.length === 0) {
-                    galleryDiv.innerHTML = '<div class="empty-state">✨ 点击上方按钮，选择你的参考图文件夹</div>';
-                    imageCounter.textContent = '0 张图片';
-                    return;
-                }
-
-                const fragment = document.createDocumentFragment();
-                imagesData.forEach((item, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'gallery-item';
-                    card.dataset.index = index;
-
-                    const img = document.createElement('img');
-                    img.src = item.url;
-                    img.alt = item.name;
-                    img.loading = 'lazy';
-                    img.onload = function() {
-                        const naturalW = this.naturalWidth;
-                        const naturalH = this.naturalHeight;
-                        if (naturalW && naturalH) {
-                            item.width = naturalW;
-                            item.height = naturalH;
-                        }
-                        // 图片加载完成后，移除卡片的固定最小高度，避免背景露出
-                        if (item.element) {
-                            item.element.style.minHeight = 'auto';
-                        }
-                    };
-
-                    card.appendChild(img);
-                    card.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        openModal(item, img);
-                    });
-
-                    fragment.appendChild(card);
-                    item.element = card;
-                    item.imgElement = img;
-                });
-
-                galleryDiv.appendChild(fragment);
-                updateCounter(imagesData.length);
-            }
-
-            // ========== 递归读取目录 ==========
-            async function readDirectoryRecursively(dirHandle, basePath = '') {
-                let results = [];
-                for await (const entry of dirHandle.values()) {
-                    if (entry.kind === 'file') {
-                        const name = entry.name;
-                        if (isImageFile(name)) {
-                            const file = await entry.getFile();
-                            results.push({
-                                handle: entry,           // 保留句柄以备后用
-                                file: file,
-                                name: file.name,
-                                path: basePath ? `${basePath}/${file.name}` : file.name,
-                                displayPath: basePath ? `${basePath}/${file.name}` : file.name,
-                                width: null,
-                                height: null,
-                                element: null,
-                                imgElement: null
-                            });
-                        }
-                    } else if (entry.kind === 'directory') {
-                        const subPath = basePath ? `${basePath}/${entry.name}` : entry.name;
-                        const subResults = await readDirectoryRecursively(entry, subPath);
-                        results.push(...subResults);
-                    }
-                }
-                return results;
-            }
-
-            // ========== 从句柄加载图片 ==========
-            async function loadImagesFromHandle(dirHandle) {
-                resetGallery(); // 清空旧数据并释放URL
-
-                try {
-                    // 请求读取权限（如果尚未授予）
-                    const permission = await dirHandle.requestPermission({ mode: 'read' });
-                    if (permission !== 'granted') {
-                        alert('需要读取权限才能显示图片');
-                        return;
-                    }
-
-                    // 递归读取所有图片
-                    let imageEntries = await readDirectoryRecursively(dirHandle);
-
-                    // ---------- 随机打乱图片顺序 ----------
-                    function shuffleArray(array) {
-                        for (let i = array.length - 1; i > 0; i--) {
-                            const j = Math.floor(Math.random() * (i + 1));
-                            [array[i], array[j]] = [array[j], array[i]];
-                        }
-                        return array;
-                    }
-                    imageEntries = shuffleArray(imageEntries);
-
-                    if (imageEntries.length === 0) {
-                        alert('该文件夹内没有图片文件');
-                        return;
-                    }
-
-                    // 创建 object URL
-                    for (const entry of imageEntries) {
-                        const url = URL.createObjectURL(entry.file);
-                        currentObjectUrls.push(url);
-                        entry.url = url;
-                    }
-
-                    imagesData = imageEntries;
-                    renderGallery();
-                    searchInput.value = ''; // 清空搜索
-
-                    // 统计标签
-                    const tagCounts = {};
-                    imageEntries.forEach(item => {
-                        // 去掉扩展名，按 '-' 分割
-                        const baseName = item.name.replace(/\.[^/.]+$/, ''); // 移除扩展名
-                        const parts = baseName.split('-').map(s => s.trim()).filter(s => s);
-                        parts.forEach(tag => {
-                            if (/^\d+$/.test(tag)) return;
-                            tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-                        });
-                    });
-                    // 将标签数据保存到全局或某个地方（例如 window.tagData）
-                    window.tagData = Object.entries(tagCounts)
-                        .sort((a, b) => {
-                            if (b[1] !== a[1]) return b[1] - a[1];
-                            return a[0].localeCompare(b[0]);
-                        })
-                        .map(([tag, count]) => ({ tag, count }));
-                } catch (err) {
-                    console.error('读取文件夹失败', err);
-                    alert('读取文件夹失败：' + err.message);
-                }
-            }
-
-            // ========== 选择新文件夹 ==========
-            async function pickDirectory() {
-                try {
-                    const dirHandle = await window.showDirectoryPicker();
-                    currentDirHandle = dirHandle;
-                    // 保存句柄到 IndexedDB
-                    await saveDirectoryHandle(dirHandle);
-                    // 加载图片
-                    await loadImagesFromHandle(dirHandle);
-                } catch (err) {
-                    if (err.name === 'AbortError') return; // 用户取消选择
-                    console.error('选择文件夹失败', err);
-                    alert('无法选择文件夹：' + err.message);
-                }
-            }
-
-            // ========== 尝试恢复上次的文件夹 ==========
-            async function tryRestoreDirectory() {
-                try {
-                    const savedHandle = await loadDirectoryHandle();
-                    if (!savedHandle) return; // 没有保存的句柄
-
-                    // 验证句柄是否还可访问（权限可能已过期）
-                    const permission = await savedHandle.queryPermission({ mode: 'read' });
-                    if (permission === 'granted') {
-                        currentDirHandle = savedHandle;
-                        await loadImagesFromHandle(savedHandle);
-                    } else {
-                        // 权限未授予，需要重新请求（可以通过再次调用 requestPermission）
-                        // 这里静默失败，让用户手动点击按钮重新选择
-                        console.log('上次的文件夹权限已过期，请重新选择');
-                    }
-                } catch (err) {
-                    console.warn('恢复文件夹失败', err);
-                }
-            }
-
-            // ========== 打开模态框 ==========
-            function openModal(item, imgEl) {
-                function updateAspectRatio() {
-                    const w = currentModalData.width;
-                    const h = currentModalData.height;
-                    const aspectSpan = document.getElementById('modalAspectRatio');
-                    if (w && h) {
-                        const match = getClosestAspectRatio(w, h);
-                        // 使用 flex 布局，名称左，百分比右
-                        aspectSpan.innerHTML = `<span class="aspect-name">${match.name}</span><span class="aspect-percent">${match.percent.toFixed(1)}%</span>`;
-                        aspectSpan.style.display = 'flex';
-                        aspectSpan.style.justifyContent = 'space-between';
-                        aspectSpan.style.alignItems = 'center';
-                    } else {
-                        aspectSpan.textContent = '等待加载…';
-                        // 恢复默认样式
-                        aspectSpan.style.display = '';
-                        aspectSpan.style.justifyContent = '';
-                    }
-                }
-
-                currentModalData = item;
-
-                modalFileName.textContent = item.name.replace(/\.[^/.]+$/, '');
-                modalFilePath.textContent = item.displayPath || item.path || '—';
-                modalImg.src = item.url;
-
-                function setResolutionText(text) {
-                    modalResolution.textContent = text;
-                }
-
-                if (item.width && item.height) {
-                    setResolutionText(`${item.width} x ${item.height}`);
-                    updateAspectRatio();
-                } else if (imgEl && imgEl.complete && imgEl.naturalWidth) {
-                    item.width = imgEl.naturalWidth;
-                    item.height = imgEl.naturalHeight;
-                    setResolutionText(`${item.width} x ${item.height}`);
-                    updateAspectRatio();
-                } else {
-                    setResolutionText('读取中…');
-                    if (pendingResolutionLoad) return;
-
-                    const loader = new Image();
-                    loader.src = item.url;
-                    loader.onload = () => {
-                        if (currentModalData === item) {
-                            item.width = loader.naturalWidth;
-                            item.height = loader.naturalHeight;
-                            setResolutionText(`${item.width} x ${item.height}`);
-                            updateAspectRatio();
-                        }
-                        pendingResolutionLoad = false;
-                    };
-                    loader.onerror = () => {
-                        if (currentModalData === item) {
-                            setResolutionText('无法读取');
-                        }
-                        pendingResolutionLoad = false;
-                    };
-                    pendingResolutionLoad = true;
-                }
-
-                modal.style.display = 'flex';
-            }
-
-            // ========== 关闭模态框 ==========
-            function closeModal() {
-                modal.style.display = 'none';
-                currentModalData = null;
-            }
-
-            // ========== 渲染标签面板 ==========
-            function renderTagPanel() {
-                const data = selectedTags.length>0 ? window.filteredTagData : window.tagData;
-                if (!data) return;
-
-                tagContainer.innerHTML = '';
-                data.forEach(({ tag, count }) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'tag-btn';
-                    if (selectedTags.includes(tag)) btn.classList.add('selected');
-
-                    // 根据标签内容生成柔和背景色
-                    const hue = Math.abs(hashCode(tag) % 360);
-                    const sat = 30; // 饱和度 %
-                    const light = 85; // 明度 %
-                    btn.style.backgroundColor = `hsl(${hue}, ${sat}%, ${light}%)`;
-                    btn.style.border = selectedTags.includes(tag) ? '2px solid #333' : '1px solid #ddd';
-                    btn.style.borderRadius = '16px';
-                    btn.style.padding = '12px 8px';
-                    btn.style.fontSize = '0.85rem';
-                    btn.style.color = '#2c3e50';
-                    btn.style.fontWeight = '500';
-                    btn.style.cursor = 'pointer';
-                    btn.style.transition = 'all 0.1s';
-                    btn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.02)';
-                    btn.style.display = 'flex';
-                    btn.style.flexDirection = 'column';
-                    btn.style.alignItems = 'center';
-                    btn.style.justifyContent = 'center';
-                    btn.style.lineHeight = '1.4';
-                    btn.innerHTML = `<span style="font-weight:600;">${tag}</span><span style="font-size:0.75rem; opacity:0.8;">${count}</span>`;
-
-                    btn.addEventListener('click', () => {
-                        const index = selectedTags.indexOf(tag);
-                        if (index === -1) {
-                            selectedTags.push(tag);       // 添加标签
-                        } else {
-                            selectedTags.splice(index, 1); // 移除标签
-                        }
-                        filterImages(searchInput.value);   // 重新过滤
-                        renderTagPanel();                  // 刷新面板（更新选中状态）
-                    });
-                    tagContainer.appendChild(btn);
-                });
-            }
-
-            // 辅助哈希函数
-            function hashCode(str) {
-                let hash = 0;
-                for (let i = 0; i < str.length; i++) {
-                    hash = ((hash << 5) - hash) + str.charCodeAt(i);
-                    hash |= 0; // 转换为32位整数
-                }
-                return Math.abs(hash);
-            }
-
-            // ========== 事件绑定 ==========
-            selectBtn.addEventListener('click', pickDirectory);
-
-            searchInput.addEventListener('input', (e) => {
-                filterImages(e.target.value);
-            });
-
-            closeModalBtn.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeModal();
-            });
-
-            window.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && modal.style.display === 'flex') {
-                    closeModal();
-                }
-            });
-
-            // 打开标签模态框
-            showTagsBtn.addEventListener('click', () => {
-                renderTagPanel();
-                tagModal.style.display = 'flex';
-            });
-
-            // 关闭标签模态框
-            closeTagModalBtn.addEventListener('click', () => {
-                tagModal.style.display = 'none';
-            });
-            tagModal.addEventListener('click', (e) => {
-                if (e.target === tagModal) tagModal.style.display = 'none';
-            });
-
-            document.getElementById('clearTagsBtn').addEventListener('click', () => {
-                selectedTags = [];
-                filterImages(searchInput.value);
-            });
-
-            // ========== 初始化 ==========
-            resetGallery(); // 显示空状态
-            tryRestoreDirectory(); // 尝试恢复上次的文件夹
-        })();
-    </script>
+  </div>
+
+  <!-- 瀑布流 -->
+  <div id="gallery" class="gallery"></div>
+
+  <!-- 图片模态框 -->
+  <div id="modal" class="modal">
+    <div class="modal-card">
+      <div class="modal-left">
+        <img id="modalImage" src="" alt="preview">
+      </div>
+      <div class="modal-right">
+        <h3 id="modalFileName">filename.jpg</h3>
+        <div class="meta-row">
+          <span class="meta-label"><span
+              class="material-symbols-outlined">folder</span> 相对路径</span>
+          <span class="meta-value" id="modalFilePath">—</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label"><span
+              class="material-symbols-outlined">photo_size_select_actual</span>
+            分辨率</span>
+          <span class="meta-value" id="modalResolution">加载中…</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label"><span
+              class="material-symbols-outlined">aspect_ratio</span> 比例</span>
+          <span class="meta-value" id="modalAspectRatio">—</span>
+        </div>
+        <button class="close-btn" id="closeModalBtn">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 标签模态框 -->
+  <div id="tagModal" class="modal">
+    <div class="modal-card"
+      style="max-width:620px;flex-direction:column;padding:24px">
+      <h3
+        style="margin-bottom:16px;font-size:1.15rem;font-weight:600;display:flex;align-items:center;gap:8px">
+        <span class="material-symbols-outlined"
+          style="font-size:22px;color:var(--primary)">label</span> 所有标签
+      </h3>
+      <div id="tagContainer" class="tag-grid"></div>
+      <div style="display:flex;gap:12px;margin-top:16px">
+        <button class="btn" id="clearTagsBtn"><span
+            class="material-symbols-outlined"
+            style="font-size:18px">clear_all</span> 清除</button>
+        <button class="close-btn" id="closeTagModalBtn"
+          style="flex:1">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>dsapps &copy; 2025 masterLazy · 由 DeepSeek 开发 · MIT License</p>
+  </div>
+
+  <script>
+    (function () {
+      if (!window.showDirectoryPicker) { alert('您的浏览器不支持 File System Access API，请使用最新版 Edge 或 Chrome 并确保在 HTTPS/localhost 下运行。') }
+
+      const selectBtn = document.getElementById('selectFolderBtn');
+      const searchInput = document.getElementById('searchInput');
+      const galleryDiv = document.getElementById('gallery');
+      const imageCounter = document.getElementById('imageCounter');
+      const modal = document.getElementById('modal');
+      const modalImg = document.getElementById('modalImage');
+      const modalFileName = document.getElementById('modalFileName');
+      const modalFilePath = document.getElementById('modalFilePath');
+      const modalResolution = document.getElementById('modalResolution');
+      const modalAspect = document.getElementById('modalAspectRatio');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      let imagesData = [], currentObjectUrls = [], currentModalData = null, pendingRes = false, currentDirHandle = null, selectedTags = [];
+      const tagModal = document.getElementById('tagModal'), tagContainer = document.getElementById('tagContainer');
+      const showTagsBtn = document.getElementById('showTagsBtn'), closeTagModalBtn = document.getElementById('closeTagModalBtn');
+
+      const DB_NAME = 'FolderPickerDB', STORE_NAME = 'handles', DB_VERSION = 1;
+      function openDB() { return new Promise((res, rej) => { const r = indexedDB.open(DB_NAME, DB_VERSION); r.onerror = () => rej(r.error); r.onsuccess = () => res(r.result); r.onupgradeneeded = e => { const d = e.target.result; if (!d.objectStoreNames.contains(STORE_NAME)) d.createObjectStore(STORE_NAME) } }) }
+      async function saveHandle(h) { const db = await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const r = tx.objectStore(STORE_NAME).put(h, 'dirHandle'); r.onsuccess = () => res(); r.onerror = () => rej(r.error) }) }
+      async function loadHandle() { const db = await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readonly'); const r = tx.objectStore(STORE_NAME).get('dirHandle'); r.onsuccess = () => res(r.result || null); r.onerror = () => rej(r.error) }) }
+
+      function isImg(f) { return /\.(jpg|jpeg|png|gif|bmp|webp|svg|avif)$/i.test(f) }
+      function revokeAll() { currentObjectUrls.forEach(u => URL.revokeObjectURL(u)); currentObjectUrls = [] }
+      function resetGallery() { galleryDiv.innerHTML = ''; imagesData = []; revokeAll(); imageCounter.textContent = '0 张图片' }
+
+      const aspectMap = [
+        { r: 1, n: '1:1 - 方形' }, { r: 4 / 3, n: '4:3' }, { r: 3 / 2, n: '3:2' }, { r: 16 / 9, n: '16:9' },
+        { r: 2, n: '2:1' }, { r: 21 / 9, n: '21:9' }, { r: 1.618, n: '1.618:1 - 黄金比例' }, { r: 1.414, n: '1.414:1 - 白银比例' }
+      ];
+      function closestAspect(w, h) {
+        if (!w || !h) return null;
+        const r = Math.max(w, h) / Math.min(w, h);
+        let best = aspectMap[0], min = Math.abs(r - best.r);
+        for (let i = 1; i < aspectMap.length; i++) { const d = Math.abs(r - aspectMap[i].r); if (d < min) { min = d; best = aspectMap[i] } }
+        const pct = Math.min(100, Math.max(0, Math.round((1 - min / best.r) * 100 * 10) / 10));
+        return { name: best.n, percent: pct };
+      }
+
+      function filter(keyword) {
+        const kw = keyword.trim().toLowerCase();
+        let vis = 0;
+        imagesData.forEach(item => {
+          let match = true;
+          if (selectedTags.length > 0) {
+            const base = item.name.replace(/\.[^/.]+$/, '');
+            const parts = base.split('-').map(s => s.trim()).filter(s => s);
+            match = selectedTags.every(t => parts.includes(t));
+          }
+          if (match && kw) match = item.name.toLowerCase().includes(kw);
+          if (item.element) item.element.style.display = match ? '' : 'none';
+          if (match) vis++;
+        });
+        imageCounter.textContent = `${vis} / ${imagesData.length} 张图片`;
+        updateTagStats();
+      }
+
+      function updateTagStats() {
+        if (!window.tagData) return;
+        const visible = imagesData.filter(i => i.element && i.element.style.display !== 'none');
+        const cnt = {};
+        visible.forEach(i => {
+          const base = i.name.replace(/\.[^/.]+$/, '');
+          base.split('-').map(s => s.trim()).filter(s => s && !/^\d+$/.test(s)).forEach(t => cnt[t] = (cnt[t] || 0) + 1);
+        });
+        window.filteredTags = Object.entries(cnt).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([t, c]) => ({ tag: t, count: c }));
+        if (tagModal.style.display === 'flex') renderTags();
+      }
+
+      function renderGallery() {
+        galleryDiv.innerHTML = '';
+        if (!imagesData.length) { galleryDiv.innerHTML = '<div class="empty-state">✨ 点击上方按钮，选择你的参考图文件夹</div>'; imageCounter.textContent = '0 张图片'; return }
+        const frag = document.createDocumentFragment();
+        imagesData.forEach((item, i) => {
+          const card = document.createElement('div'); card.className = 'gallery-item'; card.dataset.index = i;
+          const img = document.createElement('img'); img.src = item.url; img.alt = item.name; img.loading = 'lazy';
+          img.onload = function () { if (this.naturalW && this.naturalH) { item.width = this.naturalW; item.height = this.naturalH } if (item.element) item.element.style.minHeight = 'auto' };
+          card.appendChild(img);
+          card.addEventListener('click', () => openModal(item, img));
+          frag.appendChild(card); item.element = card; item.imgElement = img;
+        });
+        galleryDiv.appendChild(frag);
+        imageCounter.textContent = `${imagesData.length} / ${imagesData.length} 张图片`;
+      }
+
+      async function readDir(dir, base = '') {
+        let res = [];
+        for await (const e of dir.values()) {
+          if (e.kind === 'file') { if (isImg(e.name)) { const f = await e.getFile(); res.push({ handle: e, file: f, name: f.name, path: base ? base + '/' + f.name : f.name, displayPath: base ? base + '/' + f.name : f.name, width: null, height: null, element: null, imgElement: null }) } }
+          else if (e.kind === 'directory') { const sub = base ? base + '/' + e.name : e.name; res = res.concat(await readDir(e, sub)) }
+        }
+        return res;
+      }
+
+      async function loadFromHandle(dir) {
+        resetGallery();
+        const perm = await dir.requestPermission({ mode: 'read' });
+        if (perm !== 'granted') { alert('需要读取权限'); return }
+        let entries = await readDir(dir);
+        // 随机打乱
+        for (let i = entries.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[entries[i], entries[j]] = [entries[j], entries[i]] }
+        if (!entries.length) { alert('该文件夹内没有图片'); return }
+        for (const e of entries) { const url = URL.createObjectURL(e.file); currentObjectUrls.push(url); e.url = url }
+        imagesData = entries; renderGallery(); searchInput.value = '';
+        // 统计标签
+        const cnt = {};
+        entries.forEach(i => { const base = i.name.replace(/\.[^/.]+$/, ''); base.split('-').map(s => s.trim()).filter(s => s && !/^\d+$/.test(s)).forEach(t => cnt[t] = (cnt[t] || 0) + 1) });
+        window.tagData = Object.entries(cnt).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([t, c]) => ({ tag: t, count: c }));
+      }
+
+      async function pickDir() {
+        try {
+          const handle = await window.showDirectoryPicker(); currentDirHandle = handle; await saveHandle(handle); await loadFromHandle(handle);
+        } catch (e) { if (e.name !== 'AbortError') console.error(e) }
+      }
+
+      async function restoreDir() {
+        try {
+          const handle = await loadHandle(); if (!handle) return;
+          const perm = await handle.queryPermission({ mode: 'read' });
+          if (perm === 'granted') { currentDirHandle = handle; await loadFromHandle(handle) }
+        } catch (e) { console.warn(e) }
+      }
+
+      function openModal(item, img) {
+        currentModalData = item;
+        modalFileName.textContent = item.name.replace(/\.[^/.]+$/, '');
+        modalFilePath.textContent = item.displayPath || item.path || '—';
+        modalImg.src = item.url;
+        function setRes(t) { modalResolution.textContent = t }
+        function setAspect() {
+          const w = currentModalData.width, h = currentModalData.height;
+          if (w && h) { const m = closestAspect(w, h); modalAspect.innerHTML = `<span>${m.name}</span><span style="margin-left:auto;opacity:.7">${m.percent.toFixed(1)}%</span>`; modalAspect.style.display = 'flex' } else { modalAspect.textContent = '等待加载…' }
+        }
+        if (item.width && item.height) { setRes(`${item.width} x ${item.height}`); setAspect() }
+        else if (img && img.complete && img.naturalWidth) { item.width = img.naturalWidth; item.height = img.naturalHeight; setRes(`${item.width} x ${item.height}`); setAspect() }
+        else {
+          setRes('读取中…');
+          if (!pendingRes) { pendingRes = true; const ld = new Image(); ld.src = item.url; ld.onload = () => { if (currentModalData === item) { item.width = ld.naturalWidth; item.height = ld.naturalHeight; setRes(`${item.width} x ${item.height}`); setAspect() } pendingRes = false }; ld.onerror = () => { if (currentModalData === item) setRes('无法读取'); pendingRes = false } }
+        }
+        modal.style.display = 'flex';
+      }
+
+      function closeModal() { modal.style.display = 'none'; currentModalData = null }
+      selectBtn.addEventListener('click', pickDir);
+      searchInput.addEventListener('input', e => filter(e.target.value));
+      closeModalBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', e => { if (e.target === modal) closeModal() });
+      window.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.style.display === 'flex') closeModal() });
+
+      function renderTags() {
+        const data = selectedTags.length ? window.filteredTags : window.tagData;
+        if (!data) return;
+        tagContainer.innerHTML = '';
+        data.forEach(({ tag, count }) => {
+          const btn = document.createElement('button'); btn.className = 'tag-btn';
+          if (selectedTags.includes(tag)) btn.classList.add('selected');
+          const h = Math.abs((tag.split('').reduce((a, c) => ((a << 5) - a) + c.charCodeAt(0), 0)) % 360);
+          btn.style.background = `hsl(${h},30%,87%)`;
+          btn.innerHTML = `<span style="font-weight:600">${tag}</span><span class="tag-count">${count}</span>`;
+          btn.addEventListener('click', () => {
+            const idx = selectedTags.indexOf(tag);
+            idx === -1 ? selectedTags.push(tag) : selectedTags.splice(idx, 1);
+            filter(searchInput.value); renderTags();
+          });
+          tagContainer.appendChild(btn);
+        });
+      }
+
+      showTagsBtn.addEventListener('click', () => { renderTags(); tagModal.style.display = 'flex' });
+      closeTagModalBtn.addEventListener('click', () => { tagModal.style.display = 'none' });
+      tagModal.addEventListener('click', e => { if (e.target === tagModal) tagModal.style.display = 'none' });
+      document.getElementById('clearTagsBtn').addEventListener('click', () => { selectedTags = []; filter(searchInput.value) });
+
+      resetGallery(); restoreDir();
+    })();
+  </script>
 </body>
+
 </html>

@@ -2,512 +2,507 @@
 <html lang="zh-CN">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dsapps | A1Z26 编码转换器</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dsapps | A1Z26 编码转换器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
+    rel="stylesheet">
+  <style>
+    /* ===== 主题色 (同 index) ===== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 0;
-        }
+    :root {
+      --primary: #4f7c9e;
+      --on-primary: #fff;
+      --primary-container: #d1e4f5;
+      --on-primary-container: #1a3a4f;
+      --secondary: #6b7d8e;
+      --secondary-container: #d5e1eb;
+      --on-secondary-container: #1f2e3c;
+      --surface: #f8fafc;
+      --surface-dim: #dde3e9;
+      --surface-container: #edf1f5;
+      --surface-container-high: #e2e8ee;
+      --on-surface: #1b1c1e;
+      --on-surface-variant: #44474a;
+      --outline: #7b8086;
+      --outline-variant: #c2c7cd;
+      --error: #ba1a1a;
+      --elevation1: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --elevation2: 0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.04);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-full: 9999px;
+      --duration: 0.2s;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+    }
 
-        /* 顶部导航栏 */
-        .top-nav {
-            width: 100%;
-            background: transparent;
-            color: #4a69bd;
-            padding: 15px 0;
-        }
+    body {
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--on-surface);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column
+    }
 
-        .nav-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
+    /* ===== 顶栏 ===== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--outline-variant);
+      position: sticky;
+      top: 0;
+      z-index: 100
+    }
 
-        .nav-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
+    .top-bar__left {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
 
-        .home-link {
-            color: #333;
-            text-decoration: none;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 8px 15px;
-            border-radius: 20px;
-            background-color: rgba(102, 102, 102, 0.1);
-            transition: background-color 0.3s;
-        }
+    .top-bar__title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      letter-spacing: -0.01em
+    }
 
-        .home-link:hover {
-            background-color: rgba(102, 102, 102, 0.3);
-            text-decoration: none;
-        }
+    .top-bar__right {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
 
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            margin: 20px;
-            flex-grow: 1;
-        }
+    .top-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--primary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      transition: background var(--duration)
+    }
 
-        header {
-            background: linear-gradient(to right, #6a89cc, #4a69bd);
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-        }
+    .top-link:hover {
+      background: color-mix(in srgb, var(--primary) 10%, transparent)
+    }
 
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-        }
+    .top-link .material-symbols-outlined {
+      font-size: 20px
+    }
 
-        .description {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            line-height: 1.5;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+    /* ===== 头部 ===== */
+    .header {
+      text-align: center;
+      padding: 40px 24px 28px;
+      background: linear-gradient(135deg, var(--surface-container), var(--surface-dim))
+    }
 
-        .main-content {
-            padding: 30px;
-        }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px
+    }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
+    .header .desc {
+      font-size: 0.9rem;
+      color: var(--on-surface-variant);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6
+    }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #444;
-        }
+    /* ===== 主容器 ===== */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      flex: 1;
+      width: 100%
+    }
 
-        input,
-        select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-            background-color: #f9f9f9;
-        }
+    /* ===== M3 组件 ===== */
+    /* Chip 组 (模式选择) */
+    .chip-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px
+    }
 
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #6a89cc;
-            background-color: white;
-        }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: 1px solid var(--outline-variant);
+      background: transparent;
+      color: var(--on-surface-variant);
+      cursor: pointer;
+      transition: all var(--duration);
+      user-select: none
+    }
 
-        .mode-selector {
-            display: flex;
-            margin-bottom: 20px;
-            background-color: #f5f5f5;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #e0e0e0;
-        }
+    .chip:hover {
+      background: color-mix(in srgb, var(--on-surface) 6%, transparent)
+    }
 
-        .mode-option {
-            flex: 1;
-            text-align: center;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-            color: #555;
-        }
+    .chip--selected {
+      background: var(--primary-container);
+      border-color: var(--primary);
+      color: var(--on-primary-container)
+    }
 
-        .mode-option.active {
-            background-color: #6a89cc;
-            color: white;
-        }
+    .chip--selected:hover {
+      background: color-mix(in srgb, var(--primary-container) 88%, #000)
+    }
 
-        .result-container {
-            position: relative;
-            margin-top: 10px;
-        }
+    /* 输入 & 标签 */
+    .field {
+      margin-bottom: 20px
+    }
 
-        .result-box {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px 50px 15px 15px;
-            min-height: 60px;
-            border: 2px dashed #e0e0e0;
-            font-family: monospace;
-            word-break: break-all;
-        }
+    .field label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      margin-bottom: 6px
+    }
 
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: #555;
-            border: none;
-            border-radius: 6px;
-            padding: 6px 12px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+    .field input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--outline-variant);
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--on-surface);
+      transition: border-color var(--duration);
+      outline: none
+    }
 
-        .copy-btn:hover {
-            background-color: #5a79bc;
-            color: white;
-        }
+    .field input:focus {
+      border-color: var(--primary)
+    }
 
-        .copy-btn.copied {
-            background-color: #4CAF50;
-            color: white;
-        }
+    /* 填充按钮 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 0.9rem;
+      font-weight: 500;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: all var(--duration);
+      text-decoration: none
+    }
 
-        .error {
-            color: #e53935;
-            font-size: 0.9rem;
-            margin-top: 5px;
-            display: none;
-        }
+    .btn--primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      box-shadow: var(--elevation1)
+    }
 
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-size: 0.9rem;
-            border-top: 1px solid #eee;
-            background-color: #f9f9f9;
-            width: 100%;
-        }
+    .btn--primary:hover {
+      background: color-mix(in srgb, var(--primary) 88%, #000);
+      box-shadow: var(--elevation2)
+    }
 
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+    .btn--primary:active {
+      transform: scale(0.97)
+    }
 
-        .convert-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #6a89cc;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-bottom: 15px;
-        }
+    .btn--full {
+      width: 100%
+    }
 
-        .convert-btn:hover {
-            background-color: #5a79bc;
-        }
+    /* 结果框 */
+    .result-wrap {
+      position: relative;
+      margin-top: 4px
+    }
 
-        .info-box {
-            background-color: #e8f4fd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 1.5px solid #95ade0;
-        }
+    .result-box {
+      background: var(--surface-container);
+      border-radius: var(--radius-md);
+      padding: 16px 60px 16px 16px;
+      min-height: 56px;
+      border: 1px solid var(--outline-variant);
+      font-family: monospace;
+      font-size: 1rem;
+      word-break: break-all;
+      display: flex;
+      align-items: center
+    }
 
-        .info-box h3 {
-            color: #4a69bd;
-            margin-bottom: 10px;
-        }
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 500;
+      font-family: var(--font);
+      cursor: pointer;
+      background: var(--surface-container-high);
+      color: var(--on-surface-variant);
+      transition: all var(--duration)
+    }
 
-        @media (max-width: 800px) {
-            .app-grid {
-                grid-template-columns: 1fr;
-            }
+    .copy-btn:hover {
+      background: var(--primary-container);
+      color: var(--on-primary-container)
+    }
 
-            h1 {
-                font-size: 1.8rem;
-            }
+    .copy-btn.copied {
+      background: var(--primary);
+      color: var(--on-primary)
+    }
 
-            .description {
-                font-size: 1rem;
-            }
-        }
-    </style>
+    /* 错误 */
+    .error {
+      color: var(--error);
+      font-size: 0.85rem;
+      margin-top: 4px;
+      display: none
+    }
+
+    /* 信息卡片 */
+    .info-card {
+      background: var(--primary-container);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-top: 20px;
+      border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent)
+    }
+
+    .info-card h3 {
+      color: var(--on-primary-container);
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px
+    }
+
+    .info-card p {
+      color: var(--on-primary-container);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      margin-bottom: 4px
+    }
+
+    .info-card p:last-child {
+      margin-bottom: 0
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 20px 24px;
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+      border-top: 1px solid var(--outline-variant);
+      background: var(--surface)
+    }
+
+    /* 响应 */
+    @media(max-width:640px) {
+      .header {
+        padding: 32px 16px 20px
+      }
+
+      .header h1 {
+        font-size: 1.6rem
+      }
+
+      .container {
+        padding: 24px 16px
+      }
+
+      .top-bar {
+        padding: 10px 16px
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <!-- 顶部导航栏 -->
-    <div class="top-nav">
-        <div class="nav-content">
-            <div class="nav-title">dsapps</div>
-            <a href="https://masterlazy.github.io/dsapps/" class="home-link">
-                <span>🏠 返回应用列表</span>
-            </a>
-        </div>
+
+  <!-- 顶栏 -->
+  <div class="top-bar">
+    <div class="top-bar__left">
+      <span class="top-bar__title">dsapps</span>
+      <a href="https://masterlazy.github.io/dsapps/" class="top-link"
+        aria-label="返回应用列表">
+        <span class="material-symbols-outlined">home</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 头部 -->
+  <div class="header">
+    <h1>A1Z26 编码转换器</h1>
+    <p class="desc">A1Z26是一种简单的替换密码，其中字母A=1，B=2，...，Z=26</p>
+  </div>
+
+  <!-- 主内容 -->
+  <div class="container">
+    <!-- 模式切换 -->
+    <div class="chip-group" id="mode-group">
+      <button class="chip chip--selected" data-mode="numbers-to-letters">数字 →
+        字母</button>
+      <button class="chip" data-mode="letters-to-numbers">字母 → 数字</button>
     </div>
 
-    <div class="container">
-        <header>
-            <h1>A1Z26 编码转换器</h1>
-            <p class="description">A1Z26是一种简单的替换密码，其中字母A=1，B=2，...，Z=26</p>
-        </header>
-
-        <div class="main-content">
-            <div class="mode-selector">
-                <div class="mode-option active" data-mode="numbers-to-letters">数字 → 字母</div>
-                <div class="mode-option" data-mode="letters-to-numbers">字母 → 数字</div>
-            </div>
-
-            <div class="input-group">
-                <label for="input-text" id="input-label">输入数字 (用空格分隔):</label>
-                <input type="text" id="input-text" placeholder="例如: 1 2 3 4 5">
-                <div class="error" id="error-message"></div>
-            </div>
-
-            <button id="convert-btn" class="convert-btn">转换</button>
-
-            <div class="input-group">
-                <label for="result">结果:</label>
-                <div class="result-container">
-                    <div class="result-box" id="result">结果将显示在这里</div>
-                    <button class="copy-btn" id="copy-btn">复制</button>
-                </div>
-            </div>
-
-            <div class="info-box">
-                <h3>使用示例</h3>
-                <p><strong>数字转字母:</strong> 输入 "8 5 12 12 15" 将得到 "hello"</p>
-                <p><strong>字母转数字:</strong> 输入 "World" 将得到 "23 15 18 12 4"</p>
-            </div>
-
-            <div class="info-box">
-                <h3>关于A1Z26编码</h3>
-                <p>A1Z26是一种简单的字母替换密码，每个字母被替换为其在字母表中的位置序号。A=1, B=2, ..., Z=26。这种编码常用于谜题和简单的加密场景。</p>
-            </div>
-        </div>
+    <!-- 输入 -->
+    <div class="field">
+      <label id="input-label">输入数字 (用空格分隔):</label>
+      <input type="text" id="input-text" placeholder="例如: 1 2 3 4 5">
+      <div class="error" id="error-message"></div>
     </div>
 
-    <footer>
-        <p>dsapps &copy; 2025 masterLazy · 由 DeepSeek 开发 · MIT License</p>
-    </footer>
+    <!-- 转换按钮 -->
+    <button id="convert-btn" class="btn btn--primary btn--full">转换</button>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const modeOptions = document.querySelectorAll('.mode-option');
-            const inputLabel = document.getElementById('input-label');
-            const inputText = document.getElementById('input-text');
-            const convertBtn = document.getElementById('convert-btn');
-            const resultDiv = document.getElementById('result');
-            const copyBtn = document.getElementById('copy-btn');
-            const errorMessage = document.getElementById('error-message');
+    <!-- 结果 -->
+    <div class="field" style="margin-top:20px">
+      <label>结果:</label>
+      <div class="result-wrap">
+        <div class="result-box" id="result">结果将显示在这里</div>
+        <button class="copy-btn" id="copy-btn">复制</button>
+      </div>
+    </div>
 
-            let currentMode = 'numbers-to-letters';
+    <!-- 信息 -->
+    <div class="info-card">
+      <h3>使用示例</h3>
+      <p><strong>数字转字母:</strong> 输入 "8 5 12 12 15" 将得到 "hello"</p>
+      <p><strong>字母转数字:</strong> 输入 "World" 将得到 "23 15 18 12 4"</p>
+    </div>
 
-            // 模式切换
-            modeOptions.forEach(option => {
-                option.addEventListener('click', function () {
-                    modeOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    currentMode = this.getAttribute('data-mode');
+    <div class="info-card">
+      <h3>关于A1Z26编码</h3>
+      <p>A1Z26是一种简单的字母替换密码，每个字母被替换为其在字母表中的位置序号。A=1, B=2, ...,
+        Z=26。这种编码常用于谜题和简单的加密场景。</p>
+    </div>
+  </div>
 
-                    // 更新输入提示
-                    if (currentMode === 'numbers-to-letters') {
-                        inputLabel.textContent = '输入数字 (用空格分隔):';
-                        inputText.placeholder = '例如: 1 2 3 4 5';
-                    } else {
-                        inputLabel.textContent = '输入字母 (自动过滤空格):';
-                        inputText.placeholder = '例如: HELLO 或 hello';
-                    }
+  <!-- Footer -->
+  <div class="footer">
+    <p>dsapps &copy; 2025 masterLazy · 由 DeepSeek 开发 · MIT License</p>
+  </div>
 
-                    // 清空输入和结果
-                    inputText.value = '';
-                    resultDiv.textContent = '结果将显示在这里';
-                    errorMessage.style.display = 'none';
-                    copyBtn.textContent = '复制';
-                    copyBtn.classList.remove('copied');
-                });
-            });
+  <script>
+    (function () {
+      const modeGroup = document.getElementById('mode-group');
+      const inputLabel = document.getElementById('input-label');
+      const inputText = document.getElementById('input-text');
+      const convertBtn = document.getElementById('convert-btn');
+      const resultDiv = document.getElementById('result');
+      const copyBtn = document.getElementById('copy-btn');
+      const errorMsg = document.getElementById('error-message');
+      let currentMode = 'numbers-to-letters';
 
-            // 转换按钮点击事件
-            convertBtn.addEventListener('click', function () {
-                errorMessage.style.display = 'none';
-                const input = inputText.value.trim();
-
-                if (!input) {
-                    showError('请输入文本');
-                    return;
-                }
-
-                try {
-                    if (currentMode === 'numbers-to-letters') {
-                        resultDiv.textContent = numbersToLetters(input);
-                    } else {
-                        resultDiv.textContent = lettersToNumbers(input);
-                    }
-                    // 转换成功后重置复制按钮状态
-                    copyBtn.textContent = '复制';
-                    copyBtn.classList.remove('copied');
-                } catch (e) {
-                    showError(e.message);
-                }
-            });
-
-            // 复制按钮点击事件
-            copyBtn.addEventListener('click', function () {
-                const resultText = resultDiv.textContent;
-
-                // 如果结果框显示的是默认文本或错误信息，不执行复制
-                if (resultText === '结果将显示在这里' ||
-                    resultText === '转换失败' ||
-                    resultText === '输入中...') {
-                    return;
-                }
-
-                // 使用现代剪贴板API
-                navigator.clipboard.writeText(resultText).then(() => {
-                    // 复制成功反馈
-                    copyBtn.textContent = '已复制!';
-                    copyBtn.classList.add('copied');
-
-                    // 3秒后恢复原始状态
-                    setTimeout(() => {
-                        copyBtn.textContent = '复制';
-                        copyBtn.classList.remove('copied');
-                    }, 3000);
-                }).catch(err => {
-                    // 如果剪贴板API失败，使用传统方法
-                    const textArea = document.createElement('textarea');
-                    textArea.value = resultText;
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    try {
-                        document.execCommand('copy');
-                        // 复制成功反馈
-                        copyBtn.textContent = '已复制!';
-                        copyBtn.classList.add('copied');
-
-                        // 3秒后恢复原始状态
-                        setTimeout(() => {
-                            copyBtn.textContent = '复制';
-                            copyBtn.classList.remove('copied');
-                        }, 3000);
-                    } catch (e) {
-                        alert('复制失败，请手动复制结果');
-                    }
-                    document.body.removeChild(textArea);
-                });
-            });
-
-            // 数字转字母函数
-            function numbersToLetters(input) {
-                // 过滤多余空格，只保留一个空格作为分隔符
-                const numbers = input.replace(/\s+/g, ' ').trim().split(' ');
-                let result = '';
-
-                for (let num of numbers) {
-                    // 验证是否为有效数字
-                    if (!/^\d+$/.test(num)) {
-                        throw new Error(`"${num}" 不是有效的数字`);
-                    }
-
-                    const n = parseInt(num, 10);
-
-                    // 验证数字范围
-                    if (n < 1 || n > 26) {
-                        throw new Error(`数字 ${n} 超出范围 (1-26)`);
-                    }
-
-                    // 转换为小写字母 (A=1, B=2, ..., Z=26)
-                    result += String.fromCharCode(96 + n); // 使用96+得到小写字母
-                }
-
-                return result;
-            }
-
-            // 字母转数字函数
-            function lettersToNumbers(input) {
-                // 移除非字母字符和所有空格，并转换为大写
-                const letters = input.replace(/[^A-Za-z]/g, '').toUpperCase();
-
-                if (!letters) {
-                    throw new Error('未找到有效字母');
-                }
-
-                let result = [];
-
-                for (let letter of letters) {
-                    // 获取字母的ASCII码并转换为数字 (A=1, B=2, ..., Z=26)
-                    const num = letter.charCodeAt(0) - 64;
-
-                    if (num < 1 || num > 26) {
-                        throw new Error(`"${letter}" 不是有效的英文字母`);
-                    }
-
-                    result.push(num.toString());
-                }
-
-                return result.join(' ');
-            }
-
-            // 显示错误信息
-            function showError(message) {
-                errorMessage.textContent = message;
-                errorMessage.style.display = 'block';
-                resultDiv.textContent = '转换失败';
-                copyBtn.textContent = '复制';
-                copyBtn.classList.remove('copied');
-            }
-
-            // 添加实时转换功能
-            inputText.addEventListener('input', function () {
-                if (this.value.trim() === '') {
-                    resultDiv.textContent = '结果将显示在这里';
-                    errorMessage.style.display = 'none';
-                    copyBtn.textContent = '复制';
-                    copyBtn.classList.remove('copied');
-                    return;
-                }
-
-                try {
-                    if (currentMode === 'numbers-to-letters') {
-                        resultDiv.textContent = numbersToLetters(this.value);
-                    } else {
-                        resultDiv.textContent = lettersToNumbers(this.value);
-                    }
-                    errorMessage.style.display = 'none';
-                    copyBtn.textContent = '复制';
-                    copyBtn.classList.remove('copied');
-                } catch (e) {
-                    // 输入过程中允许部分错误，不显示错误信息
-                    resultDiv.textContent = '输入中...';
-                    copyBtn.textContent = '复制';
-                    copyBtn.classList.remove('copied');
-                }
-            });
+      // Chip 切换
+      modeGroup.querySelectorAll('.chip').forEach(chip => {
+        chip.addEventListener('click', function () {
+          modeGroup.querySelectorAll('.chip').forEach(c => c.classList.remove('chip--selected'));
+          this.classList.add('chip--selected');
+          currentMode = this.dataset.mode;
+          inputLabel.textContent = currentMode === 'numbers-to-letters' ? '输入数字 (用空格分隔):' : '输入字母 (自动过滤空格):';
+          inputText.placeholder = currentMode === 'numbers-to-letters' ? '例如: 1 2 3 4 5' : '例如: HELLO 或 hello';
+          inputText.value = ''; resultDiv.textContent = '结果将显示在这里'; errorMsg.style.display = 'none'; copyBtn.textContent = '复制'; copyBtn.classList.remove('copied');
         });
-    </script>
+      });
+
+      function numbersToLetters(input) {
+        const nums = input.replace(/\s+/g, ' ').trim().split(' ');
+        let r = '';
+        for (let n of nums) {
+          if (!/^\d+$/.test(n)) throw new Error(`"${n}" 不是有效的数字`);
+          const v = parseInt(n, 10);
+          if (v < 1 || v > 26) throw new Error(`数字 ${v} 超出范围 (1-26)`);
+          r += String.fromCharCode(96 + v);
+        }
+        return r;
+      }
+
+      function lettersToNumbers(input) {
+        const letters = input.replace(/[^A-Za-z]/g, '').toUpperCase();
+        if (!letters) throw new Error('未找到有效字母');
+        return letters.split('').map(l => l.charCodeAt(0) - 64).join(' ');
+      }
+
+      function convert() {
+        errorMsg.style.display = 'none';
+        const val = inputText.value.trim();
+        if (!val) { errorMsg.textContent = '请输入文本'; errorMsg.style.display = 'block'; resultDiv.textContent = '转换失败'; copyBtn.textContent = '复制'; copyBtn.classList.remove('copied'); return }
+        try {
+          resultDiv.textContent = currentMode === 'numbers-to-letters' ? numbersToLetters(val) : lettersToNumbers(val);
+          copyBtn.textContent = '复制'; copyBtn.classList.remove('copied');
+        } catch (e) { errorMsg.textContent = e.message; errorMsg.style.display = 'block'; resultDiv.textContent = '转换失败'; copyBtn.textContent = '复制'; copyBtn.classList.remove('copied') }
+      }
+
+      convertBtn.addEventListener('click', convert);
+
+      inputText.addEventListener('input', function () {
+        if (!this.value.trim()) { resultDiv.textContent = '结果将显示在这里'; errorMsg.style.display = 'none'; copyBtn.textContent = '复制'; copyBtn.classList.remove('copied'); return }
+        try {
+          resultDiv.textContent = currentMode === 'numbers-to-letters' ? numbersToLetters(this.value) : lettersToNumbers(this.value);
+          errorMsg.style.display = 'none'; copyBtn.textContent = '复制'; copyBtn.classList.remove('copied');
+        } catch (e) { resultDiv.textContent = '输入中...'; copyBtn.textContent = '复制'; copyBtn.classList.remove('copied') }
+      });
+
+      copyBtn.addEventListener('click', function () {
+        const txt = resultDiv.textContent;
+        if (txt === '结果将显示在这里' || txt === '转换失败' || txt === '输入中...') return;
+        navigator.clipboard.writeText(txt).then(() => {
+          copyBtn.textContent = '已复制!'; copyBtn.classList.add('copied');
+          setTimeout(() => { copyBtn.textContent = '复制'; copyBtn.classList.remove('copied') }, 3000);
+        }).catch(() => {
+          const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); copyBtn.textContent = '已复制!'; copyBtn.classList.add('copied'); setTimeout(() => { copyBtn.textContent = '复制'; copyBtn.classList.remove('copied') }, 3000) } catch (e) { alert('复制失败，请手动复制') }
+          document.body.removeChild(ta);
+        });
+      });
+    })();
+  </script>
 </body>
 
 </html>

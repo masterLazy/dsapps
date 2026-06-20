@@ -2,980 +2,713 @@
 <html lang="zh-CN">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dsapps | 图论在线画图工具</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dsapps | 图论在线画图工具</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
+    rel="stylesheet">
+  <style>
+    /* ===== 主题色 ===== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #333333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 0;
-        }
+    :root {
+      --primary: #4f7c9e;
+      --on-primary: #fff;
+      --primary-container: #d1e4f5;
+      --on-primary-container: #1a3a4f;
+      --secondary: #6b7d8e;
+      --secondary-container: #d5e1eb;
+      --on-secondary-container: #1f2e3c;
+      --surface: #f8fafc;
+      --surface-dim: #dde3e9;
+      --surface-container: #edf1f5;
+      --surface-container-high: #e2e8ee;
+      --on-surface: #1b1c1e;
+      --on-surface-variant: #44474a;
+      --outline: #7b8086;
+      --outline-variant: #c2c7cd;
+      --error: #ba1a1a;
+      --elevation1: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --elevation2: 0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.04);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --duration: 0.2s;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+    }
 
-        /* 顶部导航栏 */
-        .top-nav {
-            width: 100%;
-            background: transparent;
-            color: #4a69bd;
-            padding: 15px 0;
-        }
+    body {
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--on-surface);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column
+    }
 
-        .nav-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
+    /* ===== 顶栏 ===== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--outline-variant);
+      position: sticky;
+      top: 0;
+      z-index: 100
+    }
 
-        .nav-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
+    .top-bar__left {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
 
-        .home-link {
-            color: #333333;
-            text-decoration: none;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 8px 15px;
-            border-radius: 20px;
-            background-color: rgba(102, 102, 102, 0.1);
-            transition: background-color 0.3s;
-        }
+    .top-bar__title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      letter-spacing: -0.01em
+    }
 
-        .home-link:hover {
-            background-color: rgba(102, 102, 102, 0.3);
-            text-decoration: none;
-        }
+    .top-bar__right {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
 
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            margin: 20px;
-            flex-grow: 1;
-        }
+    .top-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--primary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      transition: background var(--duration)
+    }
 
-        header {
-            background: linear-gradient(to right, #6a89cc, #4a69bd);
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-        }
+    .top-link:hover {
+      background: color-mix(in srgb, var(--primary) 10%, transparent)
+    }
 
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-        }
+    .top-link .material-symbols-outlined {
+      font-size: 20px
+    }
 
-        .description {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            line-height: 1.5;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+    /* ===== 头部 ===== */
+    .header {
+      text-align: center;
+      padding: 32px 24px 24px;
+      background: linear-gradient(135deg, var(--surface-container), var(--surface-dim))
+    }
 
-        .main-content {
-            display: flex;
-            padding: 0;
-            min-height: 600px;
-        }
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px
+    }
 
-        /* 工具面板 */
-        .tool-panel {
-            flex: 0 0 340px;
-            background: #f9f9f9;
-            padding: 20px;
-            border-right: 1px solid #e0e0e0;
-            overflow-y: auto;
-        }
+    .header .desc {
+      font-size: 0.85rem;
+      color: var(--on-surface-variant);
+      max-width: 500px;
+      margin: 0 auto
+    }
 
-        /* 图容器 */
-        .graph-container {
-            flex: 1;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+    /* ===== 主布局 ===== */
+    .app-layout {
+      display: flex;
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 20px;
+      gap: 20px;
+      min-height: 600px
+    }
 
-        .graph-controls {
-            padding: 15px 20px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f8f9fa;
-        }
+    @media(max-width:860px) {
+      .app-layout {
+        flex-direction: column;
+        padding: 16px;
+        min-height: auto
+      }
+    }
 
-        /* 输入组 */
-        .input-group {
-            margin-bottom: 20px;
-        }
+    /* ===== 左侧面板 ===== */
+    .sidebar {
+      flex: 0 0 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px
+    }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #444;
-        }
+    @media(max-width:860px) {
+      .sidebar {
+        flex: none;
+        width: 100%
+      }
+    }
 
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-            background-color: white;
-        }
+    /* Chip 组 */
+    .chip-group {
+      display: flex;
+      gap: 6px
+    }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #6a89cc;
-        }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: 1px solid var(--outline-variant);
+      background: transparent;
+      color: var(--on-surface-variant);
+      cursor: pointer;
+      transition: all var(--duration);
+      user-select: none;
+      font-family: var(--font)
+    }
 
-        textarea {
-            height: 120px;
-            resize: vertical;
-            font-family: monospace;
-        }
+    .chip:hover {
+      background: color-mix(in srgb, var(--on-surface) 6%, transparent)
+    }
 
-        /* 模式选择器 */
-        .mode-selector {
-            display: flex;
-            margin-bottom: 20px;
-            background-color: #f5f5f5;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #e0e0e0;
-        }
+    .chip--selected {
+      background: var(--primary-container);
+      border-color: var(--primary);
+      color: var(--on-primary-container);
+      font-weight: 600
+    }
 
-        .mode-option {
-            flex: 1;
-            text-align: center;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-            color: #555;
-        }
+    .chip--selected:hover {
+      background: color-mix(in srgb, var(--primary-container) 88%, #000)
+    }
 
-        .mode-option.active {
-            background-color: #6a89cc;
-            color: white;
-        }
+    /* Section 标题 */
+    .panel-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px
+    }
 
-        /* 按钮 */
-        .btn-primary {
-            width: 100%;
-            padding: 12px;
-            background-color: #6a89cc;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-bottom: 15px;
-        }
+    /* 文本域 */
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--outline-variant);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-family: monospace;
+      background: var(--surface);
+      color: var(--on-surface);
+      resize: vertical;
+      outline: none;
+      transition: border-color var(--duration);
+      min-height: 100px
+    }
 
-        .btn-primary:hover {
-            background-color: #5a79bc;
-        }
+    textarea:focus {
+      border-color: var(--primary)
+    }
 
-        .btn-secondary {
-            padding: 10px 15px;
-            background-color: #f5f5f5;
-            color: #555;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+    /* 按钮 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 500;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: all var(--duration)
+    }
 
-        .btn-secondary:hover {
-            background-color: #e9e9e9;
-        }
+    .btn--primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      box-shadow: var(--elevation1)
+    }
 
-        .action-btn {
-            background-color: #6a89cc;
-            color: white;
-        }
+    .btn--primary:hover {
+      background: color-mix(in srgb, var(--primary) 88%, #000);
+      box-shadow: var(--elevation2)
+    }
 
-        .action-btn:hover {
-            background-color: #5a79bc;
-        }
+    .btn--primary:active {
+      transform: scale(0.97)
+    }
 
-        .reset-btn {
-            background-color: #e74c3c;
-            color: white;
-        }
+    .btn--full {
+      width: 100%
+    }
 
-        .reset-btn:hover {
-            background-color: #c0392b;
-        }
+    .btn--outline {
+      background: transparent;
+      color: var(--on-surface-variant);
+      border: 1px solid var(--outline-variant)
+    }
 
-        /* 颜色控制 */
-        .color-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+    .btn--outline:hover {
+      background: var(--surface-container-high)
+    }
 
-        .color-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .btn--danger {
+      background: var(--error);
+      color: #fff
+    }
 
-        .color-control label {
-            min-width: 80px;
-            margin: 0;
-        }
+    .btn--danger:hover {
+      background: color-mix(in srgb, var(--error) 88%, #000)
+    }
 
-        /* 预设颜色选择器 */
-        .preset-colors {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 5px;
-        }
+    /* 颜色控件 */
+    .color-section {
+      background: var(--surface-container);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      border: 1px solid var(--outline-variant)
+    }
 
-        .color-preset {
-            width: 25px;
-            height: 25px;
-            border-radius: 4px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-        }
+    .color-section .sel-label {
+      font-size: 0.8rem;
+      color: var(--on-surface-variant);
+      margin-bottom: 8px
+    }
 
-        .color-preset:hover {
-            transform: scale(1.1);
-        }
+    .preset-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
 
-        .color-preset.active {
-            border-color: #333;
-        }
+    .color-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all var(--duration)
+    }
 
-        /* 信息框 */
-        .info-box {
-            background-color: #e8f4fd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 1.5px solid #95ade0;
-        }
+    .color-swatch:hover {
+      transform: scale(1.15)
+    }
 
-        .info-box h3 {
-            color: #4a69bd;
-            margin-bottom: 10px;
-        }
+    .color-swatch.active {
+      border-color: var(--on-surface)
+    }
 
-        .info-box ul {
-            margin-left: 10px;
-        }
+    /* 选中信息 */
+    .sel-info {
+      font-size: 0.8rem;
+      color: var(--on-surface-variant);
+      background: var(--surface-container);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      border: 1px solid var(--outline-variant);
+      min-height: 38px;
+      display: flex;
+      align-items: center
+    }
 
-        .instructions {
-            background-color: #f0f4ff;
-            border-radius: 8px;
-            padding: 15px;
-            font-size: 0.9rem;
-            border-left: 4px solid #6a89cc;
-        }
+    /* 说明卡片 */
+    .info-card {
+      background: var(--primary-container);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent)
+    }
 
-        .instructions h3 {
-            margin-bottom: 10px;
-            color: #4a69bd;
-        }
+    .info-card h3 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--on-primary-container);
+      margin-bottom: 8px
+    }
 
-        .instructions ul {
-            padding-left: 20px;
-            margin: 10px 0;
-        }
+    .info-card ul {
+      padding-left: 16px;
+      font-size: 0.8rem;
+      color: var(--on-primary-container);
+      line-height: 1.7
+    }
 
-        .instructions li {
-            margin-bottom: 5px;
-            line-height: 1.4;
-        }
+    /* ===== 右侧图区域 ===== */
+    .graph-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface-container);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--outline-variant);
+      overflow: hidden
+    }
 
-        /* 选中信息 */
-        .selected-info {
-            margin-top: 10px;
-            padding-bottom: 20px;
-            background: #f8f9fa;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
+    .graph-toolbar {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--outline-variant);
+      background: var(--surface);
+      flex-wrap: wrap
+    }
 
-        /* 图区域 */
-        #graph-canvas {
-            width: 100%;
-            flex: 1;
-            min-height: 500px;
-            background-color: #f8f9fa;
-            border: 1px solid #e0e0e0;
-        }
+    .graph-toolbar .btn {
+      padding: 8px 16px;
+      font-size: 0.8rem
+    }
 
-        .node {
-            cursor: move;
-        }
+    #graph-canvas {
+      flex: 1;
+      min-height: 450px;
+      background: #fff
+    }
 
-        .node-label {
-            font-size: 18px;
-            font-weight: 700;
-            text-anchor: middle;
-            pointer-events: none;
-            fill: #333333;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    .node {
+      cursor: move
+    }
 
-        .edge-label {
-            font-size: 10px;
-            text-anchor: middle;
-            pointer-events: none;
-        }
+    .node-label {
+      font-size: 16px;
+      font-weight: 700;
+      text-anchor: middle;
+      pointer-events: none;
+      fill: #1b1c1e;
+      font-family: var(--font)
+    }
 
-        /* 页脚 */
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-size: 0.9rem;
-            border-top: 1px solid #eee;
-            background-color: #f9f9f9;
-            width: 100%;
-        }
+    .edge-label {
+      font-size: 9px;
+      text-anchor: middle;
+      pointer-events: none
+    }
 
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+    .boundary-indicator {
+      stroke: var(--outline-variant);
+      stroke-width: 1;
+      fill: none;
+      stroke-dasharray: 5, 5
+    }
 
-        .section-title {
-            font-size: 1.4rem;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e0e0e0;
-        }
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 16px 20px;
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+      border-top: 1px solid var(--outline-variant);
+      background: var(--surface)
+    }
 
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
+    @media(max-width:860px) {
+      .header {
+        padding: 24px 16px 16px
+      }
 
-            .tool-panel {
-                flex: none;
-                border-right: none;
-                border-bottom: 1px solid #e0e0e0;
-            }
+      .header h1 {
+        font-size: 1.4rem
+      }
 
-            .graph-container {
-                min-height: 400px;
-            }
-
-            .nav-content {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .description {
-                font-size: 1rem;
-            }
-        }
-
-        .boundary-indicator {
-            stroke: #e0e0e0;
-            stroke-width: 1;
-            fill: none;
-            stroke-dasharray: 5, 5;
-        }
-    </style>
+      #graph-canvas {
+        min-height: 350px
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <!-- 顶部导航栏 -->
-    <div class="top-nav">
-        <div class="nav-content">
-            <div class="nav-title">dsapps</div>
-            <a href="https://masterlazy.github.io/dsapps/" class="home-link">
-                <span>🏠 返回应用列表</span>
-            </a>
+
+  <!-- 顶栏 -->
+  <div class="top-bar">
+    <div class="top-bar__left">
+      <span class="top-bar__title">dsapps</span>
+      <a href="https://masterlazy.github.io/dsapps/" class="top-link"
+        aria-label="返回应用列表">
+        <span class="material-symbols-outlined">home</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 头部 -->
+  <div class="header">
+    <h1>图论在线画图工具</h1>
+    <p class="desc">可视化创建和编辑图结构，支持有向图和无向图，可自定义节点和边的颜色</p>
+  </div>
+
+  <!-- 主布局 -->
+  <div class="app-layout">
+
+    <!-- 左侧面板 -->
+    <div class="sidebar">
+      <div>
+        <div class="panel-title">图类型</div>
+        <div class="chip-group">
+          <button class="chip chip--selected" id="undirected-btn">无向图</button>
+          <button class="chip" id="directed-btn">有向图</button>
         </div>
+      </div>
+
+      <div>
+        <div class="panel-title">输入图结构</div>
+        <textarea id="graph-input"
+          placeholder="输入边，每行一条：&#10;1 2&#10;2 3&#10;3 1"></textarea>
+        <button id="apply-btn" class="btn btn--primary btn--full"
+          style="margin-top:10px">应用图结构</button>
+      </div>
+
+      <div>
+        <div class="panel-title">选中元素</div>
+        <div class="sel-info" id="selected-info">点击节点或边可选中并更改其颜色</div>
+      </div>
+
+      <div class="color-section">
+        <div class="sel-label">元素颜色</div>
+        <div class="preset-row" id="color-presets">
+          <div class="color-swatch active" style="background:#333"
+            data-color="#333333"></div>
+          <div class="color-swatch" style="background:#e74c3c"
+            data-color="#e74c3c"></div>
+          <div class="color-swatch" style="background:#3498db"
+            data-color="#3498db"></div>
+          <div class="color-swatch" style="background:#2ecc71"
+            data-color="#2ecc71"></div>
+          <div class="color-swatch" style="background:#f39c12"
+            data-color="#f39c12"></div>
+          <div class="color-swatch" style="background:#9b59b6"
+            data-color="#9b59b6"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel-title">操作</div>
+        <button id="clear-btn" class="btn btn--danger btn--full"
+          style="margin-bottom:8px">清空画布</button>
+        <button id="reset-view-btn"
+          class="btn btn--outline btn--full">重置视图</button>
+      </div>
+
+      <div class="info-card">
+        <h3>使用说明</h3>
+        <ul>
+          <li>通过文本输入创建图: 每行一条边 (如 "1 2")</li>
+          <li>拖拽节点可以重新布局</li>
+          <li>点击节点或边可以选中并更改其颜色</li>
+          <li>切换有向图/无向图模式</li>
+          <li>使用"重置视图"可将所有节点重新居中</li>
+        </ul>
+      </div>
     </div>
 
-    <!-- 主容器 -->
-    <div class="container">
-        <!-- 头部区域 -->
-        <header>
-            <h1>图论在线画图工具</h1>
-            <p class="description">可视化创建和编辑图结构，支持有向图和无向图，可自定义节点和边的颜色</p>
-        </header>
-
-        <!-- 主内容区域 -->
-        <div class="main-content">
-            <!-- 工具面板 -->
-            <div class="tool-panel">
-                <h2 class="section-title">图类型</h2>
-                <div class="mode-selector">
-                    <div class="mode-option active" id="undirected-btn">无向图</div>
-                    <div class="mode-option" id="directed-btn">有向图</div>
-                </div>
-
-                <h2 class="section-title">输入图结构</h2>
-                <div class="input-group">
-                    <textarea id="graph-input" placeholder="输入边，每行一条：
-1 2
-2 3
-3 1"></textarea>
-                </div>
-                <button id="apply-btn" class="btn-primary">应用图结构</button>
-
-                <h2 class="section-title">选中元素颜色</h2>
-                <div class="selected-info" id="selected-info">
-                    点击节点或边可选中并更改其颜色
-                </div>
-                <div class="color-controls">
-                    <div class="color-control">
-                        <label>元素颜色</label>
-                        <div class="preset-colors" id="color-presets">
-                            <div class="color-preset active" style="background-color: #333333;" data-color="#333333">
-                            </div>
-                            <div class="color-preset" style="background-color: #e74c3c;" data-color="#e74c3c"></div>
-                            <div class="color-preset" style="background-color: #3498db;" data-color="#3498db"></div>
-                            <div class="color-preset" style="background-color: #2ecc71;" data-color="#2ecc71"></div>
-                            <div class="color-preset" style="background-color: #f39c12;" data-color="#f39c12"></div>
-                            <div class="color-preset" style="background-color: #9b59b6;" data-color="#9b59b6"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <h2 class="section-title">操作</h2>
-                <button id="clear-btn" class="btn-primary reset-btn">清空画布</button>
-                <button id="reset-view-btn" class="btn-primary">重置视图</button>
-
-                <div class="info-box">
-                    <h3>使用说明</h3>
-                    <ul>
-                        <li>通过文本输入创建图: 每行输入一条边 (如 "1 2")</li>
-                        <li>拖拽节点可以重新布局</li>
-                        <li>点击节点或边可以选中并更改其颜色</li>
-                        <li>切换有向图/无向图模式</li>
-                        <li>使用"重置视图"按钮可将所有节点重新居中</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- 图容器 -->
-            <div class="graph-container">
-                <div class="graph-controls">
-                    <button id="layout-btn" class="btn-secondary action-btn">自动布局</button>
-                    <button id="export-btn" class="btn-secondary">导出为图片</button>
-                </div>
-                <svg id="graph-canvas"></svg>
-            </div>
-        </div>
+    <!-- 右侧图区域 -->
+    <div class="graph-area">
+      <div class="graph-toolbar">
+        <button id="layout-btn" class="btn btn--outline">自动布局</button>
+        <button id="export-btn" class="btn btn--outline">导出为图片</button>
+      </div>
+      <svg id="graph-canvas"></svg>
     </div>
+  </div>
 
-    <!-- 页脚 -->
-    <footer>
-        <p>dsapps &copy; 2025 masterLazy · 由 DeepSeek 开发 · MIT License</p>
-    </footer>
+  <!-- Footer -->
+  <div class="footer">
+    <p>dsapps &copy; 2025 masterLazy · 由 DeepSeek 开发 · MIT License</p>
+  </div>
 
-    <script>
-        // 初始化变量
-        let graphType = 'undirected'; // 默认设置为无向图
-        let nodes = [];
-        let edges = [];
-        let nextNodeId = 1;
-        let selectedElement = null;
-        let selectedElementType = null; // 'node' 或 'edge'
-        let currentColor = '#333333';
+  <script>
+    (function () {
+      let graphType = 'undirected', nodes = [], edges = [], nextNodeId = 1, selectedElement = null, selectedElementType = null, currentColor = '#333333';
 
-        // 创建SVG和力导向图
-        const svg = d3.select('#graph-canvas');
-        const width = document.getElementById('graph-canvas').clientWidth;
-        const height = document.getElementById('graph-canvas').clientHeight;
+      const svg = d3.select('#graph-canvas');
+      const w = () => document.getElementById('graph-canvas').clientWidth;
+      const h = () => document.getElementById('graph-canvas').clientHeight;
 
-        // 创建缩放行为
-        const zoom = d3.zoom()
-            .scaleExtent([0.1, 4])
-            .on('zoom', (event) => {
-                g.attr('transform', event.transform);
-            });
+      const zoom = d3.zoom().scaleExtent([0.1, 4]).on('zoom', event => g.attr('transform', event.transform));
+      svg.call(zoom);
+      const g = svg.append('g');
 
-        svg.call(zoom);
+      const defs = svg.append('defs');
 
-        // 创建主组
-        const g = svg.append('g');
-
-        // 添加边界指示器
-        g.append('rect')
-            .attr('class', 'boundary-indicator')
-            .attr('width', width - 100)
-            .attr('height', height - 100)
-            .attr('x', 50)
-            .attr('y', 50);
-
-        // 创建箭头标记定义
-        const defs = svg.append('defs');
-
-        // 创建箭头标记
-        function createArrowMarker(id, color = '#333333') {
-            // 移除现有的特定箭头标记
-            defs.selectAll(`#${id}`).remove();
-
-            // 只在有向图模式下创建箭头
-            if (graphType === 'directed') {
-                const marker = defs.append('marker')
-                    .attr('id', id)
-                    .attr('viewBox', '0 -5 10 10')
-                    .attr('refX', 25)  // 调整箭头位置
-                    .attr('refY', 0)
-                    .attr('markerWidth', 6)
-                    .attr('markerHeight', 6)
-                    .attr('orient', 'auto');
-
-                marker.append('path')
-                    .attr('d', 'M0,-5L10,0L0,5')
-                    .attr('fill', color);
-            }
+      function createArrow(id, color = '#333') {
+        defs.selectAll(`#${id}`).remove();
+        if (graphType === 'directed') {
+          const m = defs.append('marker').attr('id', id).attr('viewBox', '0 -5 10 10').attr('refX', 25).attr('refY', 0).attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto');
+          m.append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', color);
         }
+      }
+      function createAllArrows() { edges.forEach((e, i) => createArrow(`ah-${i}`, e.color || currentColor)) }
+      function createEdgeArrow(e, i) { createArrow(`ah-${i}`, e.color || currentColor) }
 
-        // 为所有边创建箭头标记
-        function createAllArrowMarkers() {
-            edges.forEach((edge, index) => {
-                createArrowMarker(`arrowhead-${index}`, edge.color || currentColor);
-            });
-        }
+      const sim = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(edges).id(d => d.id).distance(120))
+        .force('charge', d3.forceManyBody().strength(-100).distanceMax(300))
+        .force('center', d3.forceCenter(500, 350))
+        .force('collision', d3.forceCollide().radius(35))
+        .force('x', d3.forceX(500).strength(0.05))
+        .force('y', d3.forceY(350).strength(0.05))
+        .alphaDecay(0.02).velocityDecay(0.4);
 
-        // 为特定边创建箭头标记
-        function createEdgeArrowMarker(edge, index) {
-            createArrowMarker(`arrowhead-${index}`, edge.color || currentColor);
-        }
+      function defGraph() {
+        const cw = w() || 700, ch = h() || 500;
+        nodes = [{ id: '1', label: '1', strokeColor: currentColor, x: cw / 2 - 100, y: ch / 2 - 50 }, { id: '2', label: '2', strokeColor: currentColor, x: cw / 2 + 100, y: ch / 2 - 50 }, { id: '3', label: '3', strokeColor: currentColor, x: cw / 2, y: ch / 2 + 50 }];
+        edges = [{ source: '1', target: '2', color: currentColor }, { source: '2', target: '3', color: currentColor }, { source: '3', target: '1', color: currentColor }];
+        nextNodeId = 4;
+      }
+      defGraph(); updateGraph();
 
-        // 初始创建箭头标记
-        createAllArrowMarkers();
+      // 图类型切换
+      document.getElementById('directed-btn').addEventListener('click', () => {
+        graphType = 'directed';
+        document.getElementById('directed-btn').classList.add('chip--selected');
+        document.getElementById('undirected-btn').classList.remove('chip--selected');
+        createAllArrows(); updateGraph();
+      });
+      document.getElementById('undirected-btn').addEventListener('click', () => {
+        graphType = 'undirected';
+        document.getElementById('undirected-btn').classList.add('chip--selected');
+        document.getElementById('directed-btn').classList.remove('chip--selected');
+        defs.selectAll('marker').remove(); updateGraph();
+      });
 
-        // 力导向图模拟 - 优化参数防止节点分散
-        const simulation = d3.forceSimulation(nodes)
-            .force('link', d3.forceLink(edges).id(d => d.id).distance(120))
-            .force('charge', d3.forceManyBody()
-                .strength(-100)  // 减少排斥力强度
-                .distanceMax(300)  // 设置最大作用距离
-            )
-            .force('center', d3.forceCenter(width / 2, height / 2))
-            .force('collision', d3.forceCollide().radius(35))
-            .force('x', d3.forceX(width / 2).strength(0.05))  // X轴中心引力
-            .force('y', d3.forceY(height / 2).strength(0.05)) // Y轴中心引力
-            .alphaDecay(0.02)  // 降低alpha衰减速度，使布局更稳定
-            .velocityDecay(0.4);  // 增加速度衰减，防止节点飞散
+      document.getElementById('apply-btn').addEventListener('click', applyInput);
+      document.getElementById('clear-btn').addEventListener('click', () => { nodes = []; edges = []; nextNodeId = 1; selectedElement = null; selectedElementType = null; document.getElementById('selected-info').textContent = '点击节点或边可选中并更改其颜色'; defs.selectAll('marker').remove(); updateGraph() });
+      document.getElementById('layout-btn').addEventListener('click', () => sim.alpha(1).restart());
+      document.getElementById('reset-view-btn').addEventListener('click', () => {
+        svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+        nodes.forEach(d => { d.x = w() / 2; d.y = h() / 2; d.vx = 0; d.vy = 0 });
+        sim.alpha(1).restart(); updateGraph();
+      });
 
-        // 初始化渲染
-        createDefaultGraph();
-        updateGraph();
+      document.getElementById('export-btn').addEventListener('click', () => {
+        const data = new XMLSerializer().serializeToString(svg.node());
+        const c = document.createElement('canvas'), ctx = c.getContext('2d'), img = new Image();
+        const blob = new Blob([data], { type: 'image/svg+xml;charset=utf-8' }), url = URL.createObjectURL(blob);
+        img.onload = function () { c.width = w(); c.height = h(); ctx.drawImage(img, 0, 0); URL.revokeObjectURL(url); const a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = 'graph.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a) };
+        img.src = url;
+      });
 
-        // 事件监听器
-        document.getElementById('directed-btn').addEventListener('click', () => {
-            graphType = 'directed';
-            document.getElementById('directed-btn').classList.add('active');
-            document.getElementById('undirected-btn').classList.remove('active');
-            createAllArrowMarkers();
-            updateGraph();
+      // 颜色预设
+      document.querySelectorAll('#color-presets .color-swatch').forEach(el => {
+        el.addEventListener('click', function () {
+          currentColor = this.dataset.color;
+          document.querySelectorAll('#color-presets .color-swatch').forEach(p => p.classList.remove('active'));
+          this.classList.add('active');
+          updateSelectedColor();
         });
+      });
 
-        document.getElementById('undirected-btn').addEventListener('click', () => {
-            graphType = 'undirected';
-            document.getElementById('undirected-btn').classList.add('active');
-            document.getElementById('directed-btn').classList.remove('active');
-            // 无向图不需要箭头标记
-            defs.selectAll('marker').remove();
-            updateGraph();
+      function applyInput() {
+        const input = document.getElementById('graph-input').value.trim();
+        if (!input) return;
+        nodes = []; edges = []; nextNodeId = 1; const nm = new Map();
+        const lines = input.split('\n');
+        lines.forEach(line => {
+          const parts = line.trim().split(/\s+/);
+          if (parts.length >= 2) {
+            const sId = parts[0], tId = parts[1];
+            if (!nm.has(sId)) { nm.set(sId, { id: nextNodeId.toString(), label: sId, strokeColor: currentColor, x: w() / 2 + (Math.random() - 0.5) * 100, y: h() / 2 + (Math.random() - 0.5) * 100 }); nodes.push(nm.get(sId)); nextNodeId++ }
+            if (!nm.has(tId)) { nm.set(tId, { id: nextNodeId.toString(), label: tId, strokeColor: currentColor, x: w() / 2 + (Math.random() - 0.5) * 100, y: h() / 2 + (Math.random() - 0.5) * 100 }); nodes.push(nm.get(tId)); nextNodeId++ }
+            edges.push({ source: nm.get(sId).id, target: nm.get(tId).id, color: currentColor });
+          }
         });
+        createAllArrows(); updateGraph();
+      }
 
-        document.getElementById('apply-btn').addEventListener('click', applyGraphInput);
-        document.getElementById('clear-btn').addEventListener('click', clearCanvas);
-        document.getElementById('layout-btn').addEventListener('click', applyLayout);
-        document.getElementById('export-btn').addEventListener('click', exportImage);
-        document.getElementById('reset-view-btn').addEventListener('click', resetView);
+      function updateSelectedColor() {
+        if (!selectedElement || !selectedElementType) return;
+        if (selectedElementType === 'node') {
+          selectedElement.strokeColor = currentColor;
+          d3.selectAll('.node').filter(d => d.id === selectedElement.id).select('circle').attr('stroke', currentColor).attr('stroke-width', 2);
+          document.getElementById('selected-info').textContent = `已选中节点 ${selectedElement.label}，轮廓颜色已更新`;
+        } else {
+          selectedElement.color = currentColor;
+          const idx = edges.findIndex(e => e.source === selectedElement.source && e.target === selectedElement.target);
+          if (idx !== -1) createEdgeArrow(selectedElement, idx);
+          d3.selectAll('.edge').filter((d, i) => i === idx).select('line').attr('stroke', currentColor).attr('marker-end', graphType === 'directed' ? `url(#ah-${idx})` : null).attr('stroke-width', 2);
+          document.getElementById('selected-info').textContent = `已选中边 ${selectedElement.source.label || selectedElement.source} → ${selectedElement.target.label || selectedElement.target}，颜色已更新`;
+        }
+      }
 
-        // 预设颜色选择器事件
-        document.querySelectorAll('#color-presets .color-preset').forEach(preset => {
-            preset.addEventListener('click', function () {
-                const color = this.getAttribute('data-color');
-                currentColor = color;
+      function updateGraph() {
+        g.selectAll('.edges,.nodes').remove();
+        const eg = g.append('g').attr('class', 'edges'), ng = g.append('g').attr('class', 'nodes');
 
-                // 更新预设颜色激活状态
-                document.querySelectorAll('#color-presets .color-preset').forEach(p => p.classList.remove('active'));
-                this.classList.add('active');
+        // 边界
+        eg.append('rect').attr('class', 'boundary-indicator').attr('width', (w() || 700) - 80).attr('height', (h() || 500) - 80).attr('x', 40).attr('y', 40);
 
-                updateSelectedElementColor();
-            });
+        // 边
+        const es = eg.selectAll('.edge').data(edges, (d, i) => `${d.source.id || d.source}-${d.target.id || d.target}-${i}`);
+        const ee = es.enter().append('g').attr('class', 'edge').style('cursor', 'pointer').on('click', function (event, d) {
+          if (selectedElement) { if (selectedElementType === 'node') ng.selectAll('.node').select('circle').attr('stroke-width', 2); else eg.selectAll('.edge').select('line').attr('stroke-width', 2) }
+          selectedElement = d; selectedElementType = 'edge'; d3.select(this).select('line').attr('stroke-width', 4);
+          document.getElementById('selected-info').textContent = `已选中边 ${d.source.label || d.source} → ${d.target.label || d.target}`;
         });
+        ee.append('line').attr('class', 'edge-line').attr('stroke', d => d.color || currentColor).attr('stroke-width', 2).attr('marker-end', (d, i) => graphType === 'directed' ? `url(#ah-${i})` : null);
+        const ea = es.merge(ee); ea.select('.edge-line').attr('stroke', d => d.color || currentColor).attr('marker-end', (d, i) => graphType === 'directed' ? `url(#ah-${i})` : null);
 
-        // 创建默认图
-        function createDefaultGraph() {
-            nodes = [
-                { id: '1', label: '1', strokeColor: currentColor, x: width / 2 - 100, y: height / 2 - 50 },
-                { id: '2', label: '2', strokeColor: currentColor, x: width / 2 + 100, y: height / 2 - 50 },
-                { id: '3', label: '3', strokeColor: currentColor, x: width / 2, y: height / 2 + 50 }
-            ];
-            edges = [
-                { source: '1', target: '2', color: currentColor },
-                { source: '2', target: '3', color: currentColor },
-                { source: '3', target: '1', color: currentColor }
-            ];
-            nextNodeId = 4;
-        }
+        // 节点
+        const ns = ng.selectAll('.node').data(nodes, d => d.id);
+        const ne = ns.enter().append('g').attr('class', 'node').style('cursor', 'pointer').call(d3.drag().on('start', (event, d) => { if (!event.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y }).on('drag', (event, d) => { d.fx = event.x; d.fy = event.y }).on('end', (event, d) => { if (!event.active) sim.alphaTarget(0); d.fx = null; d.fy = null })).on('click', function (event, d) {
+          if (selectedElement) { if (selectedElementType === 'node') ng.selectAll('.node').select('circle').attr('stroke-width', 2); else eg.selectAll('.edge').select('line').attr('stroke-width', 2) }
+          selectedElement = d; selectedElementType = 'node'; d3.select(this).select('circle').attr('stroke-width', 4);
+          document.getElementById('selected-info').textContent = `已选中节点 ${d.label}`;
+        });
+        ne.append('circle').attr('r', 22).attr('fill', '#fff').attr('stroke', d => d.strokeColor || currentColor).attr('stroke-width', 2);
+        ne.append('text').attr('class', 'node-label').attr('dy', 5).text(d => d.label);
 
-        // 重置视图函数
-        function resetView() {
-            // 重置缩放和平移
-            svg.transition()
-                .duration(750)
-                .call(zoom.transform, d3.zoomIdentity);
+        const na = ns.merge(ne); na.select('circle').attr('fill', '#fff').attr('stroke', d => d.strokeColor || currentColor);
 
-            // 将所有节点重新居中
-            nodes.forEach(node => {
-                node.x = width / 2;
-                node.y = height / 2;
-                node.vx = 0;
-                node.vy = 0;
-            });
+        sim.nodes(nodes);
+        sim.force('link').links(edges);
+        sim.alpha(1).restart();
+        sim.on('tick', () => {
+          const cw = w() || 700, ch = h() || 500;
+          nodes.forEach(d => { d.x = Math.max(30, Math.min(cw - 30, d.x)); d.y = Math.max(30, Math.min(ch - 30, d.y)) });
+          na.attr('transform', d => `translate(${d.x},${d.y})`);
+          ea.select('.edge-line').attr('x1', d => d.source.x).attr('y1', d => d.source.y).attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+        });
+      }
 
-            // 重新启动模拟
-            simulation.alpha(1).restart();
-            updateGraph();
-        }
-
-        // 应用文本输入的图结构
-        function applyGraphInput() {
-            const input = document.getElementById('graph-input').value.trim();
-            if (!input) return;
-
-            // 清空当前图
-            nodes = [];
-            edges = [];
-            nextNodeId = 1;
-
-            // 解析输入
-            const lines = input.split('\n');
-            const nodeMap = new Map();
-
-            lines.forEach(line => {
-                const parts = line.trim().split(/\s+/);
-                if (parts.length >= 2) {
-                    const sourceId = parts[0];
-                    const targetId = parts[1];
-
-                    // 确保节点存在
-                    if (!nodeMap.has(sourceId)) {
-                        nodeMap.set(sourceId, {
-                            id: nextNodeId.toString(),
-                            label: sourceId,
-                            strokeColor: currentColor,
-                            x: width / 2 + (Math.random() - 0.5) * 100,
-                            y: height / 2 + (Math.random() - 0.5) * 100
-                        });
-                        nodes.push(nodeMap.get(sourceId));
-                        nextNodeId++;
-                    }
-
-                    if (!nodeMap.has(targetId)) {
-                        nodeMap.set(targetId, {
-                            id: nextNodeId.toString(),
-                            label: targetId,
-                            strokeColor: currentColor,
-                            x: width / 2 + (Math.random() - 0.5) * 100,
-                            y: height / 2 + (Math.random() - 0.5) * 100
-                        });
-                        nodes.push(nodeMap.get(targetId));
-                        nextNodeId++;
-                    }
-
-                    // 添加边
-                    edges.push({
-                        source: nodeMap.get(sourceId).id,
-                        target: nodeMap.get(targetId).id,
-                        color: currentColor
-                    });
-                }
-            });
-
-            createAllArrowMarkers();
-            updateGraph();
-        }
-
-        // 清空画布
-        function clearCanvas() {
-            nodes = [];
-            edges = [];
-            nextNodeId = 1;
-            selectedElement = null;
-            selectedElementType = null;
-            document.getElementById('selected-info').textContent = '点击节点或边可选中并更改其颜色';
-            defs.selectAll('marker').remove();
-            updateGraph();
-        }
-
-        // 应用自动布局
-        function applyLayout() {
-            simulation.alpha(1).restart();
-        }
-
-        // 导出为图片
-        function exportImage() {
-            const svgData = new XMLSerializer().serializeToString(svg.node());
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            const img = new Image();
-
-            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(svgBlob);
-
-            img.onload = function () {
-                canvas.width = width;
-                canvas.height = height;
-                ctx.drawImage(img, 0, 0);
-                URL.revokeObjectURL(url);
-
-                const imageURI = canvas.toDataURL('image/png');
-                const downloadLink = document.createElement('a');
-                downloadLink.href = imageURI;
-                downloadLink.download = 'graph.png';
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-            };
-
-            img.src = url;
-        }
-
-        // 更新选中的元素颜色
-        function updateSelectedElementColor() {
-            if (!selectedElement || !selectedElementType) return;
-
-            if (selectedElementType === 'node') {
-                selectedElement.strokeColor = currentColor;
-
-                // 直接更新节点颜色，不重启模拟
-                g.selectAll('.node')
-                    .filter(d => d.id === selectedElement.id)
-                    .select('circle')
-                    .attr('stroke', currentColor)
-                    .attr('stroke-width', 2);
-
-                document.getElementById('selected-info').textContent =
-                    `已选中节点 ${selectedElement.label}，轮廓颜色已更新`;
-            } else if (selectedElementType === 'edge') {
-                selectedElement.color = currentColor;
-
-                // 找到边的索引并更新对应的箭头标记
-                const edgeIndex = edges.findIndex(edge =>
-                    edge.source === selectedElement.source &&
-                    edge.target === selectedElement.target
-                );
-
-                if (edgeIndex !== -1) {
-                    createEdgeArrowMarker(selectedElement, edgeIndex);
-                }
-
-                // 直接更新边颜色，不重启模拟
-                g.selectAll('.edge')
-                    .filter((d, i) => i === edgeIndex)
-                    .select('line')
-                    .attr('stroke', currentColor)
-                    .attr('marker-end', graphType === 'directed' ? `url(#arrowhead-${edgeIndex})` : null)
-                    .attr('stroke-width', 2);
-
-                document.getElementById('selected-info').textContent =
-                    `已选中边 ${selectedElement.source.label} → ${selectedElement.target.label}，颜色已更新`;
-            }
-
-        }
-
-        // 更新图显示
-        function updateGraph() {
-            // 清除现有内容
-            g.selectAll('.edges, .nodes').remove();
-
-            // 创建边组
-            const edgeGroup = g.append('g').attr('class', 'edges');
-
-            // 创建节点组
-            const nodeGroup = g.append('g').attr('class', 'nodes');
-
-            // 绘制边
-            const edgeSelection = edgeGroup.selectAll('.edge')
-                .data(edges, (d, i) => `${d.source.id || d.source}-${d.target.id || d.target}-${i}`);
-
-            const edgeEnter = edgeSelection.enter()
-                .append('g')
-                .attr('class', 'edge')
-                .style('cursor', 'pointer')
-                .on('click', function (event, d) {
-                    // 取消之前选中的元素
-                    if (selectedElement) {
-                        if (selectedElementType === 'node') {
-                            nodeGroup.selectAll('.node').select('circle')
-                                .attr('stroke-width', 2);
-                        } else {
-                            edgeGroup.selectAll('.edge').select('line')
-                                .attr('stroke-width', 2);
-                        }
-                    }
-
-                    // 选中当前边
-                    selectedElement = d;
-                    selectedElementType = 'edge';
-                    d3.select(this).select('line').attr('stroke-width', 4);
-
-                    document.getElementById('selected-info').textContent =
-                        `已选中边 ${d.source.label || d.source} → ${d.target.label || d.target}`;
-                });
-
-            // 绘制边线
-            edgeEnter.append('line')
-                .attr('class', 'edge-line')
-                .attr('stroke', d => d.color || currentColor)
-                .attr('stroke-width', 2)
-                .attr('marker-end', (d, i) => graphType === 'directed' ? `url(#arrowhead-${i})` : null);
-
-            // 更新所有边
-            const allEdges = edgeSelection.merge(edgeEnter);
-
-            allEdges.select('.edge-line')
-                .attr('stroke', d => d.color || currentColor)
-                .attr('marker-end', (d, i) => graphType === 'directed' ? `url(#arrowhead-${i})` : null);
-
-            // 绘制节点
-            const nodeSelection = nodeGroup.selectAll('.node')
-                .data(nodes, d => d.id);
-
-            const nodeEnter = nodeSelection.enter()
-                .append('g')
-                .attr('class', 'node')
-                .style('cursor', 'pointer')
-                .call(d3.drag()
-                    .on('start', dragStarted)
-                    .on('drag', dragged)
-                    .on('end', dragEnded))
-                .on('click', function (event, d) {
-                    // 取消之前选中的元素
-                    if (selectedElement) {
-                        if (selectedElementType === 'node') {
-                            nodeGroup.selectAll('.node').select('circle')
-                                .attr('stroke-width', 2);
-                        } else {
-                            edgeGroup.selectAll('.edge').select('line')
-                                .attr('stroke-width', 2);
-                        }
-                    }
-
-                    // 选中当前节点
-                    selectedElement = d;
-                    selectedElementType = 'node';
-                    d3.select(this).select('circle')
-                        .attr('stroke-width', 4);
-
-                    document.getElementById('selected-info').textContent =
-                        `已选中节点 ${d.label}`;
-                });
-
-            // 绘制节点圆圈 - 白色背景，轮廓色可自定义
-            nodeEnter.append('circle')
-                .attr('r', 22)
-                .attr('fill', '#ffffff')  // 固定白色填充
-                .attr('stroke', d => d.strokeColor || currentColor)  // 使用轮廓色
-                .attr('stroke-width', 2);
-
-            // 添加节点标签 - 黑色文字
-            nodeEnter.append('text')
-                .attr('class', 'node-label')
-                .attr('dy', 5)
-                .text(d => d.label);
-
-            // 更新所有节点
-            const allNodes = nodeSelection.merge(nodeEnter);
-
-            allNodes.select('circle')
-                .attr('fill', '#ffffff')
-                .attr('stroke', d => d.strokeColor || currentColor);
-
-            // 更新力导向模拟
-            simulation.nodes(nodes);
-            simulation.force('link').links(edges);
-            simulation.alpha(1).restart();
-
-            // 更新节点和边的位置
-            simulation.on('tick', () => {
-                // 添加边界约束，防止节点飞出画布
-                nodes.forEach(d => {
-                    d.x = Math.max(30, Math.min(width - 30, d.x));
-                    d.y = Math.max(30, Math.min(height - 30, d.y));
-                });
-
-                allNodes
-                    .attr('transform', d => `translate(${d.x},${d.y})`);
-
-                allEdges.select('.edge-line')
-                    .attr('x1', d => d.source.x)
-                    .attr('y1', d => d.source.y)
-                    .attr('x2', d => d.target.x)
-                    .attr('y2', d => d.target.y);
-            });
-        }
-
-        // 拖拽函数
-        function dragStarted(event, d) {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-        }
-
-        function dragged(event, d) {
-            d.fx = event.x;
-            d.fy = event.y;
-        }
-
-        function dragEnded(event, d) {
-            if (!event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-        }
-    </script>
+      // 窗口 resize
+      window.addEventListener('resize', () => {
+        const cw = w() || 700, ch = h() || 500;
+        sim.force('center', d3.forceCenter(cw / 2, ch / 2)).force('x', d3.forceX(cw / 2).strength(0.05)).force('y', d3.forceY(ch / 2).strength(0.05));
+        sim.alpha(0.3).restart();
+      });
+    })();
+  </script>
 </body>
 
 </html>
