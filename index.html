@@ -1,189 +1,447 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>dsapps | 由 DeepSeek 编写的网页小程序</title>
-<!-- Google Fonts & Material Symbols -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0" rel="stylesheet">
-<style>
-/* ===== 主题色 ===== */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
---primary:#4f7c9e;--on-primary:#fff;
---primary-container:#d1e4f5;--on-primary-container:#1a3a4f;
---secondary:#6b7d8e;--on-secondary:#fff;
---secondary-container:#d5e1eb;--on-secondary-container:#1f2e3c;
---surface:#f8fafc;--surface-dim:#dde3e9;
---surface-container:#edf1f5;--surface-container-high:#e2e8ee;
---on-surface:#1b1c1e;--on-surface-variant:#44474a;
---outline:#7b8086;--outline-variant:#c2c7cd;
---shadow:rgba(0,0,0,0.08);
---elevation1:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
---elevation2:0 4px 12px rgba(0,0,0,0.05),0 2px 4px rgba(0,0,0,0.04);
---radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-full:9999px;
---duration:0.2s;
---font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif
-}
-body{font-family:var(--font);background:var(--surface);color:var(--on-surface);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dsapps | 由 DeepSeek 编写的网页小程序</title>
+  <!-- Google Fonts & Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
+    rel="stylesheet">
+  <style>
+    /* ===== 主题色 ===== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-/* ===== 顶栏 ===== */
-.top-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--outline-variant);position:sticky;top:0;z-index:100}
-.top-bar__left{display:flex;align-items:center;gap:12px}
-.top-bar__title{font-size:1.2rem;font-weight:600;color:var(--on-surface);letter-spacing:-0.01em}
-.top-bar__right{display:flex;align-items:center;gap:8px}
-.top-link{display:inline-flex;align-items:center;gap:6px;font-size:0.875rem;font-weight:500;color:var(--primary);text-decoration:none;padding:6px 14px;border-radius:var(--radius-full);transition:background var(--duration)}
-.top-link:hover{background:color-mix(in srgb,var(--primary) 10%,transparent)}
-.top-link .material-symbols-outlined{font-size:20px}
+    :root {
+      --primary: #4f7c9e;
+      --on-primary: #fff;
+      --primary-container: #d1e4f5;
+      --on-primary-container: #1a3a4f;
+      --secondary: #6b7d8e;
+      --on-secondary: #fff;
+      --secondary-container: #d5e1eb;
+      --on-secondary-container: #1f2e3c;
+      --surface: #f8fafc;
+      --surface-dim: #dde3e9;
+      --surface-container: #edf1f5;
+      --surface-container-high: #e2e8ee;
+      --on-surface: #1b1c1e;
+      --on-surface-variant: #44474a;
+      --outline: #7b8086;
+      --outline-variant: #c2c7cd;
+      --shadow: rgba(0, 0, 0, 0.08);
+      --elevation1: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --elevation2: 0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.04);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --duration: 0.2s;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+    }
 
-/* ===== 头部 ===== */
-.header{text-align:center;padding:48px 24px 32px;background:linear-gradient(135deg,var(--surface-container),var(--surface-dim))}
-.header h1{font-size:2.4rem;font-weight:600;color:var(--on-surface);letter-spacing:-0.02em;margin-bottom:8px}
-.header .desc{font-size:0.95rem;color:var(--on-surface-variant);max-width:500px;margin:0 auto;line-height:1.6}
+    body {
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--on-surface);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 0.875rem
+    }
 
-/* ===== 通用组件 ===== */
-.container{max-width:1100px;margin:0 auto;padding:32px 24px;flex:1;width:100%}
-.section{margin-bottom:40px}
-.section-title{font-size:1.3rem;font-weight:600;color:var(--on-surface);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--outline-variant);display:flex;align-items:center;gap:8px}
-.section-title .material-symbols-outlined{font-size:22px;color:var(--primary)}
+    /* ===== 顶栏 ===== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--outline-variant);
+      position: sticky;
+      top: 0;
+      z-index: 100
+    }
 
-/* 卡片网格 */
-.app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-.app-card{background:var(--surface-container);border-radius:var(--radius-md);padding:24px;text-decoration:none;color:inherit;transition:box-shadow var(--duration),transform var(--duration);border:1px solid var(--outline-variant);display:block}
-.app-card:hover{box-shadow:var(--elevation2);transform:translateY(-3px)}
-.app-card .icon{font-size:2rem;margin-bottom:10px;display:block}
-.app-card .title{font-size:1.05rem;font-weight:600;color:var(--primary);margin-bottom:6px}
-.app-card .desc{font-size:0.875rem;color:var(--on-surface-variant);line-height:1.5}
-.app-card.coming{opacity:0.6;cursor:default}
-.app-card.coming:hover{transform:none;box-shadow:var(--elevation1)}
+    .top-bar__left {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
 
-/* 信息卡片 */
-.info-card{background:var(--primary-container);border-radius:var(--radius-md);padding:24px;border:1px solid color-mix(in srgb,var(--primary) 30%,transparent)}
-.info-card h3{color:var(--on-primary-container);font-size:1rem;font-weight:600;margin-bottom:12px}
-.info-card p,.info-card li{color:var(--on-primary-container);font-size:0.9rem;line-height:1.6}
-.info-card ul{list-style:none;padding:0}
-.info-card li{padding:8px 0;display:flex;align-items:center;gap:8px;border-bottom:1px solid color-mix(in srgb,var(--primary) 15%,transparent)}
-.info-card li:last-child{border-bottom:none}
-.info-card li .check{color:var(--primary);font-weight:700}
+    .top-bar__title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      letter-spacing: -0.01em
+    }
 
-/* 关于区域 */
-.about-section{display:flex;flex-direction:column;gap:16px}
-.about-section .info-card p{margin-bottom:8px}
-.about-section .info-card p:last-child{margin-bottom:0}
+    .top-bar__right {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
 
-/* Footer */
-.footer{text-align:center;padding:20px 24px;font-size:0.8125rem;color:var(--on-surface-variant);border-top:1px solid var(--outline-variant);background:var(--surface)}
-.footer a{color:var(--primary);text-decoration:none}
-.footer a:hover{text-decoration:underline}
+    .top-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--primary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      transition: background var(--duration)
+    }
 
-/* 响应 */
-@media(max-width:640px){
-.header{padding:36px 16px 24px}.header h1{font-size:1.8rem}
-.container{padding:24px 16px}
-.app-grid{grid-template-columns:1fr}
-.top-bar{padding:10px 16px}
-}
-</style>
+    .top-link:hover {
+      background: color-mix(in srgb, var(--primary) 10%, transparent)
+    }
+
+    .top-link .material-symbols-outlined {
+      font-size: 20px
+    }
+
+    /* ===== 头部 ===== */
+    .header {
+      text-align: center;
+      padding: 36px 24px 28px;
+      background: linear-gradient(135deg, var(--surface-container), var(--surface-dim))
+    }
+
+    .header h1 {
+      font-size: 2.4rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px
+    }
+
+    .header .desc {
+      font-size: 0.95rem;
+      color: var(--on-surface-variant);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6
+    }
+
+    /* ===== 通用组件 ===== */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      flex: 1;
+      width: 100%
+    }
+
+    .section {
+      margin-bottom: 40px
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--outline-variant);
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .section-title .material-symbols-outlined {
+      font-size: 22px;
+      color: var(--primary)
+    }
+
+    /* 卡片网格 */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px
+    }
+
+    .app-card {
+      background: var(--surface-container);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow var(--duration), transform var(--duration);
+      border: 1px solid var(--outline-variant);
+      display: block
+    }
+
+    .app-card:hover {
+      box-shadow: var(--elevation2);
+      transform: translateY(-3px)
+    }
+
+    .app-card .icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      display: block
+    }
+
+    .app-card .title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 6px
+    }
+
+    .app-card .desc {
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+      line-height: 1.5
+    }
+
+    .app-card.coming {
+      opacity: 0.6;
+      cursor: default
+    }
+
+    .app-card.coming:hover {
+      transform: none;
+      box-shadow: var(--elevation1)
+    }
+
+    /* 信息卡片 */
+    .info-card {
+      background: var(--primary-container);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent)
+    }
+
+    .info-card h3 {
+      color: var(--on-primary-container);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 12px
+    }
+
+    .info-card p,
+    .info-card li {
+      color: var(--on-primary-container);
+      font-size: 0.9rem;
+      line-height: 1.6
+    }
+
+    .info-card ul {
+      list-style: none;
+      padding: 0
+    }
+
+    .info-card li {
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid color-mix(in srgb, var(--primary) 15%, transparent)
+    }
+
+    .info-card li:last-child {
+      border-bottom: none
+    }
+
+    .info-card li .check {
+      color: var(--primary);
+      font-weight: 700
+    }
+
+    /* 关于区域 */
+    .about-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px
+    }
+
+    .about-section .info-card p {
+      margin-bottom: 8px
+    }
+
+    .about-section .info-card p:last-child {
+      margin-bottom: 0
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 20px 24px;
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+      border-top: 1px solid var(--outline-variant);
+      background: var(--surface)
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none
+    }
+
+    .footer a:hover {
+      text-decoration: underline
+    }
+
+    /* 响应 */
+    @media(max-width:640px) {
+      .header {
+        padding: 36px 16px 24px
+      }
+
+      .header h1 {
+        font-size: 1.8rem
+      }
+
+      .container {
+        padding: 24px 16px
+      }
+
+      .app-grid {
+        grid-template-columns: 1fr
+      }
+
+      .top-bar {
+        padding: 10px 16px
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- 顶栏 -->
-<div class="top-bar">
-  <div class="top-bar__left">
-    <span class="top-bar__title">dsapps</span>
-    <a href="https://github.com/masterlazy/dsapps/" class="top-link" target="_blank" aria-label="GitHub">
-      <span class="material-symbols-outlined">code</span>
-    </a>
-  </div>
-</div>
-
-<!-- 头部 -->
-<div class="header">
-  <h1>dsapps</h1>
-  <p class="desc">由 DeepSeek 编写的网页小程序</p>
-</div>
-
-<!-- 主内容 -->
-<div class="container">
-  <!-- 可用项 -->
-  <div class="section">
-    <div class="section-title">
-      <span class="material-symbols-outlined">apps</span> 可用项
+  <!-- 顶栏 -->
+  <div class="top-bar">
+    <div class="top-bar__left">
+      <span class="top-bar__title">dsapps</span>
+      <a href="https://github.com/masterlazy/dsapps/" class="top-link"
+        target="_blank" aria-label="GitHub">
+        <span class="material-symbols-outlined">code</span>
+      </a>
     </div>
-    <div class="app-grid">
-      <a href="a1z26" class="app-card">
-        <span class="icon">🔤</span>
-        <div class="title">A1Z26 编码转换器</div>
-        <div class="desc">在字母和数字之间进行A1Z26编码转换，支持双向转换和实时预览</div>
-      </a>
-      <a href="graph" class="app-card">
-        <span class="icon">#️⃣</span>
-        <div class="title">图论在线画图工具</div>
-        <div class="desc">可视化创建和编辑图结构，支持有向图和无向图，可自定义节点和边的颜色</div>
-      </a>
-      <a href="masonry" class="app-card">
-        <span class="icon">#️⃣</span>
-        <div class="title">瀑布视图</div>
-        <div class="desc">类似 Pinterest 的瀑布流视图</div>
-      </a>
-      <a href="cmo" class="app-card">
-        <span class="icon">🎮</span>
-        <div class="title">金牌教练模拟器</div>
-        <div class="desc">咳咳。</div>
-      </a>
-      <div class="app-card coming">
-        <span class="icon">🔄</span>
-        <div class="title">更多工具开发中</div>
-        <div class="desc">我们正在开发更多实用工具，敬请期待</div>
+  </div>
+
+  <!-- 头部 -->
+  <div class="header">
+    <h1>dsapps</h1>
+    <p class="desc">由 DeepSeek 编写的网页小程序</p>
+  </div>
+
+  <!-- 主内容 -->
+  <div class="container">
+    <!-- 可用项 -->
+    <div class="section">
+      <div class="section-title">
+        <span class="material-symbols-outlined">apps</span> 可用项
+      </div>
+      <div class="app-grid">
+        <a href="a1z26" class="app-card">
+          <span class="icon material-symbols-outlined"
+            style="font-size:2rem">abc</span>
+          <div class="title">A1Z26 编码转换器</div>
+          <div class="desc">在字母和数字之间进行A1Z26编码转换，支持双向转换和实时预览</div>
+        </a>
+        <a href="graph" class="app-card">
+          <span class="icon material-symbols-outlined"
+            style="font-size:2rem">account_tree</span>
+          <div class="title">图论在线画图工具</div>
+          <div class="desc">可视化创建和编辑图结构，支持有向图和无向图，可自定义节点和边的颜色</div>
+        </a>
+        <a href="masonry" class="app-card">
+          <span class="icon material-symbols-outlined"
+            style="font-size:2rem">grid_view</span>
+          <div class="title">瀑布视图</div>
+          <div class="desc">类似 Pinterest 的瀑布流视图</div>
+        </a>
+        <a href="gen" class="app-card">
+          <span class="icon material-symbols-outlined"
+            style="font-size:2rem">auto_awesome</span>
+          <div class="title">发疯文学生成器</div>
+          <div class="desc">输入对象，生成发疯文学，可选多种模板</div>
+        </a>
+        <a href="cmo" class="app-card">
+          <span class="icon material-symbols-outlined"
+            style="font-size:2rem">sports_esports</span>
+          <div class="title">金牌教练模拟器</div>
+          <div class="desc">咳咳。</div>
+        </a>
+        <div class="app-card coming">
+          <span class="icon material-symbols-outlined"
+            style="font-size:2rem">construction</span>
+          <div class="title">更多工具开发中</div>
+          <div class="desc">我们正在开发更多实用工具，敬请期待</div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- 项目特点 -->
-  <div class="section">
-    <div class="section-title">
-      <span class="material-symbols-outlined">checklist</span> 项目特点
-    </div>
-    <div class="info-card">
-      <ul>
-        <li><span class="check">✓</span><strong>简洁直观</strong> - 所有工具都设计得简单易用，无需复杂操作</li>
-        <li><span class="check">✓</span><strong>响应式设计</strong> - 在各种设备上都能提供良好的使用体验</li>
-        <li><span class="check">✓</span><strong>使用方便</strong> - 本项目使用纯前端技术开发，无需下载</li>
-        <li><span class="check">✓</span><strong>开源透明</strong> - 遵循 MIT License，欢迎贡献和改进</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- 关于项目 -->
-  <div class="section">
-    <div class="section-title">
-      <span class="material-symbols-outlined">info</span> 关于项目
-    </div>
-    <p style="font-size:0.9rem;color:var(--on-surface-variant);margin-bottom:16px">本项目与深度求索（DeepSeek）公司没有从属关系。</p>
-    <div class="about-section">
-      <div class="info-card">
-        <h3>项目目的</h3>
-        <p>dsapps 旨在收集和开发一些在日常工作和学习中常用的小工具，帮助用户简化任务流程，提高效率。这些工具都是轻量级的，无需安装，打开网页即可使用。</p>
+    <!-- 项目特点 -->
+    <div class="section">
+      <div class="section-title">
+        <span class="material-symbols-outlined">checklist</span> 项目特点
       </div>
       <div class="info-card">
-        <h3>开发背景</h3>
-        <p>这个项目最初是为了解决一些重复性的小任务而创建的，随着时间的推移，逐渐扩展为一个工具集合。我们希望这些工具能帮助更多人简化工作流程。</p>
+        <ul>
+          <li><span class="check">✓</span><strong>简洁直观</strong> -
+            所有工具都设计得简单易用，无需复杂操作</li>
+          <li><span class="check">✓</span><strong>响应式设计</strong> -
+            在各种设备上都能提供良好的使用体验</li>
+          <li><span class="check">✓</span><strong>使用方便</strong> -
+            本项目使用纯前端技术开发，无需下载</li>
+          <li><span class="check">✓</span><strong>开源透明</strong> - 遵循 MIT
+            License，欢迎贡献和改进</li>
+        </ul>
       </div>
-      <div class="info-card">
-        <h3>由 DeepSeek 开发</h3>
-        <p>这个项目大多数代码都是 DeepSeek 写的，但是我会做一些微调（比如这句话是我写的）。</p>
+    </div>
+
+    <!-- 关于项目 -->
+    <div class="section">
+      <div class="section-title">
+        <span class="material-symbols-outlined">info</span> 关于项目
+      </div>
+      <p
+        style="font-size:0.9rem;color:var(--on-surface-variant);margin-bottom:16px">
+        本项目与深度求索（DeepSeek）公司没有从属关系。</p>
+      <div class="about-section">
+        <div class="info-card">
+          <h3>项目目的</h3>
+          <p>dsapps
+            旨在收集和开发一些在日常工作和学习中常用的小工具，帮助用户简化任务流程，提高效率。这些工具都是轻量级的，无需安装，打开网页即可使用。
+          </p>
+        </div>
+        <div class="info-card">
+          <h3>开发背景</h3>
+          <p>这个项目最初是为了解决一些重复性的小任务而创建的，随着时间的推移，逐渐扩展为一个工具集合。我们希望这些工具能帮助更多人简化工作流程。
+          </p>
+        </div>
+        <div class="info-card">
+          <h3>由 DeepSeek 开发</h3>
+          <p>这个项目大多数代码都是 DeepSeek 写的，但是我会做一些微调（比如这句话是我写的）。</p>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Footer -->
-<div class="footer">
-  <p>dsapps &copy; 2025 masterLazy · 由 DeepSeek 开发 · MIT License</p>
-</div>
+  <!-- Footer -->
+  <div class="footer">
+    <p>dsapps &copy; 2025 masterLazy · 由 DeepSeek 开发 · MIT License</p>
+  </div>
 
 </body>
+
 </html>
