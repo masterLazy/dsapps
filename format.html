@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dsapps | 格式清理工具</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
+    rel="stylesheet">
+  <style>
+    /* ===== 主题色 (统一) ===== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --primary: #4f7c9e;
+      --on-primary: #fff;
+      --primary-container: #d1e4f5;
+      --on-primary-container: #1a3a4f;
+      --secondary: #6b7d8e;
+      --secondary-container: #d5e1eb;
+      --on-secondary-container: #1f2e3c;
+      --surface: #f8fafc;
+      --surface-dim: #dde3e9;
+      --surface-container: #edf1f5;
+      --surface-container-high: #e2e8ee;
+      --on-surface: #1b1c1e;
+      --on-surface-variant: #44474a;
+      --outline: #7b8086;
+      --outline-variant: #c2c7cd;
+      --error: #ba1a1a;
+      --elevation1: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --elevation2: 0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.04);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-full: 9999px;
+      --duration: 0.2s;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--on-surface);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 0.875rem
+    }
+
+    /* ===== 顶栏 ===== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--outline-variant);
+      position: sticky;
+      top: 0;
+      z-index: 100
+    }
+
+    .top-bar__left {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .top-bar__title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      letter-spacing: -0.01em
+    }
+
+    .top-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--primary);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      transition: background var(--duration)
+    }
+
+    .top-link:hover {
+      background: color-mix(in srgb, var(--primary) 10%, transparent)
+    }
+
+    .top-link .material-symbols-outlined {
+      font-size: 20px
+    }
+
+    /* ===== 头部 ===== */
+    .header {
+      text-align: center;
+      padding: 36px 24px 28px;
+      background: linear-gradient(135deg, var(--surface-container), var(--surface-dim))
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--on-surface);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px
+    }
+
+    .header .desc {
+      font-size: 0.9rem;
+      color: var(--on-surface-variant);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6
+    }
+
+    /* ===== 主容器 ===== */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      flex: 1;
+      width: 100%
+    }
+
+    /* ===== M3 组件 ===== */
+    /* Chip 组 (模式选择) */
+    .chip-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: 1px solid var(--outline-variant);
+      background: transparent;
+      color: var(--on-surface-variant);
+      cursor: pointer;
+      transition: all var(--duration);
+      user-select: none;
+      font-family: var(--font)
+    }
+
+    .chip:hover {
+      background: color-mix(in srgb, var(--on-surface) 6%, transparent)
+    }
+
+    .chip--selected {
+      background: var(--primary-container);
+      border-color: var(--primary);
+      color: var(--on-primary-container)
+    }
+
+    .chip--selected:hover {
+      background: color-mix(in srgb, var(--primary-container) 88%, #000)
+    }
+
+    /* 文本域 & 标签 */
+    .field {
+      margin-bottom: 20px
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      margin-bottom: 6px
+    }
+
+    .field textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--outline-variant);
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--on-surface);
+      transition: border-color var(--duration);
+      outline: none;
+      resize: vertical;
+      min-height: 160px;
+      line-height: 1.6
+    }
+
+    .field textarea:focus {
+      border-color: var(--primary)
+    }
+
+    .field textarea::placeholder {
+      color: var(--on-surface-variant);
+      opacity: 0.6
+    }
+
+    /* 统计信息 */
+    .stats {
+      display: flex;
+      gap: 16px;
+      font-size: 0.8rem;
+      color: var(--on-surface-variant);
+      margin-bottom: 16px
+    }
+
+    .stats span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    /* 按钮 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 0.9rem;
+      font-weight: 500;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: all var(--duration);
+      text-decoration: none
+    }
+
+    .btn--primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      box-shadow: var(--elevation1)
+    }
+
+    .btn--primary:hover {
+      background: color-mix(in srgb, var(--primary) 88%, #000);
+      box-shadow: var(--elevation2)
+    }
+
+    .btn--primary:active {
+      transform: scale(0.97)
+    }
+
+    .btn--full {
+      width: 100%
+    }
+
+    .btn--outline {
+      background: transparent;
+      color: var(--on-surface-variant);
+      border: 1px solid var(--outline-variant)
+    }
+
+    .btn--outline:hover {
+      background: var(--surface-container-high)
+    }
+
+    .btn--danger {
+      background: var(--error);
+      color: #fff
+    }
+
+    .btn--danger:hover {
+      background: color-mix(in srgb, var(--error) 88%, #000)
+    }
+
+    /* 结果框 */
+    .result-wrap {
+      position: relative;
+      margin-top: 4px
+    }
+
+    .result-box {
+      background: var(--surface-container);
+      border-radius: var(--radius-md);
+      padding: 16px 60px 16px 16px;
+      min-height: 56px;
+      border: 1px solid var(--outline-variant);
+      font-size: 0.95rem;
+      word-break: break-all;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      color: var(--on-surface);
+      max-height: 400px;
+      overflow-y: auto
+    }
+
+    .result-box:empty::before {
+      content: '结果将显示在这里';
+      color: var(--on-surface-variant);
+      opacity: 0.5
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 500;
+      font-family: var(--font);
+      cursor: pointer;
+      background: var(--surface-container-high);
+      color: var(--on-surface-variant);
+      transition: all var(--duration)
+    }
+
+    .copy-btn:hover {
+      background: var(--primary-container);
+      color: var(--on-primary-container)
+    }
+
+    .copy-btn.copied {
+      background: var(--primary);
+      color: var(--on-primary)
+    }
+
+    /* 信息卡片 */
+    .info-card {
+      background: var(--primary-container);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-top: 24px;
+      border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent)
+    }
+
+    .info-card h3 {
+      color: var(--on-primary-container);
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 8px
+    }
+
+    .info-card p {
+      color: var(--on-primary-container);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      margin-bottom: 4px
+    }
+
+    .info-card p:last-child {
+      margin-bottom: 0
+    }
+
+    .info-card ul {
+      list-style: none;
+      padding: 0
+    }
+
+    .info-card li {
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+      color: var(--on-primary-container);
+      line-height: 1.6;
+      border-bottom: 1px solid color-mix(in srgb, var(--primary) 15%, transparent)
+    }
+
+    .info-card li:last-child {
+      border-bottom: none
+    }
+
+    .info-card li .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--primary)
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 20px 24px;
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+      border-top: 1px solid var(--outline-variant);
+      background: var(--surface)
+    }
+
+    /* 响应 */
+    @media(max-width:640px) {
+      .header {
+        padding: 32px 16px 20px
+      }
+
+      .header h1 {
+        font-size: 1.6rem
+      }
+
+      .container {
+        padding: 24px 16px
+      }
+
+      .top-bar {
+        padding: 10px 16px
+      }
+
+      .stats {
+        flex-wrap: wrap;
+        gap: 8px
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 顶栏 -->
+  <div class="top-bar">
+    <div class="top-bar__left">
+      <span class="top-bar__title">dsapps</span>
+      <a href="https://masterlazy.github.io/dsapps/" class="top-link"
+        aria-label="返回应用列表">
+        <span class="material-symbols-outlined">home</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 头部 -->
+  <div class="header">
+    <h1>格式清理工具</h1>
+    <p class="desc">去除文本中的连续换行符，一键清理从网页或 Markdown 复制时产生的多余空行</p>
+  </div>
+
+  <!-- 主内容 -->
+  <div class="container">
+    <!-- 模式切换 -->
+    <div class="chip-group" id="mode-group">
+      <button class="chip chip--selected" data-mode="compress">压缩连续换行</button>
+      <button class="chip" data-mode="remove-all">移除所有换行</button>
+      <button class="chip" data-mode="single-line">压缩全部空白</button>
+    </div>
+
+    <!-- 输入 -->
+    <div class="field">
+      <label for="input-text">粘贴文本</label>
+      <textarea id="input-text" placeholder="在此粘贴文本…"></textarea>
+    </div>
+
+    <!-- 统计 -->
+    <div class="stats" id="stats">
+      <span><span class="material-symbols-outlined" style="font-size:16px">text_fields</span> 字符: <strong id="char-count">0</strong></span>
+      <span><span class="material-symbols-outlined" style="font-size:16px">format_line_spacing</span> 行数: <strong id="line-count">0</strong></span>
+      <span><span class="material-symbols-outlined" style="font-size:16px">space_bar</span> 空行: <strong id="blank-count">0</strong></span>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div style="display:flex;gap:12px;margin-bottom:20px">
+      <button id="format-btn" class="btn btn--primary" style="flex:1">
+        <span class="material-symbols-outlined" style="font-size:20px">auto_fix</span> 清理格式
+      </button>
+      <button id="clear-btn" class="btn btn--outline">
+        <span class="material-symbols-outlined" style="font-size:20px">delete</span> 清空
+      </button>
+    </div>
+
+    <!-- 结果 -->
+    <div class="field">
+      <label>清理结果</label>
+      <div class="result-wrap">
+        <div class="result-box" id="result"></div>
+        <button class="copy-btn" id="copy-btn">
+          <span class="material-symbols-outlined" style="font-size:16px">content_copy</span> 复制
+        </button>
+      </div>
+    </div>
+
+    <!-- 说明 -->
+    <div class="info-card">
+      <h3>功能介绍</h3>
+      <ul>
+        <li>
+          <span class="material-symbols-outlined">compress</span>
+          <strong>压缩连续换行</strong> — 将连续 2 个及以上的换行替换为 1 个，保留正常段落分隔
+        </li>
+        <li>
+          <span class="material-symbols-outlined">format_clear</span>
+          <strong>移除所有换行</strong> — 移除所有换行符但保留空格，文字连为一段
+        </li>
+        <li>
+          <span class="material-symbols-outlined">short_text</span>
+          <strong>压缩全部空白</strong> — 将所有空白字符（换行/空格/缩进）压缩为单个空格
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>dsapps &copy; 2025 masterLazy · 由 DeepSeek 开发 · MIT License</p>
+  </div>
+
+  <script>
+    (function () {
+      const modeGroup = document.getElementById('mode-group');
+      const inputText = document.getElementById('input-text');
+      const formatBtn = document.getElementById('format-btn');
+      const clearBtn = document.getElementById('clear-btn');
+      const resultBox = document.getElementById('result');
+      const copyBtn = document.getElementById('copy-btn');
+      const charCount = document.getElementById('char-count');
+      const lineCount = document.getElementById('line-count');
+      const blankCount = document.getElementById('blank-count');
+      let currentMode = 'compress';
+
+      // ---- Chip 切换 ----
+      modeGroup.querySelectorAll('.chip').forEach(chip => {
+        chip.addEventListener('click', function () {
+          modeGroup.querySelectorAll('.chip').forEach(c => c.classList.remove('chip--selected'));
+          this.classList.add('chip--selected');
+          currentMode = this.dataset.mode;
+          // 如果已有输入且结果框非空，可自动重新格式化
+          if (inputText.value.trim() && resultBox.textContent.trim()) {
+            format();
+          }
+        });
+      });
+
+      // ---- 统计 ----
+      function updateStats(text) {
+        const chars = text.length;
+        const lines = text ? text.split('\n') : [];
+        const lineCnt = lines.length;
+        // 空行：仅含空白字符或完全为空
+        const blankCnt = lines.filter(l => l.trim() === '').length;
+        charCount.textContent = chars;
+        lineCount.textContent = lineCnt;
+        blankCount.textContent = blankCnt;
+      }
+
+      inputText.addEventListener('input', function () {
+        updateStats(this.value);
+      });
+
+      // ---- 格式化核心 ----
+      function format() {
+        const raw = inputText.value;
+        if (!raw.trim()) {
+          resultBox.innerHTML = '';
+          return;
+        }
+
+        let result = raw;
+
+        switch (currentMode) {
+          case 'compress':
+            // 将连续 2 个及以上的换行替换为 1 个换行
+            result = result.replace(/\n{2,}/g, '\n');
+            // 去除首尾换行
+            result = result.replace(/^\n+/, '').replace(/\n+$/, '');
+            break;
+          case 'remove-all':
+            // 移除所有换行符，保留空格
+            result = result.replace(/\n/g, ' ');
+            // 压缩多余空格
+            result = result.replace(/ +/g, ' ');
+            break;
+          case 'single-line':
+            // 将所有空白字符（换行、空格、制表符等）压缩为单个空格
+            result = result.replace(/\s+/g, ' ');
+            break;
+        }
+
+        resultBox.textContent = result;
+        copyBtn.textContent = '复制';
+        copyBtn.classList.remove('copied');
+      }
+
+      formatBtn.addEventListener('click', format);
+
+      // ---- Ctrl+Enter 快速格式化 ----
+      inputText.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          format();
+        }
+      });
+
+      // ---- 清空 ----
+      clearBtn.addEventListener('click', function () {
+        inputText.value = '';
+        resultBox.innerHTML = '';
+        updateStats('');
+        copyBtn.textContent = '复制';
+        copyBtn.classList.remove('copied');
+      });
+
+      // ---- 复制 ----
+      copyBtn.addEventListener('click', function () {
+        const txt = resultBox.textContent;
+        if (!txt) return;
+
+        navigator.clipboard.writeText(txt).then(() => {
+          copyBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">check</span> 已复制!';
+          copyBtn.classList.add('copied');
+          setTimeout(() => {
+            copyBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">content_copy</span> 复制';
+            copyBtn.classList.remove('copied');
+          }, 3000);
+        }).catch(() => {
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = txt;
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+            copyBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">check</span> 已复制!';
+            copyBtn.classList.add('copied');
+            setTimeout(() => {
+              copyBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">content_copy</span> 复制';
+              copyBtn.classList.remove('copied');
+            }, 3000);
+          } catch (e) {
+            alert('复制失败，请手动选择文本复制');
+          }
+          document.body.removeChild(ta);
+        });
+      });
+    })();
+  </script>
+</body>
+
+</html>
