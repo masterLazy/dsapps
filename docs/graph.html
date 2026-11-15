@@ -2,6 +2,18 @@
 <html lang="zh-CN">
 
 <head>
+  <script>(() => {
+    const allowed = ['system', 'light', 'dark'];
+    let preference = 'system';
+    try {
+      const saved = localStorage.getItem('dsapps-theme');
+      if (allowed.includes(saved)) preference = saved;
+    } catch {}
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.themePreference = preference;
+    document.documentElement.dataset.theme = preference === 'system' ? systemTheme : preference;
+  })();</script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>dsapps | 图论在线画图工具</title>
@@ -15,8 +27,9 @@
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
     rel="stylesheet">
 
-  <link rel="stylesheet" crossorigin href="./assets/graph-D-OdDaQj.css">
-  <link rel="stylesheet" crossorigin href="./assets/shared-CYqYfmlr.css">
+  <script type="module" crossorigin src="./assets/theme-CYTwFb-p.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/theme-BiyFWRnj.css">
+  <link rel="stylesheet" crossorigin href="./assets/graph-Dm1mrmH8.css">
 </head>
 
 <body>
@@ -30,12 +43,25 @@
             <span class="material-symbols-outlined">home</span>
         </a>
     </div>
+    <div class="top-bar__right">
+<label class="theme-picker">
+  <span>Theme</span>
+  <select data-theme-picker aria-label="Color theme">
+    <option value="system">System</option>
+    <option value="light">Light</option>
+    <option value="dark">Dark</option>
+  </select>
+</label>
+    </div>
 </div>
 
 <!-- dsapps:title-header-start -->
 <header class="header">
-    <h1>图论在线画图工具</h1>
-    <p class="desc">可视化创建和编辑图结构，支持有向图和无向图，可自定义节点和边的颜色</p>
+    <div class="header__content">
+        <h1>图论在线画图工具</h1>
+        <p class="desc">可视化创建和编辑图结构，支持有向图和无向图，可自定义节点和边的颜色</p>
+    </div>
+
 </header>
 <!-- dsapps:title-header-end -->
 
@@ -130,11 +156,18 @@
 
   <script>
     (function () {
-      let graphType = 'undirected', nodes = [], edges = [], nextNodeId = 1, selectedElement = null, selectedElementType = null, currentColor = '#333333';
+      const readThemeColor = token => getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+      let graphType = 'undirected', nodes = [], edges = [], nextNodeId = 1, selectedElement = null, selectedElementType = null, currentColor = readThemeColor('--on-surface') || '#333333';
+      let themeDefaultColor = currentColor;
 
       const svg = d3.select('#graph-canvas');
       const w = () => document.getElementById('graph-canvas').clientWidth;
       const h = () => document.getElementById('graph-canvas').clientHeight;
+      const defaultColorSwatch = document.querySelector('#color-presets .color-swatch');
+      if (defaultColorSwatch) {
+        defaultColorSwatch.dataset.color = currentColor;
+        defaultColorSwatch.style.backgroundColor = currentColor;
+      }
 
       const zoom = d3.zoom().scaleExtent([0.1, 4]).on('zoom', event => g.attr('transform', event.transform));
       svg.call(zoom);
@@ -266,10 +299,10 @@
           selectedElement = d; selectedElementType = 'node'; d3.select(this).select('circle').attr('stroke-width', 4);
           document.getElementById('selected-info').textContent = `已选中节点 ${d.label}`;
         });
-        ne.append('circle').attr('r', 22).attr('fill', '#fff').attr('stroke', d => d.strokeColor || currentColor).attr('stroke-width', 2);
+        ne.append('circle').attr('r', 22).attr('fill', readThemeColor('--surface') || '#fff').attr('stroke', d => d.strokeColor || currentColor).attr('stroke-width', 2);
         ne.append('text').attr('class', 'node-label').attr('dy', 5).text(d => d.label);
 
-        const na = ns.merge(ne); na.select('circle').attr('fill', '#fff').attr('stroke', d => d.strokeColor || currentColor);
+        const na = ns.merge(ne); na.select('circle').attr('fill', readThemeColor('--surface') || '#fff').attr('stroke', d => d.strokeColor || currentColor);
 
         sim.nodes(nodes);
         sim.force('link').links(edges);
@@ -281,6 +314,21 @@
           ea.select('.edge-line').attr('x1', d => d.source.x).attr('y1', d => d.source.y).attr('x2', d => d.target.x).attr('y2', d => d.target.y);
         });
       }
+
+      window.addEventListener('dsapps-theme-change', () => {
+        const nextDefaultColor = readThemeColor('--on-surface');
+        if (!nextDefaultColor || nextDefaultColor === themeDefaultColor) return;
+        nodes.forEach(node => { if (node.strokeColor === themeDefaultColor) node.strokeColor = nextDefaultColor });
+        edges.forEach(edge => { if (edge.color === themeDefaultColor) edge.color = nextDefaultColor });
+        if (currentColor === themeDefaultColor) currentColor = nextDefaultColor;
+        if (defaultColorSwatch?.dataset.color === themeDefaultColor) {
+          defaultColorSwatch.dataset.color = nextDefaultColor;
+          defaultColorSwatch.style.backgroundColor = nextDefaultColor;
+        }
+        themeDefaultColor = nextDefaultColor;
+        createAllArrows();
+        updateGraph();
+      });
 
       // 窗口 resize
       window.addEventListener('resize', () => {

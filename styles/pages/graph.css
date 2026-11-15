@@ -85,7 +85,7 @@
     }
 
     .btn--danger:hover {
-      background: color-mix(in srgb, var(--error) 88%, #000)
+      background: color-mix(in srgb, var(--error) 88%, var(--hover-tone))
     }
 
     /* 颜色控件 */
@@ -175,7 +175,7 @@
     #graph-canvas {
       flex: 1;
       min-height: 450px;
-      background: #fff
+      background: var(--surface)
     }
 
     .node {
@@ -187,7 +187,7 @@
       font-weight: 700;
       text-anchor: middle;
       pointer-events: none;
-      fill: #1b1c1e;
+      fill: var(--on-surface);
       font-family: var(--font)
     }
 

@@ -54,6 +54,18 @@ function escapeHtml(value) {
 function sharedShellPlugin() {
   const headerTemplate = readFileSync(path.join(rootDir, 'src/partials/site-header.html'), 'utf8');
   const footer = readFileSync(path.join(rootDir, 'src/partials/site-footer.html'), 'utf8');
+  const themeControl = readFileSync(path.join(rootDir, 'src/partials/theme-control.html'), 'utf8');
+  const themeBootstrap = `(() => {
+    const allowed = ['system', 'light', 'dark'];
+    let preference = 'system';
+    try {
+      const saved = localStorage.getItem('dsapps-theme');
+      if (allowed.includes(saved)) preference = saved;
+    } catch {}
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.themePreference = preference;
+    document.documentElement.dataset.theme = preference === 'system' ? systemTheme : preference;
+  })();`;
 
   return {
     name: 'dsapps-shared-shell',
@@ -71,13 +83,21 @@ function sharedShellPlugin() {
       let pageHeader = page.home
         ? header.replace(/<!-- dsapps:top-bar-start -->[\s\S]*?<!-- dsapps:top-bar-end -->/, '')
         : header.replace('<!-- dsapps:top-bar-start -->', '').replace('<!-- dsapps:top-bar-end -->', '');
+      pageHeader = pageHeader
+        .replace(/^[\t ]*<!-- dsapps:theme-control-topbar -->/m, page.home ? '' : themeControl)
+        .replace(/^[\t ]*<!-- dsapps:theme-control-home -->/m, page.home ? themeControl : '');
       if (page.showTitleHeader === false) {
         pageHeader = pageHeader.replace(/<!-- dsapps:title-header-start -->[\s\S]*?<!-- dsapps:title-header-end -->/, '');
       }
 
-      return html
-        .replace(/^[\t ]*<!-- dsapps:site-header -->/m, pageHeader)
-        .replace(/^[\t ]*<!-- dsapps:site-footer -->/m, footer);
+      return {
+        html: html
+          .replace(/^[\t ]*<!-- dsapps:site-header -->/m, pageHeader)
+          .replace(/^[\t ]*<!-- dsapps:site-footer -->/m, footer),
+        tags: [
+            { tag: 'script', children: themeBootstrap, injectTo: 'head-prepend' }
+        ]
+      };
     },
     writeBundle(outputOptions) {
       const outputDir = path.resolve(rootDir, outputOptions.dir ?? 'dist');

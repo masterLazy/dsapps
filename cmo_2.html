@@ -4158,6 +4158,14 @@
         min-height: 76px;
       }
     }
+
+    /* ---- 保险：对话框永远不该是 display:none ----
+       对话层的显隐只靠 .layer 的 opacity / visibility 控制；
+       若某处（旧构建、外部样式、hidden 属性）把 adv-box 设成 display:none，
+       这一条会强制把它拉回可见，避免“有字却看不见”。 */
+    #adv-box {
+      display: block !important;
+    }
   </style>
 </head>
 

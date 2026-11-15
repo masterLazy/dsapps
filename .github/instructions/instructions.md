@@ -9,6 +9,8 @@ Scope
 - Primary focus: pages using the Material-like token set (index.html, a1z26.html, format.html, gen.html, graph.html, masonry.html). These pages follow an M3-inspired design system implemented with CSS custom properties.
 
 Design Tokens (canonical)
+- Theme preference: `system`, `light`, or `dark`, persisted as `dsapps-theme` in local storage. Shared pages resolve system preference before first paint and expose the reusable `.theme-picker` control.
+- Color values: define light and dark semantic values only in `styles/tokens.css`; page/component styles must use semantic tokens rather than hardcoded surface/text colors.
 - Color tokens (CSS custom properties):
   - --primary: #4f7c9e
   - --on-primary: #fff
@@ -75,11 +77,12 @@ CSS/Naming Conventions
 
 Project & Shared Component Workflow
 - This repository uses Vite as a static multi-page build. The root HTML files are page entries and retain their individual `.html` URLs; do not convert the tools to a client-side router or SPA.
-- Run `npm run dev` for local work and `npm run build` to generate `dist/`. Do not edit generated files in `dist/`.
+- Run `npm run dev` for local work and `npm run build` to generate `docs/`. Do not edit generated files in `docs/`.
 - Shared navigation/header and footer markup live in `src/partials/site-header.html` and `src/partials/site-footer.html`. Page entries use the `dsapps:site-header` and `dsapps:site-footer` markers, which the Vite plugin replaces at build time.
 - Before adding a component, check whether it is useful on more than one page. If it is, implement it once in the appropriate shared stylesheet or partial, then use it from every applicable page. Do not copy a shared component's markup or styles between pages.
 - When making an existing page component reusable, move its canonical styles/markup to the shared location and update all affected pages in the same change. Keep truly page-specific behavior and layout in that page's CSS/HTML.
 - `cmo.html` is intentionally outside this system and is copied unchanged to the build output. Do not add shared stylesheet links or shell markers to it unless explicitly re-theming it.
+- `cmo_2.html` is also an independent game theme and remains outside the shared site theme controls unless explicitly re-themed.
 
 Exceptions
 - `cmo.html` is a legacy/game theme and intentionally diverges (vivid gradients, Font Awesome, different tokens). Do not migrate `cmo.html` to the M3 token set unless intentionally re-theming the game UI.

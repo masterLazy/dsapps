@@ -2,6 +2,18 @@
 <html lang="zh-CN">
 
 <head>
+  <script>(() => {
+    const allowed = ['system', 'light', 'dark'];
+    let preference = 'system';
+    try {
+      const saved = localStorage.getItem('dsapps-theme');
+      if (allowed.includes(saved)) preference = saved;
+    } catch {}
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.themePreference = preference;
+    document.documentElement.dataset.theme = preference === 'system' ? systemTheme : preference;
+  })();</script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>dsapps | 由 DeepSeek 编写的网页小程序</title>
@@ -15,8 +27,9 @@
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
     rel="stylesheet">
 
+  <script type="module" crossorigin src="./assets/theme-CYTwFb-p.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/theme-BiyFWRnj.css">
   <link rel="stylesheet" crossorigin href="./assets/index-D3Fv4c72.css">
-  <link rel="stylesheet" crossorigin href="./assets/shared-CYqYfmlr.css">
 </head>
 
 <body class="home-page">
@@ -24,8 +37,18 @@
 
 <!-- dsapps:title-header-start -->
 <header class="header">
-    <h1>dsapps</h1>
-    <p class="desc">由 DeepSeek 编写的网页小程序</p>
+    <div class="header__content">
+        <h1>dsapps</h1>
+        <p class="desc">由 DeepSeek 编写的网页小程序</p>
+    </div>
+<label class="theme-picker">
+  <span>Theme</span>
+  <select data-theme-picker aria-label="Color theme">
+    <option value="system">System</option>
+    <option value="light">Light</option>
+    <option value="dark">Dark</option>
+  </select>
+</label>
 </header>
 <!-- dsapps:title-header-end -->
 

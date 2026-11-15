@@ -17,6 +17,7 @@
 
   <link rel="stylesheet" href="./styles/pages/graph.css">
   <link rel="stylesheet" href="./styles/shared.css">
+  <script type="module" src="./src/theme.js"></script>
 </head>
 
 <body>
@@ -102,11 +103,18 @@
 
   <script>
     (function () {
-      let graphType = 'undirected', nodes = [], edges = [], nextNodeId = 1, selectedElement = null, selectedElementType = null, currentColor = '#333333';
+      const readThemeColor = token => getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+      let graphType = 'undirected', nodes = [], edges = [], nextNodeId = 1, selectedElement = null, selectedElementType = null, currentColor = readThemeColor('--on-surface') || '#333333';
+      let themeDefaultColor = currentColor;
 
       const svg = d3.select('#graph-canvas');
       const w = () => document.getElementById('graph-canvas').clientWidth;
       const h = () => document.getElementById('graph-canvas').clientHeight;
+      const defaultColorSwatch = document.querySelector('#color-presets .color-swatch');
+      if (defaultColorSwatch) {
+        defaultColorSwatch.dataset.color = currentColor;
+        defaultColorSwatch.style.backgroundColor = currentColor;
+      }
 
       const zoom = d3.zoom().scaleExtent([0.1, 4]).on('zoom', event => g.attr('transform', event.transform));
       svg.call(zoom);
@@ -238,10 +246,10 @@
           selectedElement = d; selectedElementType = 'node'; d3.select(this).select('circle').attr('stroke-width', 4);
           document.getElementById('selected-info').textContent = `已选中节点 ${d.label}`;
         });
-        ne.append('circle').attr('r', 22).attr('fill', '#fff').attr('stroke', d => d.strokeColor || currentColor).attr('stroke-width', 2);
+        ne.append('circle').attr('r', 22).attr('fill', readThemeColor('--surface') || '#fff').attr('stroke', d => d.strokeColor || currentColor).attr('stroke-width', 2);
         ne.append('text').attr('class', 'node-label').attr('dy', 5).text(d => d.label);
 
-        const na = ns.merge(ne); na.select('circle').attr('fill', '#fff').attr('stroke', d => d.strokeColor || currentColor);
+        const na = ns.merge(ne); na.select('circle').attr('fill', readThemeColor('--surface') || '#fff').attr('stroke', d => d.strokeColor || currentColor);
 
         sim.nodes(nodes);
         sim.force('link').links(edges);
@@ -253,6 +261,21 @@
           ea.select('.edge-line').attr('x1', d => d.source.x).attr('y1', d => d.source.y).attr('x2', d => d.target.x).attr('y2', d => d.target.y);
         });
       }
+
+      window.addEventListener('dsapps-theme-change', () => {
+        const nextDefaultColor = readThemeColor('--on-surface');
+        if (!nextDefaultColor || nextDefaultColor === themeDefaultColor) return;
+        nodes.forEach(node => { if (node.strokeColor === themeDefaultColor) node.strokeColor = nextDefaultColor });
+        edges.forEach(edge => { if (edge.color === themeDefaultColor) edge.color = nextDefaultColor });
+        if (currentColor === themeDefaultColor) currentColor = nextDefaultColor;
+        if (defaultColorSwatch?.dataset.color === themeDefaultColor) {
+          defaultColorSwatch.dataset.color = nextDefaultColor;
+          defaultColorSwatch.style.backgroundColor = nextDefaultColor;
+        }
+        themeDefaultColor = nextDefaultColor;
+        createAllArrows();
+        updateGraph();
+      });
 
       // 窗口 resize
       window.addEventListener('resize', () => {
