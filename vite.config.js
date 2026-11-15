@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
-const pageFiles = ['index.html', 'a1z26.html', 'format.html', 'gen.html', 'graph.html', 'masonry.html'];
+const pageFiles = ['index.html', 'a1z26.html', 'cmo.html', 'format.html', 'gen.html', 'graph.html', 'masonry.html'];
 
 const pageMetadata = {
   'index.html': {
@@ -102,7 +102,7 @@ function sharedShellPlugin() {
     writeBundle(outputOptions) {
       const outputDir = path.resolve(rootDir, outputOptions.dir ?? 'dist');
       mkdirSync(outputDir, { recursive: true });
-      for (const file of ['cmo_2.html']) {
+      for (const file of ['cmo.html', 'cmo_2.html']) {
         copyFileSync(path.join(rootDir, file), path.join(outputDir, file));
       }
       cpSync(path.join(rootDir, 'sound'), path.join(outputDir, 'sound'), { recursive: true });
