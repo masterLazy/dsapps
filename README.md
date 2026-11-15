@@ -16,7 +16,7 @@ npm run build
 npm run preview
 ```
 
-发布文件输出到 `docs/`，可直接用于 GitHub Pages。`cmo.html` 和 `cmo_2.html` 保持独立主题；构建会原样复制两个游戏页面及 `sound/` 音效资源，不接入共享设计系统。
+发布文件输出到 `docs/`，可直接用于 GitHub Pages。`cmo_2.html` 是当前游戏入口，保持独立主题；构建会原样复制它及 `sound/` 音效资源，不接入共享设计系统。旧 `cmo.html` 源文件保留为存档，不再发布。
 
 ## 一键发布
 

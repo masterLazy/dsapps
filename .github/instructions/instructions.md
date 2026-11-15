@@ -81,11 +81,11 @@ Project & Shared Component Workflow
 - Shared navigation/header and footer markup live in `src/partials/site-header.html` and `src/partials/site-footer.html`. Page entries use the `dsapps:site-header` and `dsapps:site-footer` markers, which the Vite plugin replaces at build time.
 - Before adding a component, check whether it is useful on more than one page. If it is, implement it once in the appropriate shared stylesheet or partial, then use it from every applicable page. Do not copy a shared component's markup or styles between pages.
 - When making an existing page component reusable, move its canonical styles/markup to the shared location and update all affected pages in the same change. Keep truly page-specific behavior and layout in that page's CSS/HTML.
-- `cmo.html` is intentionally outside this system and is copied unchanged to the build output. Do not add shared stylesheet links or shell markers to it unless explicitly re-theming it.
-- `cmo_2.html` is also an independent game theme and remains outside the shared site theme controls unless explicitly re-themed.
+- `cmo.html` is an archived legacy game source and is not included in the current build output. Do not delete it unless explicitly requested.
+- `cmo_2.html` is the active independent game theme, copied unchanged with its `sound/` assets; keep it outside the shared site theme controls unless explicitly re-theming it.
 
 Exceptions
-- `cmo.html` is a legacy/game theme and intentionally diverges (vivid gradients, Font Awesome, different tokens). Do not migrate `cmo.html` to the M3 token set unless intentionally re-theming the game UI.
+- `cmo.html` is an archived legacy/game theme and intentionally diverges (vivid gradients, Font Awesome, different tokens). Do not migrate it to the M3 token set unless intentionally re-theming the archived game.
 
 Migration & Enforcement Guidance
 - New pages should follow the Vite multi-page pattern: add the HTML entry to `vite.config.js`, add its title/heading/description metadata to the shared shell plugin, link its page stylesheet before `styles/shared.css`, and use the shared shell markers.

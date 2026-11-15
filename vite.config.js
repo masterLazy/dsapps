@@ -95,14 +95,14 @@ function sharedShellPlugin() {
           .replace(/^[\t ]*<!-- dsapps:site-header -->/m, pageHeader)
           .replace(/^[\t ]*<!-- dsapps:site-footer -->/m, footer),
         tags: [
-            { tag: 'script', children: themeBootstrap, injectTo: 'head-prepend' }
+          { tag: 'script', children: themeBootstrap, injectTo: 'head-prepend' }
         ]
       };
     },
     writeBundle(outputOptions) {
       const outputDir = path.resolve(rootDir, outputOptions.dir ?? 'dist');
       mkdirSync(outputDir, { recursive: true });
-      for (const file of ['cmo.html', 'cmo_2.html']) {
+      for (const file of ['cmo_2.html']) {
         copyFileSync(path.join(rootDir, file), path.join(outputDir, file));
       }
       cpSync(path.join(rootDir, 'sound'), path.join(outputDir, 'sound'), { recursive: true });
