@@ -228,7 +228,7 @@
       display: flex;
     }
 
-    .vol-pop {
+    .vol-panel {
       position: absolute;
       top: 42px;
       right: -6px;
@@ -244,7 +244,7 @@
       z-index: 60;
     }
 
-    .vol-pop.on {
+    .vol-panel.on {
       opacity: 1;
       transform: none;
       pointer-events: auto;
@@ -804,7 +804,7 @@
       transition: color .3s;
     }
 
-    .v-track {
+    .v-bar {
       position: relative;
       display: flex;
       gap: 2px;
@@ -824,7 +824,7 @@
       box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .4), 0 0 8px color-mix(in srgb, var(--c) 60%, transparent);
     }
 
-    .v-track::after {
+    .v-bar::after {
       content: '';
       position: absolute;
       inset: 0;
@@ -865,7 +865,7 @@
       animation-duration: 1.7s;
     }
 
-    .vital.low .v-track .v-seg.on {
+    .vital.low .v-bar .v-seg.on {
       background: #b8553f;
       box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .4), 0 0 8px rgba(184, 85, 63, .55);
     }
@@ -1499,6 +1499,20 @@
       z-index: 1;
     }
 
+    .c-pas {
+      font-size: calc(10.5px * var(--fs));
+      letter-spacing: .04em;
+      color: #7a5a24;
+      margin-top: 5px;
+      position: relative;
+      z-index: 2;
+      opacity: .92;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
     .c-title {
       font-family: var(--font-t);
       font-size: calc(15.5px * var(--fs));
@@ -1627,6 +1641,7 @@
       position: relative;
       min-width: 132px;
       padding: 10px 20px;
+      white-space: nowrap;
       font-family: var(--font-t);
       font-size: calc(14px * var(--fs));
       font-weight: 600;
@@ -1674,6 +1689,15 @@
       color: var(--brass-l);
       border-color: var(--brass);
       box-shadow: 0 0 20px rgba(176, 141, 79, .25);
+    }
+
+    /* 换牌：比另外两个窄一档，别把时间条挤没了 */
+    .btn-cyc {
+      min-width: 104px;
+      padding: 10px 12px;
+      font-size: calc(12.5px * var(--fs));
+      letter-spacing: .08em;
+      color: #9c8760;
     }
 
     .btn.pulse {
@@ -2794,14 +2818,14 @@
     }
 
     /* ---- ADV 层 ---- */
-    .adv-layer {
+    .dlg-layer {
       padding: 0 clamp(20px, 9vw, 150px);
       display: flex;
       align-items: center;
       padding-bottom: 8px;
     }
 
-    .adv-box {
+    .dlg-box {
       position: relative;
       width: 100%;
       min-height: 208px;
@@ -2813,8 +2837,8 @@
       cursor: pointer;
     }
 
-    .adv-box::before,
-    .adv-box::after {
+    .dlg-box::before,
+    .dlg-box::after {
       content: '';
       position: absolute;
       width: 14px;
@@ -2823,21 +2847,21 @@
       opacity: .55;
     }
 
-    .adv-box::before {
+    .dlg-box::before {
       top: 7px;
       left: 7px;
       border-right: 0;
       border-bottom: 0;
     }
 
-    .adv-box::after {
+    .dlg-box::after {
       bottom: 7px;
       right: 7px;
       border-left: 0;
       border-top: 0;
     }
 
-    .adv-speaker {
+    .dlg-speaker {
       position: absolute;
       top: -15px;
       left: 30px;
@@ -2851,17 +2875,17 @@
       box-shadow: 0 6px 16px rgba(0, 0, 0, .8);
     }
 
-    .adv-speaker.student {
+    .dlg-speaker.student {
       color: #cfe3c9;
       border-color: #4c6b4a;
       background: linear-gradient(#1b2a1a, #0a120a);
     }
 
-    .adv-speaker.coach {
+    .dlg-speaker.coach {
       color: #e6cf9c;
     }
 
-    .adv-text {
+    .dlg-text {
       font-size: calc(15.5px * var(--fs));
       line-height: 2.05;
       letter-spacing: .06em;
@@ -2871,7 +2895,7 @@
       white-space: pre-wrap;
     }
 
-    .adv-text .narr {
+    .dlg-text .narr {
       color: #b9a988;
       font-style: italic;
     }
@@ -2893,7 +2917,7 @@
       }
     }
 
-    .adv-next {
+    .dlg-next {
       position: absolute;
       right: 28px;
       bottom: 14px;
@@ -2905,7 +2929,7 @@
       animation: bob 1.4s ease-in-out infinite;
     }
 
-    .adv-next.show {
+    .dlg-next.show {
       opacity: .9;
     }
 
@@ -2933,7 +2957,7 @@
       overflow: hidden;
     }
 
-    #float {
+    #verdict {
       position: relative;
       display: flex;
       flex-direction: column;
@@ -2944,11 +2968,11 @@
       transition: transform .4s cubic-bezier(.2, .9, .3, 1);
     }
 
-    #float.up {
+    #verdict.up {
       transform: translateY(-148px);
     }
 
-    #float::before {
+    #verdict::before {
       content: '';
       position: absolute;
       left: 50%;
@@ -2962,12 +2986,12 @@
       animation: fadeIn .3s ease both;
     }
 
-    #float:empty::before {
+    #verdict:empty::before {
       display: none;
     }
 
     /* 退场：暗底与最后一行的淡出同一时刻开始、同一时刻结束，不会留下单独的一块阴影 */
-    #float.out::before {
+    #verdict.out::before {
       animation: floatVeilOut var(--vo, .9s) ease forwards;
     }
 
@@ -3778,6 +3802,16 @@
       min-height: 0;
     }
 
+    /* 右侧内容列：正文在上、详情条在下。
+       详情条不在滚动区里，鼠标从树上往下扫不会把它推来推去 */
+    .mn-col {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
     /* 左侧竖排类别 */
     .mn-nav {
       flex: 0 0 208px;
@@ -3846,6 +3880,7 @@
     .mn-main {
       flex: 1 1 auto;
       min-width: 0;
+      min-height: 0;
       padding: 24px 38px 40px 32px;
       overflow-y: auto;
       scrollbar-width: thin;
@@ -3978,6 +4013,287 @@
       font-weight: 700
     }
 
+    /* ---------------- 知识树 ---------------- */
+    .kt-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px 16px;
+      margin: 0 0 8px;
+      font-size: calc(11px * var(--fs));
+      letter-spacing: .06em;
+      color: #a08c66;
+    }
+
+    .kt-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .kt-legend i {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex: 0 0 auto;
+    }
+
+    .kt-legend i.k0 {
+      background: #201810;
+      border: 1px dashed #6a5a3e
+    }
+
+    .kt-legend i.k1 {
+      background: #2e2416;
+      border: 1px solid #8a7448
+    }
+
+    .kt-legend i.k2 {
+      background: #4a3a1f;
+      border: 1px solid #c9a86a
+    }
+
+    .kt-legend i.k3 {
+      background: #8a6b32;
+      border: 1px solid #f0d7a2
+    }
+
+    /* 知识树详情条：手册底部的一条固定横条，不参与树的布局 */
+    .kt-info {
+      flex: 0 0 auto;
+      z-index: 3;
+      margin: 0 14px 14px 8px;
+      padding: 10px 26px 11px;
+      background: linear-gradient(0deg, #1c1308 0%, #2b2012 100%);
+      border: 1px solid rgba(232, 211, 162, .22);
+      box-shadow: 0 -16px 28px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 235, 200, .07);
+      font-size: calc(11.5px * var(--fs));
+      letter-spacing: .04em;
+      color: #b6a17a;
+    }
+
+    /* 每行定高：内容变了也不改高度，否则树会被推着上下抖 */
+    .kt-info .kt-i-row {
+      height: 26px;
+      line-height: 26px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .kt-info .kt-i-h {
+      color: #f2d9a4;
+      font-weight: 700;
+      letter-spacing: .1em;
+    }
+
+    .kt-info .kt-i-h em {
+      font-style: normal;
+      margin-left: 8px;
+      font-size: calc(10px * var(--fs));
+      letter-spacing: .12em;
+      color: #8d7a56;
+    }
+
+    .kt-info b {
+      color: #ecd6a4
+    }
+
+    .kt-info .kt-ok {
+      color: #8fcbb0
+    }
+
+    .kt-info .kt-no {
+      color: #c98a6a
+    }
+
+    .kt-scroll {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 4px
+    }
+
+    .kt-scroll svg {
+      display: block
+    }
+
+    .kt-scroll .kt-n {
+      cursor: default
+    }
+
+    .kt-scroll .kt-n rect {
+      transition: fill .16s, stroke .16s;
+    }
+
+    .kt-scroll .kt-n:hover rect {
+      stroke: #ffe9bb
+    }
+
+    .kt-scroll svg.focus .kt-n {
+      opacity: .26
+    }
+
+    .kt-scroll svg.focus .kt-n.on {
+      opacity: 1
+    }
+
+    .kt-scroll svg.focus .kt-e {
+      opacity: .06
+    }
+
+    .kt-scroll svg.focus .kt-e.on {
+      opacity: .95
+    }
+
+    .kt-scroll .kt-e {
+      transition: opacity .16s
+    }
+
+    .kt-band {
+      fill: rgba(255, 232, 190, .022);
+      stroke: rgba(232, 211, 162, .08);
+      stroke-width: 1;
+    }
+
+    .kt-lbl {
+      font-family: var(--font-t);
+      font-size: calc(10px * var(--fs));
+      letter-spacing: .1em;
+      fill: #a08c66;
+    }
+
+    .kt-cap {
+      font-family: var(--font-t);
+      font-size: calc(9.5px * var(--fs));
+      letter-spacing: .2em;
+      fill: #8d7a56;
+    }
+
+    .kt-n text {
+      font-family: var(--font-t);
+      font-size: calc(9px * var(--fs));
+      letter-spacing: .02em;
+      pointer-events: none;
+    }
+
+    .kt-n .kt-m {
+      font-family: var(--font-d);
+      font-size: calc(9px * var(--fs))
+    }
+
+    .kt-n .kt-c {
+      font-size: calc(8px * var(--fs));
+      fill: #b09a72
+    }
+
+    /* ---------------- 拦截器误伤提示 ---------------- */
+    .notice-card {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 340;
+      width: min(540px, 92vw);
+      padding: 16px 20px 15px;
+      transform: translate(-50%, 16px);
+      opacity: 0;
+      pointer-events: none;
+      color: #e3d2ae;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(255, 226, 176, .1), transparent 62%),
+        linear-gradient(160deg, #2a1e11 0%, #140d06 100%);
+      border: 1px solid rgba(196, 156, 92, .5);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, .9), inset 0 0 0 1px rgba(0, 0, 0, .7);
+      transition: opacity .3s, transform .3s;
+    }
+
+    .notice-card.on {
+      opacity: 1;
+      transform: translate(-50%, 0);
+      pointer-events: auto;
+    }
+
+    .notice-card h5 {
+      margin: 0 0 8px;
+      font-family: var(--font-t);
+      font-size: calc(13px * var(--fs));
+      font-weight: 700;
+      letter-spacing: .12em;
+      color: #f3d9a3;
+    }
+
+    .notice-card p {
+      margin: 0 0 7px;
+      font-size: calc(11.5px * var(--fs));
+      line-height: 1.85;
+      letter-spacing: .04em;
+      color: #b7a37c;
+    }
+
+    .notice-card p b {
+      color: #ecd6a4
+    }
+
+    .notice-card code {
+      font-family: var(--font-t);
+      padding: 1px 5px;
+      color: #d9bd86;
+      background: rgba(0, 0, 0, .35);
+      border: 1px solid rgba(232, 211, 162, .16);
+    }
+
+    .notice-card .nc-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .notice-card button {
+      padding: 8px 16px;
+      font-family: var(--font-t);
+      font-size: calc(11.5px * var(--fs));
+      letter-spacing: .14em;
+      color: #f0d7a2;
+      background: linear-gradient(#3d2d17, #251a0d);
+      border: 1px solid rgba(196, 156, 92, .55);
+      cursor: pointer;
+      transition: background .18s, color .18s, border-color .18s;
+    }
+
+    .notice-card button:hover {
+      color: #fff2d2;
+      border-color: #d8b978;
+      background: linear-gradient(#4b381d, #2c2010);
+    }
+
+    .notice-card button.ghost {
+      color: #9d8a66;
+      background: none;
+      border-color: rgba(150, 124, 82, .38);
+    }
+
+    .notice-card button.ghost:hover {
+      color: #d6c39a
+    }
+
+    .notice-card.shake {
+      animation: ncShake .4s ease
+    }
+
+    @keyframes ncShake {
+
+      0%,
+      100% {
+        transform: translate(-50%, 0)
+      }
+
+      25% {
+        transform: translate(calc(-50% - 7px), 0)
+      }
+
+      75% {
+        transform: translate(calc(-50% + 7px), 0)
+      }
+    }
+
     /* 跳过教程 */
     .skip-btn {
       display: none;
@@ -4060,7 +4376,7 @@
         font-size: calc(14px * var(--fs));
       }
 
-      .v-track {
+      .v-bar {
         height: 11px;
       }
 
@@ -4080,7 +4396,7 @@
         font-size: calc(16px * var(--fs));
       }
 
-      .v-track {
+      .v-bar {
         height: 12px;
       }
 
@@ -4104,7 +4420,7 @@
         font-size: calc(12.5px * var(--fs));
       }
 
-      .adv-text {
+      .dlg-text {
         font-size: calc(18px * var(--fs));
       }
 
@@ -4147,12 +4463,12 @@
         margin-top: 5px;
       }
 
-      .adv-box {
+      .dlg-box {
         min-height: 180px;
         padding: 22px 32px 26px;
       }
 
-      .adv-text {
+      .dlg-text {
         font-size: calc(15px * var(--fs));
         line-height: 1.95;
         min-height: 76px;
@@ -4161,9 +4477,9 @@
 
     /* ---- 保险：对话框永远不该是 display:none ----
        对话层的显隐只靠 .layer 的 opacity / visibility 控制；
-       若某处（旧构建、外部样式、hidden 属性）把 adv-box 设成 display:none，
+       若某处（旧构建、外部样式、hidden 属性）把 dlg-box 设成 display:none，
        这一条会强制把它拉回可见，避免“有字却看不见”。 */
-    #adv-box {
+    #dlg-box {
       display: block !important;
     }
   </style>
@@ -4178,7 +4494,7 @@
         程</button>
       <div class="snd-wrap">
         <button class="icon-btn" id="btn-sound" title="音量">♪</button>
-        <div class="vol-pop" id="vol-pop">
+        <div class="vol-panel" id="vol-panel">
           <div class="vp-head">声 音</div>
           <div class="vp-row">
             <span class="vp-k">背景音</span>
@@ -4189,8 +4505,8 @@
           <div class="vp-row">
             <span class="vp-k">音效</span>
             <input type="range" id="sfx-range" min="0" max="100" step="1"
-              value="100">
-            <b id="sfx-val">100</b>
+              value="50">
+            <b id="sfx-val">50</b>
           </div>
           <button class="vp-mute" id="vol-mute">全 部 静 音</button>
         </div>
@@ -4230,7 +4546,7 @@
   </main>
 
   <div id="fx">
-    <div id="float"></div>
+    <div id="verdict"></div>
   </div>
 
   <footer class="dock">
@@ -4239,6 +4555,8 @@
       <div class="dock-top">
         <div class="cal-bar" id="cal-bar"></div>
         <div class="actions">
+          <button class="btn btn-ghost btn-cyc" id="btn-cyc" disabled>换
+            牌</button>
           <button class="btn btn-ghost" id="btn-end" disabled>结束本月</button>
           <button class="btn btn-gold" id="btn-play" disabled>打 出</button>
         </div>
@@ -4247,17 +4565,28 @@
     </div>
 
     <!-- 对话层 -->
-    <div class="layer adv-layer" id="layer-adv">
-      <div class="adv-box" id="adv-box">
-        <div class="adv-speaker" id="adv-speaker">旁白</div>
-        <div class="adv-text" id="adv-text"></div>
-        <div class="adv-next" id="adv-next">▼ 点击继续</div>
+    <div class="layer dlg-layer" id="layer-dlg">
+      <div class="dlg-box" id="dlg-box">
+        <div class="dlg-speaker" id="dlg-speaker">旁白</div>
+        <div class="dlg-text" id="dlg-text"></div>
+        <div class="dlg-next" id="dlg-next">▼ 点击继续</div>
       </div>
     </div>
   </footer>
 
   <div id="fly"></div>
   <div class="toast" id="toast"></div>
+
+  <div class="notice-card" id="notice-block">
+    <h5>⚠ 对话框没有显示出来</h5>
+    <p>本页的对话层被某个<b>广告拦截插件</b>当成广告藏掉了——插件常用「名字里带 ad / adv 的元素一律隐藏」这类规则，误伤了游戏界面。
+    </p>
+    <p>请把 <b id="nc-host">本站</b> 加入白名单（或暂时关掉拦截插件），然后点下面的按钮重新检测。</p>
+    <div class="nc-row">
+      <button id="nc-retry">已处理 · 重新检测</button>
+      <button id="nc-close" class="ghost">知道了</button>
+    </div>
+  </div>
 
   <div class="spot" id="spot"></div>
 
@@ -4364,7 +4693,7 @@
       { id: 'train', n: '一对一特训', d: '随机一项属性 +1.0，本月强度 +1', ico: '✎' },
       { id: 'talk', n: '谈 心', d: '意志 +1.5，师生 +0.8', ico: '❦' },
       { id: 'plan', n: '战术分析', d: '下一场比赛，软判定 +0.2', ico: '◈' },
-      { id: 'rest', n: '强制休息', d: '意志 +1.2，健康 +1.5，本月强度 −2', ico: '☾' }
+      { id: 'rest', n: '强制休息', d: '意志 +1.2，健康 +1.5，本月强度 −2，本月不算硬撑', ico: '☾' }
     ];
 
     /* 时间标签：占用的「半日」单位 */
@@ -4377,99 +4706,108 @@
     const SEG_NAME = ['上旬', '中旬', '下旬', '月末'];
     const SEG_UNITS = 2;          // 每段 2 个半日
     const MONTH_UNITS = 8;        // 4 段 × 2
-    const ENERGY_MAX = 6;
+    const ENERGY_MAX = 7;
     const MAST_MUL = [1, .74, .5, .36];   // 第 1/2/3/4 次阅读的收益系数
-    const HAND_SIZE = 5;                  // 每月补充到 5 张
-    const HAND_CAP = 6;                   // 桌上最多留 6 张（跨月保留）
+    const HAND_SIZE = 6;                  // 每月补充到 6 张
+    const HAND_CAP = 7;                   // 桌上最多留 7 张（6 张手牌 + 教练牌）
+    const CYCLE_MAX = 6;                  // 每学年可以「换」掉的牌数：弃回牌库，立刻补一张
+    const CYCLE_PER_MONTH = 1;            // 一个月最多换一张，避免一口气把牌库洗空
     const KIND = { k: '知识', m: '方法', d: '训练', r: '养息' };
 
     /* e: 效果；dur: 时长；cost: 精力；pre: 前置；ar: 主涨方向
        kind: k 知识 / m 方法 / d 训练 / r 养息；pas: 首次读懂后的永久教法加成 */
     const CARDS = [
       // ——— 代数 ———
-      { id: 'fac', t: '因式分解技巧', m: 'alg', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑↑', kind: 'k', e: { alg: .42, gen: .1, will: -.16 }, b: '把多项式拆成乘积，代数变形的第一把钥匙。', f: '「看见结构，就等于看见答案。」' },
-      { id: 'quad', t: '一次函数与二次函数', m: 'alg', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'k', e: { alg: .38, gen: .12, will: -.14 }, b: '抛物线开口之间，藏着最朴素的极值直觉。', f: '「顶点，是所有故事转折的地方。」' },
-      { id: 'eq2', t: '一元二次方程', m: 'alg', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'k', e: { alg: .34, num: .1, will: -.14 }, b: '判别式与韦达定理，两根之间的暗语。', f: '「不求其根，先知其性。」' },
-      { id: 'set', t: '集合与简易逻辑', m: 'alg', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'k', e: { gen: .4, alg: .14, will: -.12 }, b: '把语言磨成刀：命题、量词与反证。', f: '「先把话说清楚，再谈证明。」' },
-      { id: 'func', t: '函数与函数方程', m: 'alg', tier: 2, dur: 'day', cost: 2, pre: ['quad', 'eq2'], ar: '↑↑', kind: 'k', e: { alg: .62, gen: .18, will: -.3 }, b: '单调、周期、对称——函数的三重性格。', f: '「给它一个方程，它会告诉你它是谁。」' },
-      { id: 'ineq', t: '不等式', m: 'alg', tier: 2, dur: 'day', cost: 2, pre: ['eq2'], ar: '↑↑', kind: 'k', e: { alg: .56, geo: .12, will: -.28 }, b: '均值、柯西、排序，放缩的分寸感。', f: '「等号成立的条件，才是题眼。」' },
-      { id: 'seq', t: '数列与递推', m: 'alg', tier: 2, dur: 'day', cost: 2, pre: ['quad'], ar: '↑↑', kind: 'k', e: { alg: .54, com: .16, will: -.28 }, b: '从递推关系里，逼出通项与界。', f: '「前一步的脚印，决定下一步的方向。」' },
-      { id: 'poly', t: '多项式', m: 'alg', tier: 3, dur: 'day', cost: 2, pre: ['fac', 'eq2'], ar: '↑↑', kind: 'k', e: { alg: .84, num: .18, will: -.44 }, b: '根与系数、整除与不可约，硬骨头的开始。', f: '「最高次项的系数，往往握着全局。」' },
-      { id: 'ind', t: '数学归纳法', m: 'alg', tier: 2, dur: 'day', cost: 2, pre: ['set'], ar: '↑', kind: 'm', pas: { alg: .1 }, e: { alg: .34, gen: .4, will: -.26 }, b: '奠基、假设、递推——通往无穷的三步。', f: '「多米诺骨牌的第一块，最难推。」' },
+      { id: 'fac', t: '因式分解技巧', m: 'alg', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑↑', kind: 'k', e: { alg: 0.3, gen: 0.07, will: -.16 }, b: '把多项式拆成乘积，代数变形的第一把钥匙。', f: '「看见结构，就等于看见答案。」' },
+      { id: 'quad', t: '一次函数与二次函数', m: 'alg', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'k', e: { alg: 0.26, gen: 0.088, will: -.14 }, b: '抛物线开口之间，藏着最朴素的极值直觉。', f: '「顶点，是所有故事转折的地方。」' },
+      { id: 'eq2', t: '一元二次方程', m: 'alg', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'k', e: { alg: 0.24, num: 0.07, will: -.14 }, b: '判别式与韦达定理，两根之间的暗语。', f: '「不求其根，先知其性。」' },
+      { id: 'set', t: '集合与简易逻辑', m: 'alg', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'k', e: { gen: 0.28, alg: 0.097, will: -.12 }, b: '把语言磨成刀：命题、量词与反证。', f: '「先把话说清楚，再谈证明。」' },
+      { id: 'func', t: '函数与函数方程', m: 'alg', tier: 2, dur: 'day', cost: 2, pre: ['quad', 'eq2'], ar: '↑↑', kind: 'k', e: { alg: 0.55, gen: 0.15, will: -.24 }, b: '单调、周期、对称——函数的三重性格。', f: '「给它一个方程，它会告诉你它是谁。」' },
+      { id: 'ineq', t: '不等式', m: 'alg', tier: 2, dur: 'day', cost: 2, pre: ['eq2'], ar: '↑↑', kind: 'k', e: { alg: 0.49, geo: 0.11, will: -.22 }, b: '均值、柯西、排序，放缩的分寸感。', f: '「等号成立的条件，才是题眼。」' },
+      { id: 'seq', t: '数列与递推', m: 'alg', tier: 2, dur: 'day', cost: 2, pre: ['quad'], ar: '↑↑', kind: 'k', e: { alg: 0.47, com: 0.14, will: -.22 }, b: '从递推关系里，逼出通项与界。', f: '「前一步的脚印，决定下一步的方向。」' },
+      { id: 'poly', t: '多项式', m: 'alg', tier: 3, dur: 'day', cost: 2, pre: ['fac', 'eq2'], ar: '↑↑', kind: 'k', e: { alg: 0.74, num: 0.16, will: -.46 }, b: '根与系数、整除与不可约，硬骨头的开始。', f: '「最高次项的系数，往往握着全局。」' },
+      { id: 'ind', t: '数学归纳法', m: 'alg', tier: 2, dur: 'day', cost: 2, pre: ['set'], ar: '↑', kind: 'm', pas: { alg: .08, gen: .04 }, e: { alg: 0.28, gen: 0.33, will: -.22 }, b: '奠基、假设、递推——通往无穷的三步。', f: '「多米诺骨牌的第一块，最难推。」' },
       // ——— 几何 ———
-      { id: 'tri', t: '三角形与四边形', m: 'geo', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑↑', kind: 'k', e: { geo: .42, gen: .08, will: -.16 }, b: '五心、中线、中位线，构型的字母表。', f: '「辅助线不是画出来的，是看出来的。」' },
-      { id: 'cir', t: '圆', m: 'geo', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'k', e: { geo: .38, alg: .08, will: -.14 }, b: '圆周角、切线、圆幂，最古典的对称。', f: '「圆上没有秘密，只有没连的弦。」' },
-      { id: 'solid', t: '立体几何', m: 'geo', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'k', e: { geo: .36, gen: .12, will: -.14 }, b: '截面、二面角与空间向量。', f: '「先在脑中把图转一圈。」' },
-      { id: 'trig', t: '三角与三角函数', m: 'geo', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'k', e: { geo: .32, alg: .28, will: -.16 }, b: '和差化积，角度之间的换算术。', f: '「一切角度，终将回到单位圆。」' },
-      { id: 'plgeo', t: '平面几何', m: 'geo', tier: 2, dur: 'day', cost: 2, pre: ['tri', 'cir'], ar: '↑↑', kind: 'k', e: { geo: .6, will: -.3 }, b: '共线共点、位似与反演，证明的主战场。', f: '「辅助圆一出，全题皆活。」' },
-      { id: 'area', t: '面积与面积方法', m: 'geo', tier: 2, dur: 'day', cost: 2, pre: ['tri'], ar: '↑', kind: 'm', pas: { geo: .08 }, e: { geo: .5, com: .16, will: -.26 }, b: '用面积算比例，把长度问题降维。', f: '「算两次，答案自己会浮出来。」' },
-      { id: 'gineq', t: '几何不等式', m: 'geo', tier: 2, dur: 'day', cost: 2, pre: ['plgeo', 'ineq'], ar: '↑', kind: 'k', e: { geo: .46, alg: .24, will: -.28 }, b: '周长、面积与内切圆之间的拉锯。', f: '「极端情形，常常就是答案的形状。」' },
-      { id: 'ana', t: '解析几何', m: 'geo', tier: 2, dur: 'day', cost: 2, pre: ['quad', 'tri'], ar: '↑', kind: 'k', e: { geo: .48, alg: .32, will: -.28 }, b: '坐标、参数与轨迹，用代数碾过图形。', f: '「算得动，就不必猜。」' },
+      { id: 'tri', t: '三角形与四边形', m: 'geo', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑↑', kind: 'k', e: { geo: 0.3, gen: 0.053, will: -.16 }, b: '五心、中线、中位线，构型的字母表。', f: '「辅助线不是画出来的，是看出来的。」' },
+      { id: 'cir', t: '圆', m: 'geo', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'k', e: { geo: 0.26, alg: 0.053, will: -.14 }, b: '圆周角、切线、圆幂，最古典的对称。', f: '「圆上没有秘密，只有没连的弦。」' },
+      { id: 'solid', t: '立体几何', m: 'geo', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'k', e: { geo: 0.26, gen: 0.088, will: -.14 }, b: '截面、二面角与空间向量。', f: '「先在脑中把图转一圈。」' },
+      { id: 'trig', t: '三角与三角函数', m: 'geo', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'k', e: { geo: 0.23, alg: 0.19, will: -.16 }, b: '和差化积，角度之间的换算术。', f: '「一切角度，终将回到单位圆。」' },
+      { id: 'plgeo', t: '平面几何', m: 'geo', tier: 2, dur: 'day', cost: 2, pre: ['tri', 'cir'], ar: '↑↑', kind: 'k', e: { geo: 0.53, will: -.24 }, b: '共线共点、位似与反演，证明的主战场。', f: '「辅助圆一出，全题皆活。」' },
+      { id: 'area', t: '面积与面积方法', m: 'geo', tier: 2, dur: 'day', cost: 2, pre: ['tri'], ar: '↑', kind: 'm', pas: { geo: .06 }, e: { geo: 0.44, com: 0.14, will: -.22 }, b: '用面积算比例，把长度问题降维。', f: '「算两次，答案自己会浮出来。」' },
+      { id: 'gineq', t: '几何不等式', m: 'geo', tier: 2, dur: 'day', cost: 2, pre: ['plgeo', 'ineq'], ar: '↑', kind: 'k', e: { geo: 0.41, alg: 0.21, will: -.22 }, b: '周长、面积与内切圆之间的拉锯。', f: '「极端情形，常常就是答案的形状。」' },
+      { id: 'ana', t: '解析几何', m: 'geo', tier: 2, dur: 'day', cost: 2, pre: ['quad', 'tri'], ar: '↑', kind: 'k', e: { geo: 0.41, alg: 0.28, will: -.22 }, b: '坐标、参数与轨迹，用代数碾过图形。', f: '「算得动，就不必猜。」' },
       // ——— 数论 ———
-      { id: 'ntp', t: '数论初步', m: 'num', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑↑', kind: 'k', e: { num: .42, will: -.16 }, b: '整除、质数、最大公约数，整数的语法。', f: '「整数里没有巧合。」' },
-      { id: 'base', t: '进位制与数字谜', m: 'num', tier: 1, dur: 'half', cost: 1, pre: ['ntp'], ar: '↑', kind: 'k', e: { num: .36, com: .16, will: -.14 }, b: '换个进制，数字会露出另一副面孔。', f: '「十进制的直觉，常常是陷阱。」' },
-      { id: 'congr', t: '整除·同余·不定方程', m: 'num', tier: 2, dur: 'day', cost: 2, pre: ['ntp'], ar: '↑↑', kind: 'k', e: { num: .62, will: -.3 }, b: '模运算的威力，与丢番图的古老难题。', f: '「换个模，题就换了一张脸。」' },
-      { id: 'rsq', t: '二次剩余与勒让德符号', m: 'num', tier: 2, dur: 'day', cost: 2, pre: ['congr'], ar: '↑', kind: 'k', e: { num: .5, alg: .14, will: -.26 }, b: '勒让德符号与二次互反，同余世界的对称。', f: '「能不能开方，是一个政治问题。」' },
-      { id: 'fermat', t: '费马小定理与欧拉定理', m: 'num', tier: 2, dur: 'day', cost: 2, pre: ['congr'], ar: '↑↑', kind: 'k', e: { num: .54, com: .12, will: -.26 }, b: '模 p 的乘法群，绕一圈又回到原点。', f: '「小定理，大用处。」' },
-      { id: 'crt', t: '中国剩余定理', m: 'num', tier: 3, dur: 'day', cost: 2, pre: ['congr', 'base'], ar: '↑↑', kind: 'k', e: { num: .7, com: .16, will: -.4 }, b: '几个同余式，拼出一个唯一的解。', f: '「分开看是碎片，合起来是答案。」' },
-      { id: 'pell', t: '佩尔方程与连分数', m: 'num', tier: 3, dur: 'day', cost: 2, pre: ['rsq'], ar: '↑↑', kind: 'k', e: { num: .74, alg: .2, will: -.42 }, b: '连分数逼近，最小解藏在渐近里。', f: '「整数解，有时候要跑到无穷远去找。」' },
-      { id: 'prime', t: '素数与构造', m: 'num', tier: 3, dur: 'day', cost: 2, pre: ['congr'], ar: '↑↑', kind: 'k', e: { num: .8, alg: .18, will: -.44 }, b: '素数分布、阶与原根，数论的高墙。', f: '「越简单的东西，越难被驯服。」' },
+      { id: 'gineq2', t: '三角不等式与几何极值', m: 'geo', tier: 2, dur: 'day', cost: 2, pre: ['tri', 'ineq'], ar: '↑↑', kind: 'k', e: { geo: 0.42, alg: 0.18, will: -.22 }, b: '长度、面积与角度之间的不等关系，几何里的"最值感"。', f: '「极端情形，常常就是答案的形状。」' },
+      { id: 'invert', t: '反演与位似变换', m: 'geo', tier: 3, dur: 'day', cost: 2, pre: ['plgeo', 'cir'], ar: '↑↑', kind: 'm', pas: { geo: .07 }, e: { geo: 0.63, alg: 0.14, will: -.44 }, b: '把圆变成直线，把相切变成平行——几何的换坐标系。', f: '「换一个视角，难的那一步就不见了。」' },
+      { id: 'ntp', t: '数论初步', m: 'num', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑↑', kind: 'k', e: { num: 0.3, will: -.16 }, b: '整除、质数、最大公约数，整数的语法。', f: '「整数里没有巧合。」' },
+      { id: 'base', t: '进位制与数字谜', m: 'num', tier: 1, dur: 'half', cost: 1, pre: ['ntp'], ar: '↑', kind: 'k', e: { num: 0.32, com: 0.14, will: -.14 }, b: '换个进制，数字会露出另一副面孔。', f: '「十进制的直觉，常常是陷阱。」' },
+      { id: 'congr', t: '整除·同余·不定方程', m: 'num', tier: 2, dur: 'day', cost: 2, pre: ['ntp'], ar: '↑↑', kind: 'k', e: { num: 0.55, will: -.24 }, b: '模运算的威力，与丢番图的古老难题。', f: '「换个模，题就换了一张脸。」' },
+      { id: 'rsq', t: '二次剩余与勒让德符号', m: 'num', tier: 2, dur: 'day', cost: 2, pre: ['congr'], ar: '↑', kind: 'k', e: { num: 0.44, alg: 0.12, will: -.22 }, b: '勒让德符号与二次互反，同余世界的对称。', f: '「能不能开方，是一个政治问题。」' },
+      { id: 'fermat', t: '费马小定理与欧拉定理', m: 'num', tier: 2, dur: 'day', cost: 2, pre: ['congr'], ar: '↑↑', kind: 'k', e: { num: 0.47, com: 0.11, will: -.22 }, b: '模 p 的乘法群，绕一圈又回到原点。', f: '「小定理，大用处。」' },
+      { id: 'crt', t: '中国剩余定理', m: 'num', tier: 3, dur: 'day', cost: 2, pre: ['congr', 'base'], ar: '↑↑', kind: 'k', e: { num: 0.63, com: 0.14, will: -.42 }, b: '几个同余式，拼出一个唯一的解。', f: '「分开看是碎片，合起来是答案。」' },
+      { id: 'pell', t: '佩尔方程与连分数', m: 'num', tier: 3, dur: 'day', cost: 2, pre: ['rsq'], ar: '↑↑', kind: 'k', e: { num: 0.65, alg: 0.18, will: -.44 }, b: '连分数逼近，最小解藏在渐近里。', f: '「整数解，有时候要跑到无穷远去找。」' },
+      { id: 'prime', t: '素数与构造', m: 'num', tier: 3, dur: 'day', cost: 2, pre: ['congr'], ar: '↑↑', kind: 'k', e: { num: 0.7, alg: 0.16, will: -.46 }, b: '素数分布、阶与原根，数论的高墙。', f: '「越简单的东西，越难被驯服。」' },
       // ——— 组合 ———
-      { id: 'combo', t: '组合趣题', m: 'com', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑↑', kind: 'k', e: { com: .42, gen: .1, will: -.14 }, b: '计数、抽屉、极端原理的入门三件套。', f: '「抽屉比球多一个，就一定有故事。」' },
-      { id: 'ext', t: '极端原理', m: 'com', tier: 2, dur: 'day', cost: 2, pre: ['combo'], ar: '↑', kind: 'm', pas: { com: .08 }, e: { com: .46, gen: .26, will: -.24 }, b: '取最大、取最小，让极端替你说话。', f: '「最坏的那个，往往最好用。」' },
-      { id: 'graph', t: '图论', m: 'com', tier: 2, dur: 'day', cost: 2, pre: ['combo'], ar: '↑↑', kind: 'k', e: { com: .58, num: .12, will: -.3 }, b: '从七桥问题到托兰定理，点与线的秩序。', f: '「把题画成图，一半就做完了。」' },
-      { id: 'cgeo', t: '组合几何', m: 'com', tier: 2, dur: 'day', cost: 2, pre: ['combo', 'tri'], ar: '↑', kind: 'k', e: { com: .48, geo: .26, will: -.28 }, b: '点集、覆盖与相交，几何里的离散思维。', f: '「先数清楚，再谈位置。」' },
-      { id: 'color', t: '染色与覆盖', m: 'com', tier: 2, dur: 'day', cost: 2, pre: ['combo'], ar: '↑', kind: 'm', pas: { com: .06 }, e: { com: .48, gen: .18, will: -.26 }, b: '黑白相间之间，藏着不可能的证明。', f: '「染上颜色，矛盾就显形了。」' },
-      { id: 'prob', t: '概率与期望', m: 'com', tier: 2, dur: 'day', cost: 2, pre: ['combo'], ar: '↑', kind: 'k', e: { com: .46, gen: .2, will: -.24 }, b: '随机的表象下，期望是确定的锚。', f: '「算期望，别算运气。」' },
-      { id: 'inv', t: '不变量与半不变量', m: 'com', tier: 3, dur: 'day', cost: 2, pre: ['color'], ar: '↑↑', kind: 'm', pas: { com: .1 }, e: { com: .64, gen: .22, will: -.42 }, b: '在变化中寻找不变，组合证明的哲学。', f: '「找对了不变量，题就死了。」' },
-      { id: 'cons', t: '构造法', m: 'com', tier: 3, dur: 'day', cost: 2, pre: ['ext'], ar: '↑', kind: 'm', pas: { com: .06, gen: .04 }, e: { com: .5, gen: .38, will: -.4 }, b: '无中生有地造一个例子，最难也最美。', f: '「证明存在，不如把它造出来。」' },
-      { id: 'gf', t: '母函数', m: 'com', tier: 3, dur: 'day', cost: 2, pre: ['seq', 'combo'], ar: '↑↑', kind: 'm', pas: { alg: .05, com: .05 }, e: { com: .58, alg: .32, will: -.44 }, b: '把数列塞进多项式，让计数变成代数。', f: '「系数里，藏着所有的答案。」' },
+      { id: 'combo', t: '组合趣题', m: 'com', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑↑', kind: 'k', e: { com: 0.3, gen: 0.07, will: -.14 }, b: '计数、抽屉、极端原理的入门三件套。', f: '「抽屉比球多一个，就一定有故事。」' },
+      { id: 'ext', t: '极端原理', m: 'com', tier: 2, dur: 'day', cost: 2, pre: ['combo'], ar: '↑', kind: 'm', pas: { com: .06 }, e: { com: 0.41, gen: 0.23, will: -.20 }, b: '取最大、取最小，让极端替你说话。', f: '「最坏的那个，往往最好用。」' },
+      { id: 'graph', t: '图论', m: 'com', tier: 2, dur: 'day', cost: 2, pre: ['combo'], ar: '↑↑', kind: 'k', e: { com: 0.51, num: 0.11, will: -.24 }, b: '从七桥问题到托兰定理，点与线的秩序。', f: '「把题画成图，一半就做完了。」' },
+      { id: 'cgeo', t: '组合几何', m: 'com', tier: 2, dur: 'day', cost: 2, pre: ['combo', 'tri'], ar: '↑', kind: 'k', e: { com: 0.41, geo: 0.23, will: -.22 }, b: '点集、覆盖与相交，几何里的离散思维。', f: '「先数清楚，再谈位置。」' },
+      { id: 'color', t: '染色与覆盖', m: 'com', tier: 2, dur: 'day', cost: 2, pre: ['combo'], ar: '↑', kind: 'm', pas: { com: .05 }, e: { com: 0.41, gen: 0.16, will: -.22 }, b: '黑白相间之间，藏着不可能的证明。', f: '「染上颜色，矛盾就显形了。」' },
+      { id: 'prob', t: '概率与期望', m: 'com', tier: 2, dur: 'day', cost: 2, pre: ['combo'], ar: '↑', kind: 'k', e: { com: 0.41, gen: 0.18, will: -.20 }, b: '随机的表象下，期望是确定的锚。', f: '「算期望，别算运气。」' },
+      { id: 'inv', t: '不变量与半不变量', m: 'com', tier: 3, dur: 'day', cost: 2, pre: ['color'], ar: '↑↑', kind: 'm', pas: { com: .08 }, e: { com: 0.58, gen: 0.21, will: -.44 }, b: '在变化中寻找不变，组合证明的哲学。', f: '「找对了不变量，题就死了。」' },
+      { id: 'cons', t: '构造法', m: 'com', tier: 3, dur: 'day', cost: 2, pre: ['ext'], ar: '↑', kind: 'm', pas: { com: .05, gen: .03 }, e: { com: 0.47, gen: 0.33, will: -.42 }, b: '无中生有地造一个例子，最难也最美。', f: '「证明存在，不如把它造出来。」' },
+      { id: 'gf', t: '母函数', m: 'com', tier: 3, dur: 'day', cost: 2, pre: ['seq', 'combo'], ar: '↑↑', kind: 'm', pas: { alg: .04, com: .04 }, e: { com: 0.51, alg: 0.28, will: -.46 }, b: '把数列塞进多项式，让计数变成代数。', f: '「系数里，藏着所有的答案。」' },
       // ——— 综合 ———
-      { id: 'notes', t: '错题本精读', m: 'gen', tier: 1, dur: 'half', cost: 1, pre: [], ar: '→', kind: 'd', e: { gen: .34, alg: .08, geo: .08, num: .08, com: .08, will: .12 }, b: '把跌倒的地方，一页页重新走一遍。', f: '「同样的坑，不该掉第二次。」' },
-      { id: 'mock', t: '全真模拟·四小时半', m: 'gen', tier: 2, dur: 'day', cost: 2, pre: ['notes'], ar: '↑', kind: 'd', e: { alg: .18, geo: .18, num: .18, com: .18, gen: .18, will: -.5, hp: -.24 }, b: '三道题，二百七十分钟，一次完整的战役。', f: '「考场上的时间，比平时快三倍。」' },
-      { id: 'strat', t: '奥林匹克解题策略', m: 'gen', tier: 3, dur: 'day', cost: 2, pre: ['ind', 'ext'], ar: '↑↑', kind: 'm', pas: { alg: .04, geo: .04, num: .04, com: .04, gen: .04 }, e: { gen: .58, alg: .16, geo: .16, num: .16, com: .16, will: -.34 }, b: '化归、类比、特殊化——跨模块的兵法。', f: '「不会做的时候，先做一道更简单的。」' },
-      { id: 'paper', t: '命题人视角', m: 'gen', tier: 3, dur: 'day', cost: 2, pre: ['strat'], ar: '↑↑', kind: 'k', e: { gen: .52, alg: .14, geo: .14, com: .14, will: -.32 }, b: '站在出题人的位置，看一道题是怎么被造出来的。', f: '「知道刀怎么磨，就不怕刀。」' },
-      { id: 'nerve', t: '考场心态', m: 'gen', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'm', pas: { gen: .05 }, e: { will: .55, gen: .14 }, b: '手心出汗的时候，先把呼吸放慢。', f: '「考场里，唯一能控制的只有自己。」' },
-      { id: 'eve', t: '通宵集训', m: 'gen', tier: 2, dur: 'week', cost: 2, pre: [], ar: '↑', kind: 'd', debt: 1.4, e: { alg: .26, geo: .26, num: .26, com: .14, will: -.55, hp: -.15 }, b: '整整一周，凌晨三点的草稿纸堆成小山。', f: '「这一周，能换来什么？」' },
+      { id: 'notes', t: '错题本精读', m: 'gen', tier: 1, dur: 'half', cost: 1, pre: [], ar: '→', kind: 'd', e: { gen: 0.24, alg: 0.053, geo: 0.053, num: 0.053, com: 0.053, will: .12 }, b: '把跌倒的地方，一页页重新走一遍。', f: '「同样的坑，不该掉第二次。」' },
+      { id: 'mock', t: '全真模拟·四小时半', m: 'gen', tier: 2, dur: 'day', cost: 2, pre: ['notes'], ar: '↑', kind: 'd', e: { alg: 0.15, geo: 0.15, num: 0.15, com: 0.15, gen: 0.15, will: -.42, hp: -.20 }, b: '三道题，二百七十分钟，一次完整的战役。', f: '「考场上的时间，比平时快三倍。」' },
+      { id: 'strat', t: '奥林匹克解题策略', m: 'gen', tier: 3, dur: 'day', cost: 2, pre: ['ind', 'ext'], ar: '↑↑', kind: 'm', pas: { alg: .03, geo: .03, num: .03, com: .03, gen: .03 }, e: { gen: 0.51, alg: 0.14, geo: 0.14, num: 0.14, com: 0.14, will: -.38 }, b: '化归、类比、特殊化——跨模块的兵法。', f: '「不会做的时候，先做一道更简单的。」' },
+      { id: 'paper', t: '命题人视角', m: 'gen', tier: 3, dur: 'day', cost: 2, pre: ['strat'], ar: '↑↑', kind: 'k', e: { gen: 0.47, alg: 0.12, geo: 0.12, com: 0.12, will: -.36 }, b: '站在出题人的位置，看一道题是怎么被造出来的。', f: '「知道刀怎么磨，就不怕刀。」' },
+      { id: 'nerve', t: '考场心态', m: 'gen', tier: 1, dur: 'half', cost: 1, pre: [], ar: '↑', kind: 'm', pas: { gen: .04 }, e: { will: .55, gen: 0.097 }, b: '手心出汗的时候，先把呼吸放慢。', f: '「考场里，唯一能控制的只有自己。」' },
+      { id: 'eve', t: '通宵集训', m: 'gen', tier: 2, dur: 'week', cost: 2, pre: [], ar: '↑', kind: 'd', debt: 1.4, e: { alg: 0.23, geo: 0.23, num: 0.23, com: 0.12, will: -.60, hp: -.18 }, b: '整整一周，凌晨三点的草稿纸堆成小山。', f: '「这一周，能换来什么？」' },
       // ——— 养息 ———
       { id: 'walk', t: '操场上的散步', m: 'rest', tier: 1, dur: 'half', cost: 0, en: 1, pre: [], ar: '↑', kind: 'r', e: { will: 1.15, hp: .8, rel: .2 }, b: '放下笔，绕操场走两圈，风很凉。', f: '「脑子也需要喘气。」' },
       { id: 'noodle', t: '深夜的一碗面', m: 'rest', tier: 1, dur: 'half', cost: 0, en: 1, pre: [], ar: '↑', kind: 'r', e: { will: .75, hp: .7, rel: .45 }, b: '加两个蛋，热气糊住了眼镜。', f: '「先吃饱，再谈理想。」' },
       { id: 'talk', t: '与学生谈心', m: 'rest', tier: 1, dur: 'half', cost: 0, en: 1, pre: [], ar: '↑', kind: 'r', e: { rel: 1.05, will: .45 }, b: '不谈题，只谈他最近在读的闲书。', f: '「他先是个人，然后才是选手。」' },
       { id: 'sleep', t: '补一场好觉', m: 'rest', tier: 1, dur: 'day', cost: 0, en: 2, pre: [], ar: '↑', kind: 'r', e: { will: 1.25, hp: 1.3 }, b: '关掉闹钟，睡到自然醒。', f: '「睡眠是最便宜的药。」' },
       { id: 'hike', t: '周末去爬山', m: 'rest', tier: 1, dur: 'day', cost: 0, en: 2, pre: [], ar: '↑', kind: 'r', e: { will: .85, hp: 1.05, rel: .35 }, b: '爬到山顶，风把脑子吹干净了。', f: '「站得高一点，题就小一点。」' },
+      { id: 'tea', t: '一壶茶的时间', m: 'rest', tier: 1, dur: 'half', cost: 0, en: 1, pre: [], ar: '↑', kind: 'r', e: { will: .6, hp: .55, rel: .4 }, b: '泡一壶茶，两个人坐着，谁也不说话。', f: '「不说话的时候，也是在陪他。」' },
+      { id: 'music', t: '听一张旧唱片', m: 'rest', tier: 1, dur: 'half', cost: 0, en: 1, pre: [], ar: '↑', kind: 'r', e: { will: .9, hp: .3, rel: .25 }, b: '唱针落下去，屋里忽然安静得刚刚好。', f: '「有些东西，比题更能把人拉回来。」' },
       { id: 'home', t: '归家探亲', m: 'rest', tier: 1, dur: 'month', cost: 0, en: 3, pre: [], ar: '↑', kind: 'r', e: { will: 1.85, hp: 1.2, rel: .7 }, b: '回一趟家，母亲做了满满一桌菜。整月不碰题。', f: '「他还是个孩子。」' }
     ];
 
     const SYNERGY = [
-      { a: 'fac', b: 'ind', n: '变形与归纳', d: '因式分解 × 数学归纳法', e: { alg: .22, gen: .2 } },
-      { a: 'ineq', b: 'gineq', n: '对称之美', d: '不等式 × 几何不等式', e: { alg: .16, geo: .16, gen: .12 } },
-      { a: 'congr', b: 'graph', n: '离散双修', d: '同余 × 图论', e: { num: .2, com: .2 } },
-      { a: 'graph', b: 'cgeo', n: '点线成图', d: '图论 × 组合几何', e: { com: .22, geo: .14 } },
-      { a: 'strat', b: 'mock', n: '实战检验', d: '策略 × 全真模拟', e: { gen: .24, alg: .12, com: .12 } },
-      { a: 'poly', b: 'gf', n: '系数之眼', d: '多项式 × 母函数', e: { alg: .24, com: .2 } },
-      { a: 'inv', b: 'color', n: '不变量之刃', d: '不变量 × 染色', e: { com: .24, gen: .16 } },
-      { a: 'walk', b: 'notes', n: '张弛有度', d: '散步 × 错题本', e: { will: .6, gen: .2 } },
-      { a: 'plgeo', b: 'ana', n: '双面几何', d: '平面几何 × 解析几何', e: { geo: .28, alg: .16 } },
-      { a: 'prime', b: 'cons', n: '构造素数', d: '素数 × 构造法', e: { num: .24, com: .16 } },
-      { a: 'fermat', b: 'crt', n: '模的秩序', d: '费马小定理 × 中国剩余定理', e: { num: .26, com: .12 } },
-      { a: 'rsq', b: 'pell', n: '从剩余到佩尔', d: '二次剩余 × 佩尔方程', e: { num: .26, alg: .12 } },
-      { a: 'area', b: 'cgeo', n: '面积与离散', d: '面积方法 × 组合几何', e: { geo: .2, com: .16 } },
-      { a: 'nerve', b: 'mock', n: '心手相应', d: '考场心态 × 全真模拟', e: { gen: .2, will: .4 } },
-      { a: 'sleep', b: 'eve', n: '透支与偿还', d: '通宵 × 补觉（只还得起六成）', e: { will: .3 } }
+      { a: 'fac', b: 'ind', n: '变形与归纳', d: '因式分解 × 数学归纳法', e: { alg: .40, gen: .30 } },
+      { a: 'ineq', b: 'gineq', n: '对称之美', d: '不等式 × 几何不等式', e: { alg: .24, geo: .24, gen: .14 } },
+      { a: 'congr', b: 'graph', n: '离散双修', d: '同余 × 图论', e: { num: .30, com: .30 } },
+      { a: 'graph', b: 'cgeo', n: '点线成图', d: '图论 × 组合几何', e: { com: .38, geo: .34 } },
+      { a: 'strat', b: 'mock', n: '实战检验', d: '策略 × 全真模拟', e: { gen: .42, alg: .16, com: .16 } },
+      { a: 'poly', b: 'gf', n: '系数之眼', d: '多项式 × 母函数', e: { alg: .34, com: .30 } },
+      { a: 'inv', b: 'color', n: '不变量之刃', d: '不变量 × 染色', e: { com: .42, gen: .28 } },
+      { a: 'walk', b: 'notes', n: '张弛有度', d: '散步 × 错题本', e: { will: .85, gen: .24 } },
+      { a: 'plgeo', b: 'ana', n: '双面几何', d: '平面几何 × 解析几何', e: { geo: .42, alg: .30 } },
+      { a: 'prime', b: 'cons', n: '构造素数', d: '素数 × 构造法', e: { num: .34, com: .26 } },
+      { a: 'fermat', b: 'crt', n: '模的秩序', d: '费马小定理 × 中国剩余定理', e: { num: .44, com: .26 } },
+      { a: 'rsq', b: 'pell', n: '从剩余到佩尔', d: '二次剩余 × 佩尔方程', e: { num: .44, alg: .26 } },
+      { a: 'area', b: 'cgeo', n: '面积与离散', d: '面积方法 × 组合几何', e: { geo: .32, com: .28 } },
+      { a: 'nerve', b: 'mock', n: '心手相应', d: '考场心态 × 全真模拟', e: { gen: .28, will: .7 } },
+      { a: 'sleep', b: 'eve', n: '透支与偿还', d: '通宵 × 补觉（只还得起六成）', e: { will: .8, gen: .18 } },
+      { a: 'gineq2', b: 'trig', n: '三角与极值', d: '三角不等式 × 三角函数', e: { geo: .34, alg: .20 } },
+      { a: 'invert', b: 'plgeo', n: '反演之眼', d: '反演 × 平面几何', e: { geo: .38, gen: .20 } }
     ];
+    ;
 
     const ADJ = { alg: ['geo', 'num'], geo: ['alg', 'com'], num: ['alg', 'com'], com: ['num', 'geo'], gen: ['alg', 'com'], rest: [] };
 
     /* 赛事：资格链。req 为各模块要求，focus 为侧重模块（权重 1.5） */
     const COMPS = [
-      { id: 'c1', n: '校内选拔', y: 1, mo: 10, focus: ['alg'], req: { alg: 3.6, geo: 2.9 }, desc: '教研组的三位老教师坐在后排，笔尖不停。' },
-      { id: 'c2', n: '市级竞赛', y: 2, mo: 3, focus: ['alg', 'geo'], req: { alg: 4.4, geo: 3.8, num: 3.4 }, desc: '阶梯教室里坐满了各校的种子选手。' },
-      { id: 'c3', n: '省级联赛·一试', y: 2, mo: 5, focus: ['alg', 'geo'], req: { alg: 5.0, geo: 4.4, num: 4.0, com: 3.6 }, desc: '八道填空题，两道解答题，时间紧得像绞索。' },
-      { id: 'c4', n: '省级联赛·加试', y: 2, mo: 9, focus: ['geo', 'com'], req: { alg: 5.4, geo: 4.9, num: 4.3, com: 4.1 }, desc: '四道大题，每一道都足以让人手心出汗。' },
-      { id: 'c5', n: '全国高中数学联赛', y: 3, mo: 10, focus: ['num', 'com'], req: { alg: 5.9, geo: 5.3, num: 4.9, com: 4.6, gen: 4.2 }, desc: '全省最强的三百人，在同一张卷子前低头。' },
-      { id: 'c6', n: '中国数学奥林匹克', y: 3, mo: 11, focus: ['com', 'num'], req: { alg: 6.4, geo: 5.8, num: 5.5, com: 5.2, gen: 4.8 }, desc: 'CMO。两天，六道题，一次成名的机会。' },
-      { id: 'c7', n: '国家集训队选拔', y: 4, mo: 3, focus: ['com', 'geo'], req: { alg: 6.9, geo: 6.3, num: 6.0, com: 5.8, gen: 5.4 }, desc: '六十进六。每一分都在刀尖上。' },
-      { id: 'c8', n: '国际数学奥林匹克', y: 4, mo: 7, focus: ['alg', 'geo', 'num', 'com'], req: { alg: 7.4, geo: 6.8, num: 6.5, com: 6.3, gen: 6.0 }, desc: 'IMO。世界的屋顶，风很大。' }
+      { id: 'c1', n: '校内选拔', y: 1, mo: 10, focus: ['alg'], req: { alg: 3.71, geo: 2.99 }, desc: '教研组的三位老教师坐在后排，笔尖不停。' },
+      { id: 'c2', n: '市级竞赛', y: 2, mo: 3, focus: ['alg', 'geo'], req: { alg: 4.74, geo: 4.02, num: 3.61 }, desc: '阶梯教室里坐满了各校的种子选手。' },
+      { id: 'c3', n: '省级联赛·一试', y: 2, mo: 5, focus: ['alg', 'geo'], req: { alg: 5.36, geo: 4.74, num: 4.33, com: 3.91 }, desc: '八道填空题，两道解答题，时间紧得像绞索。' },
+      { id: 'c4', n: '省级联赛·加试', y: 2, mo: 9, focus: ['geo', 'com'], req: { alg: 6.08, geo: 5.36, num: 4.84, com: 4.53 }, desc: '四道大题，每一道都足以让人手心出汗。' },
+      { id: 'c5', n: '全国高中数学联赛', y: 3, mo: 10, focus: ['num', 'com'], req: { alg: 7.21, geo: 6.49, num: 6.18, com: 5.77, gen: 5.15 }, desc: '全省最强的三百人，在同一张卷子前低头。' },
+      { id: 'c6', n: '中国数学奥林匹克', y: 3, mo: 11, focus: ['com', 'num'], req: { alg: 8.03, geo: 7.21, num: 6.8, com: 6.49, gen: 5.87 }, desc: 'CMO。两天，六道题，一次成名的机会。' },
+      { id: 'c7', n: '国家集训队选拔', y: 4, mo: 3, focus: ['com', 'geo'], req: { alg: 8.65, geo: 7.83, num: 7.42, com: 7.11, gen: 6.49 }, desc: '六十进六。每一分都在刀尖上。' },
+      { id: 'c8', n: '国际数学奥林匹克', y: 4, mo: 7, focus: ['alg', 'geo', 'num', 'com'], req: { alg: 9.27, geo: 8.45, num: 8.03, com: 7.73, gen: 7.11 }, desc: 'IMO。世界的屋顶，风很大。' }
     ];
     COMPS.forEach((c, i) => { c.idx = i; });
 
@@ -4500,6 +4838,9 @@
       relMin: 10,              // 全程师生最低值
       skills: {},              // 本学年教练技能使用情况
       skillYear: 1,
+      cycUsed: 0,              // 本学年已换掉的牌数（上限 6）
+      cycKey: -1,              // 上次换牌是哪一年哪一月（year*12+month），每月只许一次
+      cycYear: 1,
       planBuff: 0,             // 战术分析：下一场软判定加成
       rescue: { used: 0, last: -99, missed: 0 },  // 救援对话
       evtLast: '',             // 上月事件，避免连续重复
@@ -4512,6 +4853,7 @@
       stage: 'intro',          // intro / rescue / event / hand / settling
       holPick: null,           // 七月已抽出的三张假期牌 id
       holSel: null,            // 七月已选中的下标
+      holYear: null,           // 上面这两样是哪一年的（跨年作废）
       pend: null,              // 月末结算暂存（已算好、待应用）
       evtPick: null,           // 月度事件已抽出的三张（id + 效果）
       evtDone: -1,             // 已结算过事件的月份（year*12+month）
@@ -4522,6 +4864,8 @@
     let deck = [], discard = [], hand = [], selected = [];
     let soundOn = true;
     let busy = false;
+    let starting = false;      // 开局选人：连点只认第一次
+    let clickGate = 0;         // 连点闸门：教程/气泡一次点击只推进一步
     let resumeData = null;
 
     /* ==================================================================
@@ -4531,17 +4875,23 @@
       let ctx = null, master = null, noiseBuf = null, ambMaster = null;
       /* 背景音与音效分两路：玩家各调各的，互不牵连 */
       const AMB_MAX = 0.096;                 // 背景音 100% 时的目标增益（50 档 ≈ 原来的响度）
-      let ambVol = 0.5, sfxVol = 1;
+      /* 音效：滑条 50 = 现在这个响度（基准），100 = 两倍。
+         这样默认值落在中间，玩家往上还有余量 */
+      const SFX_UNIT = 0.5;
+      const SFX_BASE = 0.92;                 // 滑条 50 时 master 的增益
+      let ambVol = 0.5, sfxVol = SFX_UNIT;
       try {
         const av = parseFloat(localStorage.getItem('cmo_amb_vol'));
         if (isFinite(av)) ambVol = Math.max(0, Math.min(1, av));
-        const sv = parseFloat(localStorage.getItem('cmo_sfx_vol'));
+        const sv = parseFloat(localStorage.getItem('cmo_sfx_vol2'));
         if (isFinite(sv)) sfxVol = Math.max(0, Math.min(1, sv));
       } catch (e) { }
+      /* 外部音频（ogg）用的倍率：50 档 = 1.0，100 档 = 2.0 */
+      function sfxGain() { return Math.max(0, sfxVol / SFX_UNIT); }
       function persistVol() {
         try {
           localStorage.setItem('cmo_amb_vol', String(ambVol));
-          localStorage.setItem('cmo_sfx_vol', String(sfxVol));
+          localStorage.setItem('cmo_sfx_vol2', String(sfxVol));
         } catch (e) { }
       }
       function ensure() {
@@ -4557,7 +4907,7 @@
         comp.release.value = 0.22;
         comp.connect(ctx.destination);
         master = ctx.createGain();
-        master.gain.value = 0.92 * sfxVol;
+        master.gain.value = Math.min(1.85, SFX_BASE * sfxGain());
         master.connect(comp);
         ambMaster = ctx.createGain();
         ambMaster.gain.value = 1;
@@ -4659,7 +5009,7 @@
       function setSfxVol(v) {
         sfxVol = Math.max(0, Math.min(1, v));
         persistVol();
-        if (master && ctx) master.gain.setTargetAtTime(0.92 * sfxVol, ctx.currentTime, .2);
+        if (master && ctx) master.gain.setTargetAtTime(Math.min(1.85, SFX_BASE * sfxGain()), ctx.currentTime, .2);
       }
 
       return {
@@ -4667,13 +5017,21 @@
         ambience,
         setAmbVol,
         setSfxVol,
+        sfxGain,
         vol() { return { amb: ambVol, sfx: sfxVol }; },
         type() { // 机械打字：短促摩擦 + 金属锤击（压低两档，更像老式打字机）
           noise(0.055, 1420 + Math.random() * 680, 1.6, 0.075);
           tone(92 + Math.random() * 42, 0.062, 0.085, 'square');
         },
         tick() { noise(0.035, 2600, 2.2, 0.08); tone(620, 0.045, 0.055, 'triangle'); },
-        deal() { noise(0.18, 900, 0.8, 0.085, 'lowpass'); tone(320, 0.09, 0.03, 'sine'); },
+        deal() { noise(0.18, 900, 0.8, 0.135, 'lowpass'); tone(320, 0.09, 0.046, 'sine'); },
+        /* 翻牌：一声纸背划过的风，尾音带一点木头的轻响 */
+        flip() {
+          noise(0.2, 1180, 0.65, 0.13);
+          setTimeout(() => noise(0.14, 2350, 1.5, 0.08), 52);
+          tone(560, 0.07, 0.04, 'triangle');
+          setTimeout(() => tone(784, 0.08, 0.028, 'sine'), 76);
+        },
         play() {
           noise(0.32, 420, 0.7, 0.15, 'lowpass');
           tone(220, 0.2, 0.1, 'sine');
@@ -4714,9 +5072,13 @@
         chime: 'sound/Sfx_Scenario_057 School chime.ogg',   // 学期开始：上课钟
         paper: 'sound/Sfx_Scenario_066 Touch paper.ogg',    // 月份结束：翻纸
         tea: 'sound/Sfx_Scenario_031 Tea.ogg',              // 养息牌：一杯茶
-        noise: 'sound/Sfx_Scenario_074 Noise.ogg'           // 对话：随机环境碎响
+        noise: 'sound/Sfx_Scenario_074 Noise.ogg',          // 对话：随机环境碎响
+        bell: 'sound/Sfx_Scenario_033 Bell sound.ogg'       // 开考：考铃
       };
-      const VOL = { chime: 0.4, paper: 0.36, tea: 0.66, noise: 0.44 };
+      /* 基准音量（滑条 50 时的响度）。按每个文件实测的平均响度配平过：
+         tea 平均只有 −37.9dB，翻纸只有 0.3 秒，都必须给足才听得见；
+         上课钟与考铃本身够响，反而要收一点，免得盖住对白。 */
+      const VOL = { chime: 0.55, paper: 0.92, tea: 0.95, noise: 0.5, bell: 0.62 };
       const pool = {};
 
       function make(k) {
@@ -4739,13 +5101,14 @@
         if (!(k in pool)) pool[k] = make(k);
         const a = pool[k];
         if (!a) {
-          /* 文件不在：上课钟用合成钟声兜底，其余静音 */
-          if (k === 'chime') SFX.bell();
+          /* 文件不在：钟声 / 考铃用合成钟声兜底，其余静音 */
+          if (k === 'chime' || k === 'bell') SFX.bell();
           return;
         }
         try {
-          /* 每次微调音量与音高，重复播放时不至于像复读机 */
-          const v = VOL[k] * (opt.vol || 1) * (0.88 + Math.random() * 0.24);
+          /* 每次微调音量与音高，重复播放时不至于像复读机。
+             外部音效也吃「音效」滑条：50 = 基准，100 = 两倍 */
+          const v = VOL[k] * SFX.sfxGain() * (opt.vol || 1) * (0.88 + Math.random() * 0.24);
           a.volume = Math.max(0, Math.min(1, v));
           a.playbackRate = opt.rate || 1;
           a.currentTime = 0;
@@ -4962,7 +5325,7 @@
           <div class="v-ico"><span>${v.g || '◆'}</span></div>
           <div class="v-body">
             <div class="v-top"><span class="v-name">${v.n}</span><span class="v-num">${val.toFixed(1)}</span></div>
-            <div class="v-track">${segs}</div>
+            <div class="v-bar">${segs}</div>
           </div>
         </div>`;
       }).join('');
@@ -5051,46 +5414,53 @@
 
     function compGap(c) { return (c.y - G.year) * 12 + (c.mo - G.month); }
 
-    /* 最后一个还能开赛的月份：第 4 年 11 月 */
+    /* 最后一个还能开赛的月份：第 4 年 11 月。
+       每失败一次，整条赛程连同期限一起后移半年——输了就多读半年，
+       而不是"一次失手，四年白费" */
     const DEADLINE = 4 * 12 + 11;
+    function deadlineOf() { return DEADLINE + (G.delay || 0); }
 
     function canStillComp() {
       const c = COMPS[G.pass];
       if (!c) return false;
       const o = occurOf(c);
-      return o.y * 12 + o.mo <= DEADLINE;
+      return o.y * 12 + o.mo <= deadlineOf();
     }
 
     /* 硬门槛 + 软判定：
-       · 硬：任一科低于需求的 85% 即「未达标」，每差一项胜算 ×0.55
+       · 硬：最弱那一科离需求越远，扣得越多——但是连续扣，不再一刀砍半
        · 软：加权达标度 + 状态乘数 + 战术分析 + 随机（仅开赛时掷） */
     function compEval(c, roll) {
       const keys = Object.keys(c.req);
-      let sum = 0, wsum = 0, hard = 1;
+      let sum = 0, wsum = 0;
       const missing = [];
+      let minR = 9;
       keys.forEach(k => {
         const w = (c.focus || []).indexOf(k) >= 0 ? 1.5 : 1;
         const r = G.attrs[k] / c.req[k];
+        if (r < minR) minR = r;
         if (G.attrs[k] < c.req[k] * 0.85) {
-          hard *= 0.55;
           missing.push({ k, gap: c.req[k] * 0.85 - G.attrs[k] });
         }
         sum += clamp(r, 0.05, 1.35) * w;
         wsum += w;
       });
       const ratio = sum / wsum;
-      let soft = (ratio - 1) * 1.15 + (stateMul() - 0.86) * 1.4 + (G.planBuff || 0) + relSoft();
-      if (G.review) soft += 0.12;
+      /* 短板连续惩罚：刚好达标不罚，差 15% 打八折，差 30% 打到六折，再往下封底 */
+      const hard = clamp(0.60 + (minR - 0.72) * 1.55, 0.55, 1);
+      let soft = (ratio - 1) * 1.15 + (stateMul() - 0.86) * 1.1 + (G.planBuff || 0) + relSoft();
+      if (G.review) soft += 0.06;
+      if (G.pity) soft += Math.min(0.18, G.pity * 0.06);   // 连败保底：摔过两次的人，运气也该轮到他了
       if (roll) soft += Math.random() * 0.2 - 0.1;
-      const ch = clamp((0.56 + soft * 0.62) * hard, 0.04, 0.95);
-      return { ch, ratio, missing, hard };
+      const ch = clamp((0.44 + soft * 0.80) * hard, 0.03, 0.97);
+      return { ch, ratio, missing, hard, minR };
     }
 
     function chanceOf(c, roll) { return compEval(c, !!roll).ch; }
 
     function tierOf(ch) {
-      if (ch >= .70) return { k: '稳', c: '#9ac48f', v: .84 };
-      if (ch >= .40) return { k: '有希望', c: '#e3bd76', v: .56 };
+      if (ch >= .66) return { k: '稳', c: '#9ac48f', v: .84 };
+      if (ch >= .38) return { k: '有希望', c: '#e3bd76', v: .56 };
       return { k: '悬', c: '#c0675a', v: .22 };
     }
 
@@ -5317,12 +5687,124 @@
     ================================================================== */
     const handEl = $('#hand');
 
-    function drawCard() {
+    /* 发牌权重：越「读得动」的牌越容易被发到，
+       让手牌跟着学生的进度往上走，而不是一直摊着啃不动的书 */
+    function cardWeight(c) {
+      if (c.coach) return 0;
+      const mst = G.mastery[c.id] || 0;
+      let w;
+      if (c.pre && c.pre.length) {
+        w = hasPre(c) ? 3.4 : 1.2;      // 前置已通：优先；前置未通：也得常见到
+      } else {
+        w = 1.0;                        // 基础牌
+      }
+      /* 养息牌是续航，不是主食：手里一张都没有时正常发，有一张之后就该让位给书 */
+      if (c.kind === 'r') w *= hand.some(h => h.m === 'rest') ? 0.16 : 0.9;
+      if (mst >= 2) w *= 0.32;          // 快读完了 / 已精读：降温
+      else if (mst === 1) w *= 0.72;
+      if (isLocked(c)) w *= 0.55;       // 精研卷：师生不够时少发
+      return Math.max(0.05, w);
+    }
+
+    function deckOpenIdx() {
+      const out = [];
+      for (let i = 0; i < deck.length; i++) if (hasPre(deck[i])) out.push(i);
+      return out;
+    }
+
+    /* 手里一张「还读不动」的都没有时，从牌库里挑一张最接近解锁的：
+       前置已读的比例越高越优先，前置越短越优先，低阶牌优先。
+       这样塞过来的是「再读两本就能上手」的牌，不是三年后才用得上的死牌。 */
+    function pickLockedIdx() {
+      let best = -1, bestScore = -1e9;
+      for (let i = 0; i < deck.length; i++) {
+        const c = deck[i];
+        if (c.coach || hasPre(c)) continue;
+        const pre = c.pre || [];
+        const got = pre.filter(id => (G.mastery[id] || 0) >= 1).length;
+        const score = (got / Math.max(1, pre.length)) * 10
+          - pre.length * 0.55
+          + (c.tier <= 2 ? 1.4 : 0);
+        if (score > bestScore) { bestScore = score; best = i; }
+      }
+      return best;
+    }
+
+    function drawCard(opt) {
+      opt = opt || {};
       if (!deck.length) {
         if (!discard.length) return null;
         deck = discard.splice(0).sort(() => Math.random() - 0.5);
       }
-      return deck.pop();
+      /* 手牌里至少要有一张「还读不动」的牌：它占着位置，提醒你进度在哪，
+         也逼你在「读得动但现在不划算」和「读不动但必须开始」之间做选择。
+         换牌时不强制——玩家刚换走一张，不该立刻又塞回来一张。 */
+      if (!opt.free) {
+        /* 只在"整手一张都读不动"时兜底：先补一张读得动的，实在没有才塞最接近的。
+           平时不硬塞废牌占位——牌库里本来就有 1.2 的权重，它们会自然出现。 */
+        const aliveN = hand.filter(c => c.coach || hasPre(c)).length;
+        if (aliveN < 1) {
+          const oi = deckOpenIdx();
+          if (oi.length) return deck.splice(oi[(Math.random() * oi.length) | 0], 1)[0];
+          const li = pickLockedIdx();
+          if (li >= 0) return deck.splice(li, 1)[0];
+        }
+      }
+
+      /* 再圈出「读得动」的牌：没有前置，或前置已通。 */
+      let open = deckOpenIdx();
+      /* 牌库里能读的牌快没了：从弃牌堆里捞几张回来，
+         而不是硬把啃不动的书塞给他 */
+      if (open.length < 2 && discard.length) {
+        /* 手上正拿着的牌别捞回来：一手牌里不该出现两本一样的书 */
+        const pool = discard.filter(c => hasPre(c) && hand.indexOf(c) < 0);
+        const fresh = pool.filter(c => (G.mastery[c.id] || 0) < 2);
+        const back = (fresh.length ? fresh : pool)
+          .sort(() => Math.random() - 0.5)
+          .sort((a, b) => (G.mastery[a.id] || 0) - (G.mastery[b.id] || 0))
+          .slice(0, 4);
+        back.forEach(c => {
+          const di = discard.indexOf(c);
+          if (di >= 0) discard.splice(di, 1);
+          deck.push(c);
+        });
+        if (back.length) open = deckOpenIdx();
+      }
+      /* 从「读得动」的池子里抽的概率。池子越大越稳，但也留出足够的全库抽，
+         不然手牌永远是挑好的，一点意外都没有 */
+      const bias = open.length >= 8 ? 0.62 : open.length >= 5 ? 0.44 : 0.3;
+      let cand = open;
+      if (!open.length || Math.random() >= bias) {
+        cand = [];
+        for (let i = 0; i < deck.length; i++) cand.push(i);
+      }
+      /* 手里已经躺着两张养息牌：这一张不再发养息，除非牌库里只剩它 */
+      const restN = hand.filter(c => c.m === 'rest').length;
+      if (restN >= 2) {
+        const noRest = cand.filter(i => deck[i].m !== 'rest');
+        if (noRest.length) cand = noRest;
+      }
+      /* 反过来也一样：手里已经有两张读不动的牌，这一张就只发读得动的。
+         不然开局第一手就是四本啃不动的书，玩家只能干看着 */
+      const deadN2 = hand.filter(c => !c.coach && !hasPre(c)).length;
+      if (deadN2 >= 2) {
+        const alive = cand.filter(i => hasPre(deck[i]));
+        if (alive.length) cand = alive;
+      }
+      /* 再在候选里按权重抽：累加总权重，掷一次骰子定位 */
+      let total = 0;
+      const w = new Array(cand.length);
+      for (let j = 0; j < cand.length; j++) {
+        w[j] = cardWeight(deck[cand[j]]);
+        total += w[j];
+      }
+      if (total <= 0) return deck.pop();
+      let r = Math.random() * total, k = cand[cand.length - 1];
+      for (let j = 0; j < cand.length; j++) {
+        r -= w[j];
+        if (r <= 0) { k = cand[j]; break; }
+      }
+      return deck.splice(k, 1)[0];
     }
 
     function hasPre(card) {
@@ -5346,6 +5828,15 @@
       cards.forEach(c => { if (!c.coach) e += (c.cost || 0); });
       if (cards.length === 2) e += 1;
       return e;
+    }
+
+    /* 教法文案：科目多的时候折成一句，别把卡面撑破 */
+    function pasText(card) {
+      const ks = Object.keys(card.pas || {});
+      if (!ks.length) return '';
+      if (ks.length >= 5) return `全科+${Math.round(card.pas[ks[0]] * 100)}%`;
+      const head = ks.slice(0, 2).map(k => `${ATTR_NAME[k] || (MODS[k] && MODS[k].n) || k}+${Math.round(card.pas[k] * 100)}%`).join(' ');
+      return ks.length > 2 ? `${head} 等${ks.length}项` : head;
     }
 
     function cardEl(card) {
@@ -5383,6 +5874,13 @@
       const wrap = document.createElement('div');
       wrap.className = 'card-wrap' + (locked ? ' locked' : '');
       wrap.dataset.id = card.id;
+      /* 悬停看效率：把"这张牌值不值"从感觉变成数字。养息牌不谈效率 */
+      if (card.m !== 'rest') {
+        const _u = DUR[card.dur].u, _sum = ATTRS.reduce((a, k) => a + Math.max(0, card.e[k] || 0), 0);
+        wrap.title = `${card.t}\n每格时间 ${(_sum / _u).toFixed(2)} 点属性\n每点精力 ${(_sum / (card.cost || 1)).toFixed(2)} 点属性`;
+      } else {
+        wrap.title = `${card.t}\n意志 ${(card.e.will || 0).toFixed(2)} · 健康 ${(card.e.hp || 0).toFixed(2)} · 师生 ${(card.e.rel || 0).toFixed(2)}`;
+      }
       const note = locked ? '师生不足' : (preOk ? '' : '前置未通');
       const dots = [0, 1, 2].map(i => `<i class="${i < mast ? 'on' : ''}"></i>`).join('');
       wrap.innerHTML = `
@@ -5394,6 +5892,7 @@
               <span class="c-badges"><i>🕒${DUR[card.dur].u}</i><i class="${card.en ? 'plus' : ''}">⚡${card.cost || 0}</i></span>
             </div>
             <div class="c-title">${esc(card.t)}</div>
+            ${card.pas ? `<div class="c-pas" title="首次读懂后永久生效">教法 · ${pasText(card)}</div>` : ''}
             <div class="c-flavor">${esc(card.f)}</div>
             <div class="c-bot">
               <span class="c-kind ${card.kind}">${KIND[card.kind]}</span>
@@ -5416,7 +5915,10 @@
       const cw = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cw')) || 164;
       const usable = Math.min(W * 0.9, 1280);
       const spread = selected.length ? 1.1 : 1;
-      const spacing = n > 1 ? Math.min(cw * 0.84 * spread, usable / (n - 1)) : 0;
+      /* 扇形总宽不能超过可用宽度：扣掉一张牌宽，再扣掉两端旋转外溢的余量。
+         手牌涨到 7 张（6 + 教练）之后，原来的算法会把两端推出屏幕 */
+      const room = Math.max(cw * 0.42, usable - cw - 96);
+      const spacing = n > 1 ? Math.min(cw * 0.84 * spread, room / (n - 1)) : 0;
       // 总张角随牌数增长，单张最多 9°，整体不超过 40°
       const step = n > 1 ? clamp(40 / (n - 1), 4.5, 9) : 0;
       return Array.from({ length: n }, (_, i) => {
@@ -5498,7 +6000,7 @@
     }
 
     function syncButtons() {
-      const play = $('#btn-play'), end = $('#btn-end');
+      const play = $('#btn-play'), end = $('#btn-end'), cyc = $('#btn-cyc');
       const L = TUT.lock;
       const canHand = L === 'none' || L === 'select' || L === 'play';
       const canPlay = L === 'none' || L === 'play';
@@ -5515,6 +6017,21 @@
       play.textContent = selected.length === 2 ? '联 动 打 出' : '打 出';
       end.disabled = !(G.mode === 'hand' && !busy && canEnd);
       end.textContent = calLeft() > 0 ? '提前结束本月' : '结 束 本 月';
+
+      const cycUsedThisMonth = cycThisMonth();
+      const canCyc = G.mode === 'hand' && !busy && L === 'none'
+        && selected.length === 1 && !selected[0].coach && cycLeft() > 0 && !cycUsedThisMonth;
+      if (cyc) {
+        cyc.disabled = !canCyc;
+        cyc.textContent = cycLeft() > 0 ? `换 牌 ${cycLeft()}` : '换 牌 0';
+        cyc.title = cycLeft() <= 0
+          ? '这一学年的 6 次换牌用完了 · 明年一月再补'
+          : cycUsedThisMonth
+            ? '本月已经换过一次了 · 每月只能换一张'
+            : (selected.length === 1 && !selected[0].coach)
+              ? '把这张牌弃回牌库，立刻补一张（本学年还剩 ' + cycLeft() + ' 次，每月一次）'
+              : '先点一张牌，再换（本学年 6 次，每月一次）';
+      }
     }
 
     /* ==================================================================
@@ -5547,7 +6064,7 @@
 
     let token = 0;
     function floatResult(lines) {
-      const box = $('#float');
+      const box = $('#verdict');
       const my = ++token;
       const board = $('#board');
       box.classList.toggle('up', $('#coach').classList.contains('on'));
@@ -5682,7 +6199,7 @@
     function setMode(mode) {
       G.mode = mode;
       const adv = mode === 'adv';
-      $('#layer-adv').classList.toggle('on', adv);
+      $('#layer-dlg').classList.toggle('on', adv);
       $('#layer-hand').classList.toggle('on', !adv);
       const sk = $('#ui-skills');
       if (sk) sk.classList.toggle('off', adv);
@@ -5695,17 +6212,17 @@
     /* ==================================================================
        9. ADV 对话
     ================================================================== */
-    const ADV = { typing: false, finish: null, waiter: null };
+    const ADV = { typing: false, finish: null, waiter: null, lockUntil: 0, shownAt: 0 };
 
     function setSpeaker(s) {
-      const el = $('#adv-speaker');
+      const el = $('#dlg-speaker');
       el.textContent = s === 'cmo_UwU' ? 'cmo_UwU' : s;
-      el.className = 'adv-speaker' + (s === 'cmo_UwU' ? ' student' : s === '教练' ? ' coach' : '');
+      el.className = 'dlg-speaker' + (s === 'cmo_UwU' ? ' student' : s === '教练' ? ' coach' : '');
     }
 
     function typeLine(text, isNarr) {
       return new Promise(res => {
-        const el = $('#adv-text');
+        const el = $('#dlg-text');
         let i = 0, done = false, timer = null;
         ADV.typing = true;
         const paint = n => {
@@ -5722,7 +6239,9 @@
           res();
         };
         ADV.finish = finish;
-        paint(0);
+        /* 起手先落两个字：连点时不会出现「空框闪一下」的抽搐感 */
+        i = Math.min(2, text.length);
+        paint(i);
         const step = () => {
           if (done) return;
           if (i >= text.length) return finish();
@@ -5741,18 +6260,29 @@
     function waitAdvClick() {
       return new Promise(res => {
         ADV.waiter = res;
-        $('#adv-next').classList.add('show');
+        ADV.shownAt = Date.now();
+        $('#dlg-next').classList.add('show');
       });
     }
 
+    /* 一次点击只做一件事：先补完打字，再翻行。中间留出冷却，
+       否则狂点会变成「满字 → 空框 → 满字」的高频闪烁。 */
     function onAdvClick() {
       if (G.mode !== 'adv') return;
       if (manualEl || Date.now() < mnGuard) return;
-      if (ADV.typing && ADV.finish) { ADV.finish(); return; }
+      const now = Date.now();
+      if (now < ADV.lockUntil) return;
+      if (ADV.typing && ADV.finish) {
+        ADV.finish();
+        ADV.lockUntil = now + 220;
+        return;
+      }
       if (ADV.waiter) {
+        if (now - ADV.shownAt < 150) return;   // 这一行至少露 150ms
         const w = ADV.waiter;
         ADV.waiter = null;
-        $('#adv-next').classList.remove('show');
+        ADV.lockUntil = now + 120;
+        $('#dlg-next').classList.remove('show');
         w();
       }
     }
@@ -5766,7 +6296,7 @@
       for (const ln of lines) {
         if (my !== scriptSeq) return;
         setSpeaker(ln.s);
-        $('#adv-next').classList.remove('show');
+        $('#dlg-next').classList.remove('show');
         if (ln.spot) spotOn(ln.spot); else spotOff();
         /* 偶尔垫一层环境碎响，让对话不那么干 */
         if (Math.random() < 0.24) {
@@ -5888,7 +6418,14 @@
       { id: 'gaokao', n: '高考抉择', k: 'time', force: () => G.year === 1 && G.month === 6, t: '班主任把高考志愿表放在他桌上，说：想清楚再填。', eff: () => (G.rel >= 5 ? { rel: .5, will: .5 } : { rel: -.8, will: -.5 }), note: () => (G.rel >= 5 ? '他先来问你的意见。' : '他一个人填完了，没跟你说。') },
       { id: 'camp', n: '外省训练营', k: 'time', force: () => G.year === 2 && G.month === 7, t: '外省有个高水平训练营，名额只有一个，要占掉半个月。', eff: () => ({ [pick(ATTRS)]: .8, will: -.6 }), slot: 2 },
       { id: 'school', n: '学校活动', k: 'time', cond: () => G.month === 4 && Math.random() < 0.3, t: '校庆排练，他被拉去当班级代表，推不掉。', eff: () => ({ rel: .3 }), slot: 2 },
-      { id: 'prize', n: '竞赛奖金', k: 'special', cond: () => G.lastWin && Math.random() < 0.3, t: '学校发了一笔竞赛奖金，他全买了书。', eff: () => ({ hp: .5, will: .3, rel: .2 }) }
+      { id: 'prize', n: '竞赛奖金', k: 'special', cond: () => G.lastWin && Math.random() < 0.3, t: '学校发了一笔竞赛奖金，他全买了书。', eff: () => ({ hp: .5, will: .3, rel: .2 }) },
+
+      /* ---- 会削能力的凶签：不是扣状态，是把已经学到的东西磨掉一层 ---- */
+      { id: 'wrist', n: '手腕扭伤', k: 'bad', t: '打球时崴了右手腕，缠着绷带。他试着握笔，写出来的字歪歪扭扭。', eff: () => ({ hp: -.8, alg: -.22 }), inten: -1 },
+      { id: 'lostbook', n: '错题本丢了', k: 'bad', t: '那本写满批注的错题本怎么也找不到了。他翻遍了整个书包，坐在椅子上发呆。', eff: () => ({ num: -.26, com: -.2, will: -.3 }) },
+      { id: 'plateau', n: '方法走偏', k: 'bad', t: '他迷上了一种花哨的解法，越练越偏。正经题反而慢了半拍。', eff: () => ({ alg: -.2, gen: -.25 }) },
+      { id: 'burnout', n: '学到麻木', k: 'bad', t: '连着三周，他做题时眼睛是空的。你说什么他都点头，转头就忘。', eff: () => ({ gen: -.3, will: -.5 }) },
+      { id: 'overwork', n: '透支', k: 'bad', t: '熬夜熬到第三个月，他开始记不住东西。昨天讲过的定理，今天像新的。', eff: () => ({ gen: -.3, hp: -.6, will: -.4 }) }
     ];
 
     function sumAttrs() { return ATTRS.reduce((a, k) => a + G.attrs[k], 0); }
@@ -5906,23 +6443,23 @@
       // 属性卡 + 养息卡
       if (am === 'rest' || bm === 'rest') {
         const train = am === 'rest' ? b : a;
-        const e = { will: .3 };
-        ATTRS.forEach(k => { if ((train.e[k] || 0) > 0) e[k] = .1; });
+        const e = { will: .32 };
+        ATTRS.forEach(k => { if ((train.e[k] || 0) > 0) e[k] = .12; });
         return { n: '张弛有度', d: '训练 × 养息', e };
       }
-      // 同模块
+      /* 同模块：两张同方向的书互相印证，是通用组合里最强的一档 */
       if (am === bm) {
-        const e = { gen: .12 };
-        ATTRS.forEach(k => { if ((a.e[k] || 0) + (b.e[k] || 0) > 0.5) e[k] = .16; });
+        const e = { gen: .16 };
+        ATTRS.forEach(k => { if ((a.e[k] || 0) + (b.e[k] || 0) > 0.5) e[k] = .40; });
         return { n: '专题精读', d: `${MODS[am].n} × ${MODS[bm].n}`, e };
       }
       // 相邻模块
       if ((ADJ[am] || []).indexOf(bm) >= 0) {
-        const e = { gen: .1 };
-        e[am] = .12; e[bm] = .12;
+        const e = { gen: .12 };
+        e[am] = .14; e[bm] = .14;
         return { n: '交叉视角', d: `${MODS[am].n} × ${MODS[bm].n}`, e };
       }
-      return { n: '同席共读', d: '两张不同方向的书', e: { gen: .08 } };
+      return { n: '同席共读', d: '两张不同方向的书', e: { gen: .15 } };
     }
 
     /* ---------- 画像 / 状态 / 强度 ---------- */
@@ -5977,6 +6514,10 @@
       const mood = stateMul() * intenFactor() * (inCold() ? 0.5 : 1);
       const weakHp = hpTierOf() === 'weak';
       let preMissing = false;
+      /* 两张学习牌并进不再额外打折：协同本身随阶数缩放，
+         入门书凑对只是小补，精研卷凑对才值钱 */
+      const bothStudy = cards.length === 2 && cards.every(c => c.m !== 'rest' && c.m !== 'coach');
+      const linkMul = 1;
 
       cards.forEach(c => {
         const mast = G.mastery[c.id] || 0;
@@ -5985,13 +6526,13 @@
         if (!preOk) preMissing = true;
         const preMul = preOk ? 1 : 0.5;
         const tMul = profileMul(c.m);          // 因材施教
-        const pMul = 1 + (G.pas[c.m] || 0);    // 方法牌的教法复利
+        const pMul = Math.min(1.3, 1 + (G.pas[c.m] || 0));   // 教法复利，封顶 +30%
         for (const k in c.e) {
           const v = c.e[k];
           let val;
           if (v > 0) {
-            val = v * mood * mm * preMul * tMul * pMul;
-            if (ATTRS.includes(k)) val *= Math.max(0.22, 1 - G.attrs[k] / 13.5);
+            val = v * mood * mm * preMul * tMul * pMul * linkMul;
+            if (ATTRS.includes(k)) val *= Math.max(0.18, 1 - G.attrs[k] / 11.5);
             /* 虚弱：养息牌的健康回复只剩四分之三 */
             if (weakHp && k === 'hp' && c.m === 'rest') val *= 0.75;
           } else {
@@ -6015,9 +6556,16 @@
       const syn = findSyn(cards);
       if (syn) {
         let moved = 0;
-        const synMul = (profile().up ? 1 : 0.9) * (inCold() ? 0.5 : 1);
+        /* 协同值随两张牌的平均阶数放大：入门书凑对只是小补，
+           精研卷凑对才配得上"专题精读"这四个字 */
+        const avgTier = cards.reduce((a, c) => a + (c.tier || 1), 0) / cards.length;
+        const tierSyn = bothStudy ? (0.95 + 0.20 * (avgTier - 1)) : 1;
+        const synMul = (profile().up ? 1 : 0.9) * (inCold() ? 0.5 : 1) * tierSyn;
         for (const k in syn.e) {
           let v = syn.e[k] * synMul;
+          /* 协同同样吃递减：不然它是后期唯一不衰减的涨分口，
+             会让"两张一起打"变成无脑最优解 */
+          if (ATTRS.includes(k)) v *= Math.max(0.18, 1 - G.attrs[k] / 11.5);
           // 溢出转化：该项已接近上限时，一半的加成转为综合
           if (ATTRS.includes(k) && G.attrs[k] > 7.5) {
             const over = clamp((G.attrs[k] - 7.5) / 2.5, 0, 1);
@@ -6081,6 +6629,9 @@
     }
 
     function bumpMastery(card) {
+      /* 养息牌不是「知识」，不进精读：永远留在牌库里循环，
+         否则读满三次就退役，到了后期一张养息都摸不到，只能整月硬撑 */
+      if (card.m === 'rest') return false;
       const prev = G.mastery[card.id] || 0;
       const m = prev + 1;
       G.mastery[card.id] = Math.min(3, m);
@@ -6114,6 +6665,92 @@
       renderDeckMeta();
       fire('play');
       saveGame();          // 教练牌用过就落盘，刷新不能再用一次
+    }
+
+    /* ---------- 换牌：一张牌弃回牌库，立刻补一张新的 ----------
+       每学年 6 次，且每月最多一次。牌不销毁，只是洗回牌库，
+       所以「换掉」不等于「读废」，以后还可能再发到。
+       每月一次的限制比总数更关键：它让「换」变成一个要挑时机的决定，
+       而不是月初把六张全换一遍。 */
+    function cycLeft() { return Math.max(0, CYCLE_MAX - (G.cycUsed || 0)); }
+    function cycMonthKey() { return G.year * 12 + G.month; }
+    function cycThisMonth() { return (G.cycKey | 0) === cycMonthKey(); }
+
+    async function cycleCard() {
+      if (busy || G.mode !== 'hand') return;
+      if (TUT.lock !== 'none') return;
+      if (selected.length !== 1) { toast('先点一张牌，再点换牌'); return; }
+      const c = selected[0];
+      if (c.coach) { toast('教练亲授不能换'); return; }
+      if (cycThisMonth()) { toast('这个月已经换过一次了 · 下个月再换'); return; }
+      if (cycLeft() <= 0) { toast('这一学年的 6 次换牌用完了 · 明年一月再补'); return; }
+
+      busy = true;
+      selected = [];
+      const idx = hand.indexOf(c);
+      const w = handEl.querySelector(`.card-wrap[data-id="${c.id}"]`);
+      handEl.querySelectorAll('.card-wrap').forEach(x => x.classList.remove('sel', 'dim', 'nofit'));
+      syncButtons();
+
+      /* 弃掉的牌朝左下角的牌库飞走 */
+      if (w) {
+        const r = w.getBoundingClientRect();
+        const dock = $('.dock').getBoundingClientRect();
+        const flyer = document.createElement('div');
+        flyer.className = 'flyer';
+        flyer.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;`;
+        const face = w.querySelector('.card');
+        if (face) {
+          const cl = face.cloneNode(true);
+          cl.style.position = 'absolute';
+          cl.style.inset = '0';
+          flyer.appendChild(cl);
+        }
+        $('#fly').appendChild(flyer);
+        const dx = (dock.left + 72) - (r.left + r.width / 2);
+        const dy = (dock.bottom - 84) - (r.top + r.height / 2);
+        flyer.animate([
+          { transform: 'translate(0,0) scale(1) rotate(0deg)', opacity: 1 },
+          { transform: `translate(${dx}px,${dy}px) scale(.5) rotate(-16deg)`, opacity: 0 }
+        ], { duration: 420, easing: 'cubic-bezier(.4,.1,.6,1)', fill: 'forwards' });
+        setTimeout(() => flyer.remove(), 480);
+        w.style.opacity = '0';
+      }
+      SFX.deal();
+      await sleep(300);
+
+      const nc = drawCard({ free: true });
+      if (!nc) {
+        if (w) w.style.opacity = '';
+        busy = false;
+        syncButtons();
+        toast('牌库空了 · 这张换不出去');
+        return;
+      }
+      hand = hand.filter(h => h !== c);
+      G.cycUsed = (G.cycUsed || 0) + 1;
+      G.cycKey = cycMonthKey();
+      hand.splice(clamp(idx, 0, hand.length), 0, nc);
+      /* 洗回牌库：随机插一个位置，别总压在最上面 */
+      deck.splice(Math.floor(Math.random() * (deck.length + 1)), 0, c);
+
+      if (w) w.remove();
+      const nw = cardEl(nc);
+      nw.style.opacity = '0';
+      handEl.insertBefore(nw, handEl.children[idx] || null);
+      layoutHand();
+      requestAnimationFrame(() => {
+        nw.style.opacity = '';
+        dropWrap(nw, 0);
+      });
+
+      busy = false;
+      renderDeckMeta();
+      syncButtons();
+      renderMatch();
+      saveGame();
+      toast(`换掉《${c.t}》· 本学年还剩 ${cycLeft()} 次（本月已用）`);
+      fire('play');
     }
 
     async function doPlay() {
@@ -6196,6 +6833,18 @@
       saveGame();          // 每一次出牌都落盘：刷新回到这一刻，而不是月初
 
       if (G.will <= 0 || G.hp <= 0) return gameOver();
+      /* 精力见底：手里连一张「不耗精力又排得下」的牌都没有了，就替他收工。
+         若还捏着养息牌（0 精力），留着这个月，别把他唯一能回气的路堵死 */
+      if (G.energy <= 0) {
+        const canStill = hand.some(c => !c.coach && (c.cost || 0) <= 0
+          && !isLocked(c) && playUnits([c]) <= calLeft());
+        if (!canStill) {
+          toast('精力见底，这个月到此为止');
+          await sleep(900);
+          return endMonth(true);
+        }
+        toast('精力见底 · 只剩不耗精力的牌还能打');
+      }
       if (calLeft() <= 0) {
         toast('8 格排满，这个月到此为止');
         await sleep(900);
@@ -6330,6 +6979,57 @@
       return parts.length ? parts.join('，') : '这个月，他几乎没碰书。';
     }
 
+    /* ---------- 月末收束旁白：按排课档位分池，且不连着重复 ---------- */
+    const TAIL_POOL = {
+      heavy: [
+        '灯熄的时候，楼下早点摊已经支起来了。',
+        '手指上沾着铅笔灰，洗了两遍才干净。',
+        '窗外的树什么时候绿的，他没注意。',
+        '草稿纸堆到桌角，最上面那张写满了又划掉。',
+        '他把台灯拧到最亮，纸上的影子压得很低。'
+      ],
+      normal: [
+        '日子过得平稳，草稿纸用掉了半本。',
+        '他开始自己给题目分类，说这样好找。',
+        '桌上的书换了一摞，顺序是他自己排的。',
+        '不紧不慢的一个月，错题本又厚了几页。'
+      ],
+      light: [
+        '他难得睡了几个好觉。',
+        '这个月他读得慢，但每一页都读完了。',
+        '有空的时候，他把书桌收拾了一遍。',
+        '傍晚他会下楼走一圈，回来时心情不错。'
+      ]
+    };
+    const TAIL_LAST = {};
+
+    function pickNoRepeat(list, key) {
+      if (!list.length) return '';
+      if (list.length === 1) return list[0];
+      let i = Math.floor(Math.random() * list.length);
+      if (list[i] === TAIL_LAST[key]) i = (i + 1 + Math.floor(Math.random() * (list.length - 1))) % list.length;
+      TAIL_LAST[key] = list[i];
+      return list[i];
+    }
+
+    function monthTail(heavy) {
+      /* 状态特殊时先给一句更贴的 */
+      if (G.hp <= 3) {
+        return pickNoRepeat([
+          '他在桌前坐了很久，最后还是趴下睡了。',
+          '他咳了两声，说没事，把书又翻开。',
+          '脸色比上个月更淡，饭却吃得不多。'
+        ], 'weak');
+      }
+      if (G.rel >= 7 && heavy !== 'light') {
+        return pickNoRepeat([
+          '走的时候他会说一句「老师再见」，声音比上个月大。',
+          '他主动讲了一道题给你听，讲得比答案还清楚。'
+        ], 'warm');
+      }
+      return pickNoRepeat(TAIL_POOL[heavy], heavy);
+    }
+
     /* ---------- 月度事件：盲抽三张、盲选一张 ---------- */
     const VIT_NAME = { will: '意志', hp: '健康', rel: '师生' };
 
@@ -6352,10 +7052,11 @@
       const isPos = e => e.k === 'good' || e.k === 'special';
       const isNeg = e => e.k === 'bad';
 
-      /* 师生档位决定吉凶配比：关系差，坏消息扎堆；关系好，局面整体变顺 */
-      const t = relTierOf();
-      const needGood = t === 'close' ? 2 : t === 'mid' ? 1 : 0;
-      const needBad = t === 'red' ? 2 : (t === 'distant' || t === 'mid') ? 1 : 0;
+      /* 吉凶配比和状态无关：一吉一凶是底线，另有四成概率再多一张凶签。
+         关系好不好、身体累不累，都不再改变这个月的运气——运气就是运气。
+         想要顺，只能靠自己把牌打好。 */
+      const needGood = 1;
+      const needBad = Math.random() < 0.42 ? 2 : 1;
 
       while (chosen.length < 3 && chosen.filter(isPos).length < needGood) {
         const p = pool.filter(e => isPos(e) && chosen.indexOf(e) < 0);
@@ -6446,12 +7147,16 @@
             locked = true;
             picked = i;
             ['--ry', '--rx', '--ty', '--sc'].forEach(v => card.style.removeProperty(v));
+            SFX.flip();
 
             /* 三张依次翻开 */
             const STEP = 230, FLIP = 900;
             cards.forEach((c, j) => {
               ['--ry', '--rx', '--ty', '--sc'].forEach(v => c.style.removeProperty(v));
-              setTimeout(() => c.classList.add('flip'), j * STEP);
+              setTimeout(() => {
+                c.classList.add('flip');
+                SFX.deal();                       // 每翻一张，一声落牌的轻响
+              }, j * STEP);
             });
 
             const done = (cards.length - 1) * STEP + FLIP;
@@ -6533,39 +7238,102 @@
       { id: 'h-trip', type: 'sprint', n: '出趟远门', t: '坐了六个小时火车，去看一座没去过的城。回来时背包里塞着两张车票。', e: { gen: .5, will: .6 }, pen: { hp: -.8, rel: -.3 } },
       { id: 'h-notes', type: 'sprint', n: '整理旧笔记', t: '把四年的草稿纸按年份摞好，又从头翻了一遍。他忽然看懂了自己当年卡在哪儿。', e: { gen: .5, alg: .5 }, pen: { hp: -.8, rel: -.3 } },
       { id: 'h-grind', type: 'sprint', n: '闭门刷题', t: '一个假期没出门。桌上摞起三本新卷子，窗外的蝉声他一句也没听见。', e: { alg: .5, num: .5, gen: .3 }, pen: { hp: -.8, rel: -.3 } },
-      { id: 'h-game', type: 'sprint', n: '通宵打游戏', t: '两个人挤在电脑前打到天亮。第二天他睡了一整天，起来第一句是「值了」。', e: { will: 1.2, rel: .5 }, pen: { hp: -.8, rel: -.3 } }
+      { id: 'h-game', type: 'sprint', n: '通宵打游戏', t: '两个人挤在电脑前打到天亮。第二天他睡了一整天，起来第一句是「值了」。', e: { will: 1.2, rel: .5 }, pen: { hp: -.8, rel: -.3 } },
+      /* ---- 加训：一点血都不回，拿身体换分。健康压到 1 会被人叫停，但下个月强度要还债 ---- */
+      { id: 't-camp', type: 'train', n: '进集训营', t: '郊区的集训营，半个月没信号。出来时人瘦了一圈，眼睛却亮得吓人。', e: { alg: .55, geo: .55, num: .5, gen: .4 }, pen: { hp: -1.4, rel: -.5 } },
+      { id: 't-mock', type: 'train', n: '一日三考', t: '上午一试，下午加试，晚上讲评。三场下来他手都在抖，但排名往前挪了十几位。', e: { gen: .8, will: .5, com: .3 }, pen: { hp: -1.2, rel: -.3 } },
+      { id: 't-night', type: 'train', n: '通宵推演', t: '凌晨三点，客厅的灯还亮着。他在纸上画满了图，抬头说这题真有意思。', e: { com: .8, num: .6, will: -.2 }, pen: { hp: -1.5, rel: -.4 } },
+      { id: 't-old', type: 'train', n: '请老教练点拨', t: '退休的老教练来家里坐了一个下午，只讲了三道题。他记了满满四页。', e: { gen: .9, geo: .3, rel: .35 }, pen: { hp: -.5 } },
+      { id: 't-geo', type: 'train', n: '把自己关起来画圆', t: '草稿纸堆到膝盖，全是一个个同心圆。他说几何这东西，得用手想。', e: { geo: .9, alg: .3 }, pen: { hp: -1.1, rel: -.3 } }
     ];
 
-    /* 抽三张：至少一张休息、一张冲刺，一年之内不重复 */
+    /* 假期后面紧接着的比赛（本月或下月）：决定「针对性集训」练什么。
+       IMO 就在第四年七月，也就是暑假正中间——这个假期的选择直接决定那一场。 */
+    function holidayComp() {
+      const c = nextComp();
+      if (!c) return null;
+      const gap = (c.y - G.year) * 12 + (c.mo - G.month);
+      return (gap >= 0 && gap <= 1) ? c : null;
+    }
+
+    /* 对着下一场比赛练：只练它考的那几科，练到很狠 */
+    function focusTrain(comp) {
+      const e = {};
+      (comp.focus || ['alg']).forEach(k => { e[k] = .95; });
+      e.gen = .35;
+      const imo = comp.id === 'c8';
+      return {
+        id: 't-focus-' + comp.id,
+        type: 'train',
+        focusId: comp.id,
+        n: imo ? 'IMO 真题' : '专攻真题',
+        t: imo
+          ? '整个七月，他把历年真题铺了一地，一道一道啃。'
+          : `假期全用来对付${comp.n}：真题、模拟、复盘，一天三轮。`,
+        e, pen: { hp: -1.4, rel: -.3 }
+      };
+    }
+
+    /* 存档里只有 id，动态生成的集训牌要能按 id 还原 */
+    function holidayById(id) {
+      const c = HOLIDAY_CARDS.find(x => x.id === id);
+      if (c) return c;
+      if (id && id.indexOf('t-focus-') === 0) {
+        const comp = COMPS.find(x => 't-focus-' + x.id === id);
+        if (comp) return focusTrain(comp);
+      }
+      return null;
+    }
+
+    /* 抽三张：一休、一冲、一训，保证每个方向都有得选，一年之内不重复。
+       假期后紧接着有比赛时，加训那张换成「针对这一场」的集训——
+       尤其是第四年七月，假期结束就是 IMO，那三张里必然有一张是照着 IMO 练的。 */
     function holidayDraw(n) {
       const used = G.holidayUsed || (G.holidayUsed = []);
-      let restPool = HOLIDAY_CARDS.filter(c => c.type === 'rest' && used.indexOf(c.id) < 0);
-      let sprintPool = HOLIDAY_CARDS.filter(c => c.type === 'sprint' && used.indexOf(c.id) < 0);
-      if (restPool.length < 2 || sprintPool.length < 1) {
-        used.length = 0;
-        restPool = HOLIDAY_CARDS.filter(c => c.type === 'rest');
-        sprintPool = HOLIDAY_CARDS.filter(c => c.type === 'sprint');
-      }
-      const out = [];
-      const take = (pool, k) => {
-        while (k-- > 0 && pool.length) out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+      const take = (pool) => pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
+      const poolOf = (type) => {
+        let p = HOLIDAY_CARDS.filter(c => c.type === type && used.indexOf(c.id) < 0);
+        if (!p.length) p = HOLIDAY_CARDS.filter(c => c.type === type);
+        return p.slice();
       };
-      take(sprintPool, 1);
-      take(restPool, Math.max(1, (n || 3) - 1));
+      const out = [];
+      ['rest', 'sprint', 'train'].forEach(t => {
+        const p = poolOf(t);
+        if (p.length) out.push(take(p));
+      });
+      /* 某一类凑不出来时，用没用过的牌补齐 */
+      while (out.length < (n || 3)) {
+        let p = HOLIDAY_CARDS.filter(c => used.indexOf(c.id) < 0 && out.indexOf(c) < 0);
+        if (!p.length) p = HOLIDAY_CARDS.filter(c => out.indexOf(c) < 0);
+        if (!p.length) break;
+        out.push(take(p));
+      }
+      /* 大赛在前：把加训换成针对这一场的集训 */
+      const comp = holidayComp();
+      if (comp) {
+        const i = out.findIndex(c => c.type === 'train');
+        const ft = focusTrain(comp);
+        if (i >= 0) out[i] = ft; else out[out.length - 1] = ft;
+      }
       return out.sort(() => Math.random() - 0.5);
     }
 
     function holidayPick(list) {
       list = list && list.length ? list : HOLIDAY_CARDS.slice(0, 3);
       return new Promise(res => {
+        const KIND3 = {
+          rest: { sigil: '✧', cls: 'good', tag: '休' },
+          sprint: { sigil: '◈', cls: 'bad', tag: '冲' },
+          train: { sigil: '◆', cls: 'time', tag: '训' }
+        };
         const html = list.map((c, i) => `
           <div class="draft-card flip" data-i="${i}">
             <div class="dc-inner">
               <div class="dc-back"><span>?</span><i>${['壹', '贰', '叁'][i]}</i></div>
               <div class="dc-face">
-                <div class="dc-sigil">${c.type === 'sprint' ? '◈' : '✧'}</div>
+                <div class="dc-sigil">${(KIND3[c.type] || KIND3.rest).sigil}</div>
                 <div class="dc-top">
-                  <span class="dc-k ${c.type === 'sprint' ? 'bad' : 'good'}">${c.type === 'sprint' ? '冲' : '休'}</span>
+                  <span class="dc-k ${(KIND3[c.type] || KIND3.rest).cls}">${(KIND3[c.type] || KIND3.rest).tag}</span>
                   <span class="dc-turn">第 ${['一', '二', '三'][i]} 件</span>
                 </div>
                 <div class="dc-n">${c.n}</div>
@@ -6574,7 +7342,7 @@
               </div>
             </div>
           </div>`).join('');
-        const layer = draftLayer('假 期 的 一 件 事', '休 息 修 复 局 面 · 冲 刺 赌 一 个 身 位', html, '— 他 想 做 哪 一 件 —');
+        const layer = draftLayer('假 期 的 一 件 事', '休 息 修 复 局 面 · 冲 刺 抢 一 个 身 位 · 加 训 拿 身 体 换 分', html, '— 他 想 做 哪 一 件 —');
         let picked = -1, locked = false, closed = false, auto = null;
         const foot = layer.querySelector('#draft-foot');
         const cards = Array.from(layer.querySelectorAll('.draft-card'));
@@ -6679,15 +7447,18 @@
       /* ---------- 七月：先选牌，再一次性结算 ---------- */
       await playScript([{ s: '旁白', t: '假期只够做一件事。这一次，让他自己挑。' }]);
 
-      /* 抽到的三张、选中的那一张都记在存档里：刷新只能接着走，不能重抽重选 */
+      /* 抽到的三张、选中的那一张都记在存档里：刷新只能接着走，不能重抽重选。
+         只有「今年的」三张才算数——去年的选择不能拿来顶今年的假期 */
       let list, hi;
-      if (G.holPick && G.holPick.length) {
-        list = G.holPick.map(id => HOLIDAY_CARDS.find(c => c.id === id)).filter(Boolean);
+      if (G.holPick && G.holPick.length && G.holYear === G.year) {
+        list = G.holPick.map(id => holidayById(id)).filter(Boolean);
         hi = (typeof G.holSel === 'number' && G.holSel >= 0 && G.holSel < list.length)
           ? G.holSel : await holidayPick(list);
       } else {
         list = holidayDraw(3);
         G.holPick = list.map(c => c.id);
+        G.holYear = G.year;
+        G.holSel = null;
         saveGame();
         hi = await holidayPick(list);
       }
@@ -6700,8 +7471,9 @@
       }
 
       const sprint = !!(card && card.type === 'sprint');
-      /* 固定恢复：无视虚弱；冲刺类减半 */
-      const d = { hp: sprint ? .5 : 1.0, rel: sprint ? .2 : .4 };
+      const train = !!(card && card.type === 'train');
+      /* 固定恢复：无视虚弱；冲刺类减半，加训一点不留 */
+      const d = train ? { hp: 0, rel: 0 } : { hp: sprint ? .5 : 1.0, rel: sprint ? .2 : .4 };
       if (card) {
         for (const k in card.e) d[k] = (d[k] || 0) + card.e[k];
         if (card.pen) for (const k in card.pen) d[k] = (d[k] || 0) + card.pen[k];
@@ -6718,15 +7490,23 @@
         if (G.hp < 4) { real.hp = (real.hp || 0) + (4 - G.hp); G.hp = 4; floorHit.push('健康'); }
         if (G.rel < 4) { real.rel = (real.rel || 0) + (4 - G.rel); G.rel = 4; floorHit.push('师生'); }
       }
+      /* 加训的底线：不让人在假期里直接垮掉。
+         健康压到 1 就停手，但这份透支记在账上——下个月强度 +1 */
+      let held = false;
+      if (train && G.hp < 1) {
+        real.hp = (real.hp || 0) + (1 - G.hp);
+        G.hp = 1;
+        held = true;
+      }
 
-      G.intensity = clamp(Math.max(3, G.intensity - 2), 1, 10);
+      G.intensity = train ? clamp(G.intensity + 1, 1, 10) : clamp(Math.max(3, G.intensity - 2), 1, 10);
       G.pend = { kind: 'holiday', applied: true };
       saveGame();
       renderBoard();
       flashKeys(real);
 
       const lines = [{ cls: 'fl-event', html: '假 期 结 算' }];
-      if (card) lines.push({ cls: 'fl-meta', html: `他挑了 · <b>${card.n}</b>${sprint ? ' · 冲刺' : ' · 休息'}` });
+      if (card) lines.push({ cls: 'fl-meta', html: `他挑了 · <b>${card.n}</b>${train ? ' · 加训' : sprint ? ' · 冲刺' : ' · 休息'}` });
       ATTRS.concat(['will', 'hp', 'rel']).forEach(k => {
         const v = real[k] || 0;
         if (Math.abs(v) < 0.05) return;
@@ -6737,8 +7517,10 @@
         });
       });
       if (sprint) lines.push({ cls: 'fl-meta', html: '冲刺 · 固定回血减半，健康 / 师生各让一步' });
+      if (train) lines.push({ cls: 'fl-meta', html: '加训 · 不回血，也没有保底' });
+      if (held) lines.push({ cls: 'fl-meta', html: '健康见底，你把书从他手里抽走了 · 这个月算透支' });
       if (floorHit.length) lines.push({ cls: 'fl-meta', html: `休息把他托住了 · ${floorHit.join(' / ')} 至少回到 4` });
-      lines.push({ cls: 'fl-meta', html: '月强度 −2' });
+      lines.push({ cls: 'fl-meta', html: train ? '月强度 +1（加训的债）' : '月强度 −2' });
       floatResult(lines);
       SFX.good();
       await sleep(2200);
@@ -6761,6 +7543,11 @@
       advanceTime();
       G.stage = 'intro';
       G.pend = null;
+      /* 假期用完就清账：否则明年七月会拿去年的选择直接结算，
+         玩家连牌都没看见，就跳到别的事情上去了 */
+      G.holPick = null;
+      G.holSel = null;
+      G.holYear = null;
       saveGame();
       renderBoard();
       busy = false;
@@ -6818,8 +7605,8 @@
           b.onclick = ev => { ev.stopPropagation(); wrap.remove(); res(i); };
           wrap.appendChild(b);
         });
-        $('#adv-text').appendChild(wrap);
-        $('#adv-next').classList.remove('show');
+        $('#dlg-text').appendChild(wrap);
+        $('#dlg-next').classList.remove('show');
       });
     }
 
@@ -6898,9 +7685,11 @@
         G.will = clamp(G.will + 1.2, 0, 10);
         G.hp = clamp(G.hp + 1.5, 0, 10);
         G.intensity = clamp(G.intensity - 2, 1, 10);
+        /* 强制休息就是休息：这个月不算硬撑，师生照常回暖 */
+        G.restPlayed = true;
         lines.push({ cls: 'fl-line gain', html: `<span class="g">❖</span><span class="n">意志</span><span class="v">+1.2</span>` });
         lines.push({ cls: 'fl-line gain', html: `<span class="g">✚</span><span class="n">健康</span><span class="v">+1.5</span>` });
-        lines.push({ cls: 'fl-event', html: '月强度 −2' });
+        lines.push({ cls: 'fl-event', html: '月强度 −2 · 本月不再算硬撑' });
       }
       G.log.push({ t: `教练技能 · ${s.n}`, k: 'choice' });
       renderBoard();
@@ -6937,14 +7726,22 @@
     }
 
     async function beginMonth() {
-      if (G.year > 4) return epilogue();
-      if (G.year === 4 && G.month >= 8 && G.pass < COMPS.length && !canStillComp()) return epilogue();
+      if (G.year * 12 + G.month > deadlineOf()) return epilogue();
+      if (G.year * 12 + G.month >= 4 * 12 + 8 && G.pass < COMPS.length && !canStillComp()) return epilogue();
       if (G.skillYear !== G.year) { G.skills = {}; G.skillYear = G.year; }
-      if (G.month === 9) G.holidayUsed = [];   // 新学年，假期牌重新洗
+      if (G.cycYear !== G.year) { G.cycUsed = 0; G.cycYear = G.year; }   // 新学年：6 次换牌重新计
+      if (G.month === 9) {   // 新学年，假期牌重新洗，去年的选择也要清掉
+        G.holidayUsed = [];
+        G.holPick = null;
+        G.holSel = null;
+        G.holYear = null;
+      }
 
       /* 存档里记着本月走到哪一步：刷新回来只补没走完的那段 */
       const st = G.stage || 'intro';
       if (st === 'hand') { saveGame(); return startHand(true); }
+      /* 结算途中的存档：补完结算直接翻篇，绝不能在结算里再抽一次事件 */
+      if (st === 'settling') return resumeSettle();
 
       setMode('adv');
       if (st === 'intro') {
@@ -6967,6 +7764,8 @@
         saveGame();
       }
       /* st === 'event'：只补月度事件，不重抽、不重播旁白；已经结算过的月份直接跳过 */
+      /* 七八月只有假期：不管存档停在哪一步，都回到假期流程，不许插月度事件 */
+      if (G.month === 7 || G.month === 8) return holidayFlow();
       if (st === 'event' && G.evtDone === G.year * 12 + G.month) {
         /* 本月事件已生效 */
       } else {
@@ -7162,10 +7961,15 @@
     /* 只从牌库（必要时洗弃牌堆）取养息牌，绝不从原始牌表凭空造牌 */
     function ensureRest() {
       if (hand.some(c => c.m === 'rest')) return;
-      let i = deck.findIndex(c => c.m === 'rest' && c.dur !== 'month');
+      const pickRest = () => {
+        let i = deck.findIndex(c => c.m === 'rest' && c.dur !== 'month');
+        if (i < 0) i = deck.findIndex(c => c.m === 'rest');   // 只剩「整月」的也得给
+        return i;
+      };
+      let i = pickRest();
       if (i < 0 && discard.length) {
         deck = deck.concat(discard.splice(0).sort(() => Math.random() - 0.5));
-        i = deck.findIndex(c => c.m === 'rest' && c.dur !== 'month');
+        i = pickRest();
       }
       if (i < 0) return;
       const c = deck.splice(i, 1)[0];
@@ -7280,9 +8084,9 @@
       await sleep(2800);
 
       // ---- 3. 时间锚点旁白 ----
-      const tail = { heavy: '这个月，他瘦了一圈。', normal: '日子过得平稳，草稿纸用掉了半本。', light: '他难得睡了几个好觉。' }[heavy];
+      const tail = monthTail(heavy);
       await playScript([
-        { s: '旁白', t: `${summary}。${tail}` },
+        { s: '旁白', t: `${summary.replace(/。$/, '')}。${tail}` },
         { s: '旁白', t: `第 ${G.year} 年 · ${G.month} 月，翻篇。` }
       ]);
 
@@ -7318,6 +8122,7 @@
       G.lastWin = win;
       if (win) {
         G.pass = Math.max(G.pass, c.idx + 1);
+        G.pity = 0;
         G.done[c.id] = true;
         delete G.sched[c.id];
         G.will = clamp(G.will + 0.9, 0, 10);
@@ -7333,7 +8138,16 @@
         ]);
       } else {
         G.done[c.id] = false;
-        G.sched[c.id] = { y: G.year + 1, mo: c.mo };
+        /* 失败顺延半年，后面的赛事跟着一起后移、保持原来的间隔，
+           期限也随之后移——输一次是"多读半年"，不是"直接出局" */
+        const nx = (G.year - 1) * 12 + (G.month - 1) + 6;
+        G.sched[c.id] = { y: Math.floor(nx / 12) + 1, mo: nx % 12 + 1 };
+        for (let i = c.idx + 1; i < COMPS.length; i++) {
+          const cc = COMPS[i], at = cc.y * 12 + cc.mo + 6;
+          G.sched[cc.id] = { y: Math.floor(at / 12), mo: at % 12 };
+        }
+        G.delay = Math.min(6, (G.delay || 0) + 6);
+        G.pity = Math.min(3, (G.pity || 0) + 1);
         G.will = clamp(G.will - 0.8, 0, 10);
         G.rel = clamp(G.rel - 0.35, 0, 10);
         G.log.push({ t: `${c.n} · 落榜`, k: 'lose' });
@@ -7379,6 +8193,9 @@
       G.review = false;
       busy = true;
 
+      /* 开考铃：一声落下，场子就安静了 */
+      EXT_SFX.play('bell');
+
       await playScript([
         { s: '旁白', t: `${c.n}。${c.desc}` },
         { s: '旁白', t: '你站在考场外，隔着一层玻璃看他。笔尖划过纸面的声音，你听不见，却好像听得见。' }
@@ -7414,7 +8231,7 @@
       b.textContent = label || '重 新 执 教';
       b.style.cssText = 'position:absolute;right:26px;bottom:18px;z-index:5;';
       b.onclick = () => location.reload();
-      $('#adv-box').appendChild(b);
+      $('#dlg-box').appendChild(b);
     }
 
     function clearSave() {
@@ -7432,8 +8249,8 @@
           b.onclick = ev => { ev.stopPropagation(); wrap.remove(); res(o.k); };
           wrap.appendChild(b);
         });
-        $('#adv-box').appendChild(wrap);
-        $('#adv-next').classList.remove('show');
+        $('#dlg-box').appendChild(wrap);
+        $('#dlg-next').classList.remove('show');
       });
     }
 
@@ -7459,7 +8276,7 @@
       ]);
       await sleep(900);
       setSpeaker('旁白');
-      $('#adv-text').innerHTML = `<span class="narr">失败也是故事的一部分。但这一次，你本可以让他多睡一会儿。</span>`;
+      $('#dlg-text').innerHTML = `<span class="narr">失败也是故事的一部分。但这一次，你本可以让他多睡一会儿。</span>`;
       showRestart('再 来 一 次');
     }
 
@@ -7547,7 +8364,7 @@
       const logs = G.log.slice(-8);
       const list = logs.map(l => `<li class="rv-${l.k}">${esc(l.t)}</li>`).join('');
       setSpeaker('旁白');
-      $('#adv-text').innerHTML = `<div class="review"><h5>四 年 回 顾</h5><ul>${list || '<li>没有留下什么记录。</li>'}</ul>
+      $('#dlg-text').innerHTML = `<div class="review"><h5>四 年 回 顾</h5><ul>${list || '<li>没有留下什么记录。</li>'}</ul>
         <p class="rv-tail">${hidden ? '许多年后，他也站到了黑板前。第一句话是：「我们先看一个简单的例子。」' : (imo ? '不是每个故事都有金牌，但每个认真走过的四年，都算数。' : '有些路没走到终点，可路上的每一张草稿纸，都还留着。')}</p></div>`;
       showRestart(hidden ? '再 教 一 届' : '再 教 一 届');
       clearSave();
@@ -7605,7 +8422,7 @@
         { k: 'act', gate: 'play', lock: 'play', spot: '#btn-play', tip: '▼ 点 「打 出」', t: '再点「打出」，让它飞出去。' },
         { k: 'say', t: '效果不弹窗，只飘在屏幕中央。牌面不写数值——去猜，去试，去记住。' },
         { k: 'say', spot: '#cal-bar', t: '看时间线：点被填实了。时间是花掉的，不是点掉的。' },
-        { k: 'say', t: '标着「方法」的书，第一次读懂会留下永久的教法——工具会了，往后每本书都受益。' },
+        { k: 'say', t: '标着「方法」的书，第一次读懂会留下永久的教法——工具会了，往后每本书都受益，但复利封顶 +30%。' },
         { k: 'say', t: '一次可以选两张，按规则联动：同模块、相邻模块、训练配养息。联动的属性是白拿的，但两张牌的时间要一起付。' },
 
         { k: 'say', spot: () => handEl.querySelector('.card-wrap.coach-card') || '#hand', t: '那张「教练亲授」是你的技能：特训、谈心、战术分析、强制休息。不占时间，一年各一次。' },
@@ -7666,7 +8483,7 @@
       if (ADV.waiter) {
         const w = ADV.waiter;
         ADV.waiter = null;
-        $('#adv-next').classList.remove('show');
+        $('#dlg-next').classList.remove('show');
         w();
       }
       if (TUT.waiter) {
@@ -7690,6 +8507,7 @@
           <ul>
             <li><b>月初</b>：翻开三张背面事件牌，盲选一张。</li>
             <li><b>排课</b>：从手牌里选 1–2 张打出，把时间填进八格。</li>
+            <li><b>换牌</b>：哪张用不上，选中它点「换牌」，洗回牌库再补一张（每学年 6 次，每月最多 1 次）。</li>
             <li><b>月末</b>：结算疲劳与强度，然后打这个月的比赛（如果有）。</li>
           </ul>
           <h6>先记住三个数字</h6>
@@ -7721,6 +8539,7 @@
             <tr><td>轻排（≤3 格）</td><td>+0.3</td><td>+0.1</td></tr>
           </table>
           <p><b>师生单独算，不和排课叠加</b>：本月打过至少一张养息牌，师生 <b>+0.35</b>；一张都没打，师生 <b>−0.3</b>。每个月都要回答同一个问题：留不留一张养息牌给关系。</p>
+          <p><b>教练的「强制休息」也算休息</b>：打出这张教练牌的那个月，同样按「有养息」结算，不再算整月硬撑。养息牌读多少次都不打折，也永远不会退役——<b>后期不会没有休息</b>。</p>
           <p>健康 <b>≥7</b> 时，月末还会自然回升 <b>+0.2</b>。</p>
           <p><b>月强度</b>只影响出牌收益（×0.88 到 ×1.6），不再额外扣血：新强度 = 旧 ×0.7 + 本月 ×0.3。</p>
           <div class="mn-tip"><b>透支</b>：通宵类牌会记一笔债，补觉只还得起六成，剩下的每月按每点 0.24 扣健康。债不清，它就一直跟着你。</div>`
@@ -7740,20 +8559,42 @@
           <table class="mn-table">
             <tr><th>类型</th><th>作用</th></tr>
             <tr><td>知识</td><td>一次大增量，最稳的分数来源</td></tr>
-            <tr><td>方法</td><td>首次读懂留下<b>永久教法</b>，之后每本书都吃加成</td></tr>
+            <tr><td>方法</td><td>首次读懂留下<b>永久教法</b>，之后每本书都吃加成（封顶 +30%）</td></tr>
             <tr><td>训练</td><td>高耗高收益，通常掉意志</td></tr>
             <tr><td>养息</td><td>回意志与健康，负荷极低</td></tr>
           </table>
           <h6>递减与精读</h6>
           <p>同一本读第二、三次，收益按 <b>0.74 / 0.5 / 0.36</b> 递减；读满三次即为「精读」，永久移出牌库。别反复刷同一本，除非你就差那一点。</p>
           <h6>前置与门槛</h6>
-          <p>有些牌要先把基础书读完（牌面标「前置未通」）。<b>精研卷</b>还要 师生 ≥ 5 才翻得开——这就是为什么谈心不算浪费时间。</p>
+          <p>有些牌要先把基础书读完（牌面标「前置未通」，收益减半）。<b>精研卷</b>还要 师生 ≥ 5 才翻得开——这就是为什么谈心不算浪费时间。</p>
+          <p>哪本书通向哪本书，翻到 <b>「知识树」</b> 一页能看全：四列分层，一条线就是一条前置。</p>
           <h6>手牌</h6>
           <p>每月补到 <b>5 张</b>，桌上最多留 <b>6 张</b>。没读完的书跨月保留，可以囤到关键月份再读。</p>
-          <p>月初摆牌分两步：上月的牌先从牌库扇开落位，停一拍，新补的牌再从上方落进来。哪些是旧牌，一眼就能分出来。</p>`
+          <p>手牌里<b>至少会留一张「还读不动」的牌</b>（前置没通），最多两张养息牌。养息牌是续航不是主食：手里已经有一张时，再发到养息牌的机会会降到很低；攒到两张就不再发了。手里全是茶和散步，是打不赢比赛的。</p>
+          <p>月初摆牌分两步：上月的牌先从牌库扇开落位，停一拍，新补的牌再从上方落进来。哪些是旧牌，一眼就能分出来。</p>
+          <h6>换牌：每学年 6 次，每月最多 1 次</h6>
+          <p>选中一张牌，点左下角 <b>「换牌 N」</b>：这张牌洗回牌库，立刻补一张新的。<b>不销毁、不占时间、不耗精力</b>，只是把这一张挪到牌库里去。</p>
+          <p>一年 6 次，一月一日重新计；而且<b>一个月只许换一张</b>，换过之后按钮当天就灰了，要等下个月。所以别再月初一口气洗牌——先看看这个月要打什么，再决定哪张最该走。</p>
+          <p>手里全是啃不动的书、或者缺一张养息牌的时候，就该用它。<b>牌库不是越读越薄</b>——换出去的牌以后还会再发到。</p>
+          <h6>养息牌不进精读</h6>
+          <p>养息牌不算「知识」，读多少次收益都不打折，也永远不会被移出牌库。它是续航，不是分数。</p>`
       },
       {
-        ico: '四', n: '联动',
+        ico: '四', n: '知识树',
+        lead: '从左往右四层：基础 → 进阶 → 深研 → 攻坚。一根线连过去，就是「先读左边，才读得懂右边」。虚线框是前置未通——读得动，但收益减半。',
+        tree: true,
+        html: `
+          <div class="kt-legend">
+            <span><i class="k0"></i>前置未通</span>
+            <span><i class="k1"></i>可以读</span>
+            <span><i class="k2"></i>读过</span>
+            <span><i class="k3"></i>已精读</span>
+          </div>
+          <div class="kt-scroll" id="kt-wrap"></div>
+          <div class="mn-tip">一阶多是<b>半日</b>，二阶起基本要<b>整日</b>。想在 IMO 前摸到三阶，前两年就得把一阶铺平——贪多啃不动的书，等于白花时间。同一本书读第二、三次收益递减，<b>把一阶读透，比把三阶翻开更划算</b>。</div>`
+      },
+      {
+        ico: '五', n: '联动',
         lead: '一次最多选两张。第二张不是加法，是按规则触发的协同。',
         html: `
           <h6>三条通用规则</h6>
@@ -7768,7 +8609,7 @@
           <div class="mn-tip">协同不额外占时间，等于白拿。两张牌排不下时，先看哪张能配上，再决定牺牲谁。</div>`
       },
       {
-        ico: '五', n: '学生',
+        ico: '六', n: '学生',
         lead: '同一个孩子，顺着他的天赋练，和逆着练，差的是乘法而不是加法。',
         html: `
           <h6>三种画像</h6>
@@ -7792,11 +8633,12 @@
           <p><b>师生</b>：≥7 <b>亲密</b>（精研卷不再额外扣 0.12 师生）｜4–6 平常｜≤3 <b>疏离</b>（比赛软判定 −0.08，事件至少一张凶）｜≤2 <b>红线</b>（−0.12，至少两张凶）。疏离不降低学习收益，坏在局面：比赛更容易失手，坏事件扎堆，他也不太说话了。</p>`
       },
       {
-        ico: '六', n: '比赛',
+        ico: '七', n: '比赛',
         lead: '八场，卡在固定年月。打不过就是打不过，没有补考。',
         html: `
           <h6>赛程</h6>
           <p>从校内选拔到 IMO，共 <b>8 场</b>，各自绑死在某年某月。错过或落榜都不会重来，但输了会给复盘。</p>
+          <p><b>门槛一场比一场高，而且越往后涨得越快</b>：CMO 比市级难得多，集训队又比 CMO 难，IMO 还要再上一档。侧重点会换（有的偏代数，有的偏组合），但「更难」这件事不会反过来。</p>
           <h6>两层判定</h6>
           <p><b>硬门槛</b>：每一科都要达到需求的 85%，每差一项，胜算 ×0.55。这是「能不能上桌」。</p>
           <p><b>软判定</b>：达标度 + 状态乘数 + 战术分析 + 随机。这是「上桌之后赢多少」。</p>
@@ -7806,7 +8648,7 @@
           <p>未达标的科目各被「复盘」补回 <b>0.2</b>，错题本下个月自动回到桌上。落榜不是清零，是换个方式补课。</p>`
       },
       {
-        ico: '七', n: '技能与事件',
+        ico: '八', n: '技能与事件',
         lead: '教练自己的四张牌，和每月那三张背面朝上的意外。',
         html: `
           <h6>四个技能</h6>
@@ -7815,19 +8657,24 @@
             <tr><td>一对一特训</td><td>随机一项属性 +1.0，本月强度 +1</td></tr>
             <tr><td>谈心</td><td>意志 +1.5，师生 +0.8</td></tr>
             <tr><td>战术分析</td><td>下一场软判定 +0.2</td></tr>
-            <tr><td>强制休息</td><td>意志 +1.2，健康 +1.5，强度 −2</td></tr>
+            <tr><td>强制休息</td><td>意志 +1.2，健康 +1.5，强度 −2，本月不算硬撑</td></tr>
           </table>
           <p>每学年各一次，不占时间格，以「教练亲授」牌的形式排在手牌最前面。不用就浪费了，但也别在本月已经排满时硬塞。</p>
           <h6>月度事件</h6>
-          <p>每月开头翻开三张背面牌，盲选一张，只有选中的生效。吉凶配比看师生：<b>亲密</b>时至少两张吉签，<b>疏离</b>时至少一张凶签，<b>红线</b>时至少两张凶签。和时间绑定的事件（高考、集训营、校庆）会优先出现，还会占掉时间格。</p>
+          <p>每月开头翻开三张背面牌，盲选一张，只有选中的生效。<b>一吉一凶是底线，另有四成概率再多一张凶签</b>——配比和你的状态完全无关，关系再铁也不会让坏运气绕道走。</p>
+          <p>凶签里有一部分不扣状态，而是<b>直接削能力</b>：手腕扭伤扣代数、错题本丢了扣数论和组合、方法走偏扣代数与综合、学到麻木扣综合。这类损失不会自己回来，只能重新练回来——所以有时候「这个月少练一点、先别出事」是划算的。</p>
+          <p>和时间绑定的事件（高考、集训营、校庆）会优先出现，还会占掉时间格。</p>
           <h6>七八月</h6>
           <p><b>七月</b>：强制停练，先给一笔固定恢复（健康 +1.0 / 师生 +0.4，<b>虚弱也不打折</b>），再从三张假期牌里挑一件他想做的事，选完一次性结算。</p>
+          <p>三张牌固定是<b>一休、一冲、一训</b>，三个方向都摆在桌上，怎么选是你的判断。</p>
           <p><b>休息</b>类：额外回健康与师生；若健康或师生低于 4，<b>保底拉到 4</b>。摔进虚弱或疏离之后，这是真正能爬出来的地方。</p>
           <p><b>冲刺</b>类：主项大涨，但固定回血减半，另付健康 −0.8 / 师生 −0.3，<b>不享受保底</b>。赌一个身位，就得先让出一点身子。</p>
+          <p><b>加训</b>类：<b>一点血都不回</b>，也没有保底，换来的是一两科接近 +1.0 的硬涨。健康会掉到 1 附近——真见底了，你会把书抽走，但那笔透支会记在账上：<b>下个月强度 +1</b>。适合「差一口气就能过线」的年份，不适合拿来续命。</p>
+          <p><b>大赛前的假期</b>：假期结束（或下个月）就有比赛时，那张加训会变成<b>针对这一场的集训</b>——只练它考的科目，涨得更集中。第四年七月就是这样：假期一结束就是 IMO，这个假期怎么过，基本就是那场的结果。</p>
           <p><b>八月</b>：假期尾声，只给少量自动恢复（健康 +0.4 / 意志 +0.3 / 师生 +0.2），不选牌，也没有保底。</p>`
       },
       {
-        ico: '八', n: '危机与结局',
+        ico: '九', n: '危机与结局',
         lead: '真正让人输的，从来不是某一场比赛，而是几件小事叠在一起。',
         html: `
           <h6>救援</h6>
@@ -7850,8 +8697,223 @@
       if (!manualEl) return;
       const m = MANUAL[mnCur];
       const main = manualEl.querySelector('#mn-main');
+      /* 详情条是手册级的固定件，换页时先摘掉，避免留在别的页底下 */
+      const oldDock = manualEl.querySelector('.kt-info');
+      if (oldDock) oldDock.remove();
       main.innerHTML = `<div class="mn-h">${m.n}</div><div class="mn-lead">${m.lead}</div>${m.html}`;
       main.scrollTop = 0;
+      if (m.tree) renderKnowledgeTree(main);
+    }
+
+    /* ---------------- 知识树：按「前置深度」分列的关系图 ---------------- */
+    function renderKnowledgeTree(main) {
+      const wrap = main.querySelector('#kt-wrap');
+      /* 详情条挂在 .mn-col 上（正文之外），树怎么滚都不会牵动它 */
+      const info = document.createElement('div');
+      info.className = 'kt-info';
+      info.id = 'kt-info';
+      (main.parentNode || main).appendChild(info);
+      if (!wrap) return;
+
+      const nodes = CARDS.filter(c => c.m !== 'rest');
+      const byId = {};
+      nodes.forEach(c => { byId[c.id] = c; });
+
+      /* 深度 = 最长前置链，保证所有连线都从左往右，不会倒回 */
+      const dep = {};
+      nodes.forEach(c => { dep[c.id] = 0; });
+      for (let k = 0; k < 14; k++) {
+        nodes.forEach(c => {
+          (c.pre || []).forEach(pid => {
+            if (byId[pid]) dep[c.id] = Math.max(dep[c.id], dep[pid] + 1);
+          });
+        });
+      }
+
+      const preMap = {}, nextMap = {};
+      nodes.forEach(c => {
+        preMap[c.id] = (c.pre || []).filter(p => byId[p]);
+        nextMap[c.id] = [];
+      });
+      nodes.forEach(c => preMap[c.id].forEach(p => nextMap[p].push(c.id)));
+
+      const NW = 142, NH = 25, PX = 176, PY = 29, LBL = 62;
+      const GAP = 11, PADT = 24;
+      const maxDep = Math.max(...nodes.map(c => dep[c.id]));
+      const cols = ['基础', '进阶', '深研', '攻坚', '绝顶'];
+
+      const mods = ['alg', 'geo', 'num', 'com', 'gen'];
+      let y = PADT;
+      const pos = {}, bands = [];
+
+      mods.forEach(mk => {
+        const list = nodes.filter(c => c.m === mk);
+        if (!list.length) return;
+        const buckets = {};
+        list.forEach(c => {
+          const d = dep[c.id];
+          (buckets[d] = buckets[d] || []).push(c);
+        });
+        let rows = 0;
+        Object.keys(buckets).forEach(d => { rows = Math.max(rows, buckets[d].length); });
+        const h = rows * PY - (PY - NH);
+        bands.push({ mk, y, h });
+        Object.keys(buckets).forEach(d => {
+          buckets[d].forEach((c, i) => {
+            pos[c.id] = {
+              x: LBL + d * PX,
+              y: y + i * PY,
+              d
+            };
+          });
+        });
+        y += h + GAP;
+      });
+
+      const W = LBL + maxDep * PX + NW + 14;
+      const H = y - GAP + 8;
+
+      const mastery = (id) => (G.mastery && G.mastery[id]) || 0;
+      const preOpen = (c) => (c.pre || []).every(p => mastery(p) >= 1);
+
+      let edges = '', boxes = '';
+
+      /* 分带底色 + 模块标签（贴带首行，别飘在中间） */
+      bands.forEach(b => {
+        const mo = MODS[b.mk];
+        boxes += `<rect class="kt-band" x="0" y="${b.y - 7}" width="${W - 2}" height="${b.h + 14}" rx="4"/>`;
+        boxes += `<rect x="0" y="${b.y - 7}" width="2" height="${b.h + 14}" fill="${mo.c}" opacity=".55"/>`;
+        boxes += `<text class="kt-lbl" x="8" y="${b.y + 11}" fill="${mo.lit}">${mo.g}</text>`;
+        boxes += `<text class="kt-lbl" x="24" y="${b.y + 11}">${mo.n}</text>`;
+      });
+
+      /* 列标题 */
+      for (let d = 0; d <= maxDep; d++) {
+        const cx = LBL + d * PX;
+        boxes += `<line x1="${cx}" y1="15" x2="${cx + 22}" y2="15" stroke="rgba(196,160,104,.45)" stroke-width="1"/>`;
+        boxes += `<text class="kt-cap" x="${cx + 28}" y="18">${cols[d] || ''}</text>`;
+      }
+
+      /* 连线 */
+      nodes.forEach(c => {
+        (preMap[c.id] || []).forEach(pid => {
+          const a = pos[pid], b = pos[c.id];
+          if (!a || !b) return;
+          const x1 = a.x + NW, y1 = a.y + NH / 2;
+          const x2 = b.x, y2 = b.y + NH / 2;
+          const dx = Math.max(18, (x2 - x1) * .55);
+          const cross = byId[pid].m !== c.m;
+          edges += `<path class="kt-e" data-a="${pid}" data-b="${c.id}" d="M${x1} ${y1} C${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}"
+            fill="none" stroke="${cross ? 'rgba(176,141,79,.42)' : 'rgba(196,160,104,.6)'}"
+            stroke-width="1" ${cross ? 'stroke-dasharray="3 3"' : ''}/>`;
+        });
+      });
+
+      /* 节点 */
+      nodes.forEach(c => {
+        const p = pos[c.id];
+        if (!p) return;
+        const mst = mastery(c.id);
+        const open = preOpen(c);
+        const mo = MODS[c.m];
+        const fill = mst >= 3 ? '#8a6b32' : mst >= 1 ? '#3f3019' : open ? '#2a2013' : '#1c150d';
+        const stroke = mst >= 3 ? '#f0d7a2' : mst >= 1 ? mo.lit : open ? 'rgba(196,160,104,.55)' : 'rgba(120,100,66,.55)';
+        const txt = mst >= 3 ? '#fff3d6' : open ? '#e4d0a6' : '#8a795a';
+        boxes += `<g class="kt-n" data-id="${c.id}">
+          <rect x="${p.x}" y="${p.y}" width="${NW}" height="${NH}" rx="3"
+            fill="${fill}" stroke="${stroke}" stroke-width="1" ${open ? '' : 'stroke-dasharray="3 3"'}/>
+          <text x="${p.x + 7}" y="${p.y + NH / 2 + 3.4}" fill="${txt}">${c.t}</text>
+          ${mst > 1 && c.t.length <= 7 ? `<text class="kt-c" x="${p.x + NW - 6}" y="${p.y + NH / 2 + 3.2}" text-anchor="end" fill="#e6c489">×${mst}</text>` : ''}
+        </g>`;
+      });
+
+      wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${edges}${boxes}</svg>`;
+      const svg = wrap.querySelector('svg');
+
+      /* 悬停：高亮整条前置链与后续 */
+      const chainOf = (id) => {
+        const set = new Set([id]);
+        const up = [id];
+        while (up.length) {
+          const x = up.pop();
+          preMap[x].forEach(p => { if (!set.has(p)) { set.add(p); up.push(p); } });
+        }
+        const dn = [id];
+        while (dn.length) {
+          const x = dn.pop();
+          nextMap[x].forEach(p => { if (!set.has(p)) { set.add(p); dn.push(p); } });
+        }
+        return set;
+      };
+
+      const say = (id) => {
+        const c = byId[id];
+        if (!c) return;
+        const mst = mastery(id);
+        const pre = (c.pre || []).map(p => {
+          const q = byId[p];
+          const ok = mastery(p) >= 1;
+          return `<span class="${ok ? 'kt-ok' : 'kt-no'}">${q ? q.t : p}${ok ? ' ✓' : ' ✕'}</span>`;
+        }).join('、') || '<span class="kt-ok">无</span>';
+        const st = mst >= 3 ? '已精读（移出牌库）' : mst >= 1 ? `读过 ${mst} 次` : preOpen(c) ? '未读 · 可以读' : '未读 · 前置未通（收益减半）';
+        /* 只讲关系与状态，不复述牌面效果——具体数值留在牌上和手册里看 */
+        info.innerHTML = `
+          <div class="kt-i-row"><span class="kt-i-h">${c.t}<em>${MODS[c.m].n} · ${KIND[c.kind]} · ${DUR[c.dur].n} ${DUR[c.dur].u} 格 · 精力 ${c.cost}</em></span></div>
+          <div class="kt-i-row">前置：${pre}　·　状态：<b>${st}</b></div>`;
+      };
+
+      /* 悬停：整条前置链与后续高亮。
+         同一张牌只绘一次（鼠标在牌面上挪动不该重画），
+         一帧最多绘一次（快速扫过时不抖） */
+      let curId = '', rafId = 0, pendId = '';
+      const paint = (id) => {
+        const set = chainOf(id);
+        svg.classList.add('focus');
+        svg.querySelectorAll('.kt-n').forEach(n => n.classList.toggle('on', set.has(n.dataset.id)));
+        svg.querySelectorAll('.kt-e').forEach(p => p.classList.toggle('on', set.has(p.dataset.a) && set.has(p.dataset.b)));
+        say(id);
+      };
+
+      svg.addEventListener('pointerover', e => {
+        const g = e.target.closest ? e.target.closest('.kt-n') : null;
+        if (!g) return;
+        const id = g.dataset.id;
+        if (id === curId) return;
+        curId = id;
+        pendId = id;
+        if (rafId) return;
+        rafId = requestAnimationFrame(() => {
+          rafId = 0;
+          if (pendId) paint(pendId);
+        });
+      });
+
+      /* 空闲时也填满三行：一是交代全局统计，二是保持高度恒定不抖 */
+      const idle = () => {
+        const nAll = nodes.length;
+        const nLock = nodes.filter(c => !preOpen(c)).length;
+        const nDone = nodes.filter(c => mastery(c.id) >= 3).length;
+        const nRead = nodes.filter(c => mastery(c.id) >= 1 && mastery(c.id) < 3).length;
+        return `<div class="kt-i-row">把鼠标移到任意一张牌上，这一条会显示它的前置、效果与当前状态。</div>
+          <div class="kt-i-row">全树 ${nAll} 张 · 可读 <b>${nAll - nLock}</b> · 前置未通 <b class="kt-no">${nLock}</b> · 读过 <b>${nRead}</b> · 已精读 <b>${nDone}</b></div>
+          <div class="kt-i-row">虚线框＝前置未通（收益减半）　金框＝已精读（移出牌库）</div>`;
+      };
+
+      svg.addEventListener('mouseleave', () => {
+        curId = '';
+        pendId = '';
+        svg.classList.remove('focus');
+        svg.querySelectorAll('.kt-n.on').forEach(n => n.classList.remove('on'));
+        svg.querySelectorAll('.kt-e.on').forEach(p => p.classList.remove('on'));
+        info.innerHTML = idle();
+      });
+
+      svg.addEventListener('click', e => {
+        const g = e.target.closest ? e.target.closest('.kt-n') : null;
+        if (g) { say(g.dataset.id); SFX.tick(); }
+      });
+
+      info.innerHTML = idle();
     }
 
     function onManualKey(e) {
@@ -7879,7 +8941,7 @@
               ${MANUAL.map((m, i) => `<button data-i="${i}" class="${i === mnCur ? 'on' : ''}"><i>${m.ico}</i>${m.n}</button>`).join('')}
               <div class="mn-nav-foot">↑↓ 换页 · Esc 关闭<br>翻手册不会暂停游戏</div>
             </nav>
-            <article class="mn-main" id="mn-main"></article>
+            <div class="mn-col"><article class="mn-main" id="mn-main"></article></div>
           </div>
         </div>`;
       document.body.appendChild(el);
@@ -7937,13 +8999,14 @@
             done: G.done, cold: G.cold, log: G.log, relMin: G.relMin, imoResult: G.imoResult,
             pas: G.pas, profile: G.profile, debt: G.debt, notesPending: G.notesPending,
             intensity: G.intensity, skills: G.skills, skillYear: G.skillYear,
-            planBuff: G.planBuff, rescue: G.rescue, evtLast: G.evtLast,
+            cycUsed: G.cycUsed, cycYear: G.cycYear, cycKey: G.cycKey,
+            planBuff: G.planBuff, rescue: G.rescue, evtLast: G.evtLast, pity: G.pity || 0, delay: G.delay || 0,
             lastWin: G.lastWin, coldGood: G.coldGood, slotCut: G.slotCut,
             holidayUsed: G.holidayUsed, restPlayed: G.restPlayed,
             /* 月内进度：日历格、精力、已出牌数、复习标记、阶段 */
             cal: G.cal, energy: G.energy, played: G.played, review: G.review,
             monthLoad: G.monthLoad, stage: G.stage,
-            holPick: G.holPick, holSel: G.holSel, pend: G.pend,
+            holPick: G.holPick, holSel: G.holSel, holYear: G.holYear, pend: G.pend,
             evtPick: G.evtPick, evtDone: G.evtDone, coachSkill: G.coachSkill
           },
           deck: deck.map(c => c.id),
@@ -7969,17 +9032,21 @@
         /* 点面板外面：收起音量面板 */
         const tgt = e.target;
         const inSnd = tgt && tgt.closest && tgt.closest('.snd-wrap');
-        if (!inSnd) { const vp = document.getElementById('vol-pop'); if (vp) vp.classList.remove('on'); }
+        if (!inSnd) { const vp = document.getElementById('vol-panel'); if (vp) vp.classList.remove('on'); }
         /* 手册开着，或刚关掉的那一下：一律不产生任何副作用 */
         if (manualEl || Date.now() < mnGuard) {
           if (Date.now() < mnGuard) e.stopPropagation();
           return;
         }
-        if (COACH.typing && COACH.finish) { const f = COACH.finish; f(); return; }
-        if (skipPause) { const f = skipPause; skipPause = null; f(); return; }
+        /* 连点闸门：教程气泡、旁白停顿、教练台词，一次点击只推进一步 */
+        const now = Date.now();
+        if (now < clickGate) return;
+        if (COACH.typing && COACH.finish) { clickGate = now + 220; const f = COACH.finish; f(); return; }
+        if (skipPause) { clickGate = now + 220; const f = skipPause; skipPause = null; f(); return; }
         if (TUT.waiter) {
           const t = e.target;
-          if (t && t.closest && t.closest('.icon-btn, #ui-match, .manual, .card-wrap, .vol-pop')) return;
+          if (t && t.closest && t.closest('.icon-btn, #ui-match, .manual, .card-wrap, .vol-panel')) return;
+          clickGate = now + 160;
           const w = TUT.waiter;
           TUT.waiter = null;
           w();
@@ -7991,10 +9058,11 @@
         skipTutorial();
       });
 
-      $('#layer-adv').addEventListener('click', onAdvClick);
+      $('#layer-dlg').addEventListener('click', onAdvClick);
 
       $('#btn-play').addEventListener('click', doPlay);
       $('#btn-end').addEventListener('click', () => endMonth(false));
+      $('#btn-cyc').addEventListener('click', cycleCard);
 
       $('#ui-match').addEventListener('click', e => {
         const b = e.target.closest('#btn-review');
@@ -8004,7 +9072,7 @@
       });
 
       /* ---------- 音量面板：背景音 / 音效分开调，静音单独一个键 ---------- */
-      const volPop = $('#vol-pop');
+      const volPop = $('#vol-panel');
       const ambRange = $('#vol-range'), sfxRange = $('#sfx-range');
       const paintRange = el => el.style.setProperty('--p', el.value + '%');
       const paintSoundBtn = () => {
@@ -8060,6 +9128,7 @@
 
       $('#btn-help').addEventListener('click', e => {
         e.stopPropagation();
+        scanBlocked(true);
         showManual();
       });
 
@@ -8160,6 +9229,9 @@
     }
 
     async function startGame(pid) {
+      /* 选人卡连点：第二次直接吞掉，否则会并排跑两条开场 */
+      if (starting) return;
+      starting = true;
       SFX.resume();
       SFX.ambience(soundOn);
       clearSave();
@@ -8173,6 +9245,9 @@
       G.monthLoad = [];
       G.skills = {};
       G.skillYear = 1;
+      G.cycUsed = 0;
+      G.cycKey = -1;
+      G.cycYear = 1;
       G.planBuff = 0;
       G.rescue = { used: 0, last: -99, missed: 0 };
       G.evtLast = '';
@@ -8187,7 +9262,7 @@
       G.year = 1; G.month = 1;
       G.pass = 0; G.sched = {}; G.done = {};
       G.mastery = {}; G.log = []; G.imoResult = null; G.epilogued = false;
-      G.stage = 'intro'; G.holPick = null; G.holSel = null; G.pend = null;
+      G.stage = 'intro'; G.holPick = null; G.holSel = null; G.holYear = null; G.pend = null;
       G.evtPick = null; G.evtDone = -1; G.coachSkill = null;
       G.played = 0; G.review = false; G.restPlayed = false; G.monthLoad = [];
       G.cal = newCal(); G.energy = ENERGY_MAX;
@@ -8220,6 +9295,7 @@
       G.monthLoad = Array.isArray(d.G.monthLoad) ? d.G.monthLoad : [];
       G.stage = d.G.stage || 'intro';
       G.holPick = Array.isArray(d.G.holPick) ? d.G.holPick : null;
+      G.holYear = (typeof d.G.holYear === 'number') ? d.G.holYear : null;
       G.holSel = (typeof d.G.holSel === 'number') ? d.G.holSel : null;
       G.pend = d.G.pend || null;
       G.evtPick = Array.isArray(d.G.evtPick) ? d.G.evtPick : null;
@@ -8241,9 +9317,14 @@
       G.intensity = G.intensity || 5;
       G.skills = G.skills || {};
       G.skillYear = G.skillYear || G.year;
+      G.cycUsed = (typeof G.cycUsed === 'number') ? G.cycUsed : 0;
+      G.cycKey = (typeof G.cycKey === 'number') ? G.cycKey : -1;
+      G.cycYear = G.cycYear || G.year;
       G.planBuff = G.planBuff || 0;
       G.rescue = G.rescue || { used: 0, last: -99, missed: 0 };
       G.evtLast = G.evtLast || '';
+      G.pity = (typeof G.pity === 'number') ? G.pity : 0;
+      G.delay = (typeof G.delay === 'number') ? G.delay : 0;
       G.holidayUsed = G.holidayUsed || [];
       G.restPlayed = !!G.restPlayed;
       G.coldGood = G.coldGood || 0;
@@ -8265,10 +9346,109 @@
       beginMonth();
     }
 
+    /* 广告拦截器兜底：有些通用规则按 id/class 里的 "ad"/"adv"/"float"/"pop"
+       误伤整块界面。命名已经全部避开，这里再用内联 !important 钉一次。 */
+    function guardDlg() {
+      const L = document.getElementById('layer-dlg');
+      const B = document.getElementById('dlg-box');
+      if (L) L.style.setProperty('display', 'flex', 'important');
+      if (B) B.style.setProperty('display', 'block', 'important');
+    }
+
+    /* ==================================================================
+       18. 拦截器误伤检测
+       对话层若被外部样式整块隐藏，玩家只会看到「有字却看不见」。
+       这里用一个同 class 的探针去试：探针被隐藏 = 有外部规则在针对它。
+    ================================================================== */
+    const NOTICE = { hit: false, tries: 0, timer: 0 };
+
+    function dlgBlocked() {
+      const B = document.getElementById('dlg-box');
+      if (!B) return true;
+      /* 探针：只有 class，没有 id，所以不会被页面自己的 #dlg-box 规则影响 */
+      const p = document.createElement('div');
+      p.className = 'dlg-box';
+      p.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:40px;height:40px;opacity:0;pointer-events:none;display:block';
+      document.body.appendChild(p);
+      const ps = getComputedStyle(p);
+      const probeHidden = ps.display === 'none' || ps.visibility === 'hidden' || ps.height === '0px';
+      p.remove();
+
+      const bs = getComputedStyle(B);
+      const r = B.getBoundingClientRect();
+      const selfHidden = bs.display === 'none' || r.width < 40 || r.height < 30;
+      return probeHidden || selfHidden;
+    }
+
+    function showBlockNotice() {
+      const el = $('#notice-block');
+      if (!el) return;
+      try { $('#nc-host').textContent = location.host || '本页'; } catch (e) { }
+      el.classList.add('on');
+      NOTICE.hit = true;
+    }
+
+    function hideBlockNotice() {
+      const el = $('#notice-block');
+      if (el) el.classList.remove('on');
+    }
+
+    function gameStarted() {
+      const t = document.getElementById('title');
+      return !t || t.classList.contains('hide');
+    }
+
+    function scanBlocked(force) {
+      if (NOTICE.hit && !force) return true;
+      if (!force && !gameStarted()) return false;          // 标题页不打扰，免得挡住「开始执教」
+      if (!force) {
+        try { if (sessionStorage.getItem('cmo_blk_off') === '1') return false; } catch (e) { }
+      }
+      const bad = dlgBlocked();
+      if (bad) showBlockNotice(); else if (NOTICE.hit) { NOTICE.hit = false; hideBlockNotice(); }
+      return bad;
+    }
+
+    function bindBlockNotice() {
+      const el = $('#notice-block');
+      if (!el) return;
+      $('#nc-close').addEventListener('click', e => {
+        e.stopPropagation();
+        hideBlockNotice();
+        try { sessionStorage.setItem('cmo_blk_off', '1'); } catch (er) { }
+      });
+      $('#nc-retry').addEventListener('click', e => {
+        e.stopPropagation();
+        const bad = dlgBlocked();
+        if (bad) {
+          el.classList.remove('shake');
+          void el.offsetWidth;
+          el.classList.add('shake');
+          toast('还是被挡住了 · 请检查拦截插件的白名单');
+        } else {
+          NOTICE.hit = false;
+          hideBlockNotice();
+          guardDlg();
+          toast('对话框已恢复');
+          SFX.good();
+        }
+      });
+      /* 开局后反复试探：有些插件是延迟注入样式的 */
+      let n = 0;
+      NOTICE.timer = setInterval(() => {
+        n++;
+        scanBlocked(false);
+        if (NOTICE.hit || n >= 40) clearInterval(NOTICE.timer);
+      }, 2200);
+      setTimeout(() => scanBlocked(false), 900);
+    }
+
     bindEvents();
     initDust();
     renderBoard(false);
     setMode('adv');
+    guardDlg();
+    bindBlockNotice();
     if (loadSave()) {
       const rb = $('#btn-resume');
       rb.style.display = '';
