@@ -232,8 +232,8 @@
       position: absolute;
       top: 42px;
       right: -6px;
-      width: 214px;
-      padding: 12px 13px 11px;
+      width: 268px;
+      padding: 13px 16px 12px;
       background: linear-gradient(#171009, #0b0805);
       border: 1px solid #3d2e17;
       box-shadow: 0 14px 34px rgba(0, 0, 0, .62), inset 0 0 0 1px rgba(176, 141, 79, .08);
@@ -270,8 +270,9 @@
       color: #8d7a56;
       font-size: calc(10px * var(--fs));
       letter-spacing: .16em;
-      width: 44px;
+      width: 50px;
       flex: 0 0 auto;
+      white-space: nowrap;
     }
 
     .vp-row input[type=range] {
@@ -307,7 +308,7 @@
       color: #c9b28a;
       font-size: calc(10px * var(--fs));
       font-weight: 400;
-      width: 24px;
+      width: 28px;
       text-align: right;
       flex: 0 0 auto;
     }
@@ -4174,8 +4175,8 @@
           <div class="vp-row">
             <span class="vp-k">背景音</span>
             <input type="range" id="vol-range" min="0" max="100" step="1"
-              value="55">
-            <b id="vol-val">55</b>
+              value="50">
+            <b id="vol-val">50</b>
           </div>
           <div class="vp-row">
             <span class="vp-k">音效</span>
@@ -4521,8 +4522,8 @@
     const SFX = (() => {
       let ctx = null, master = null, noiseBuf = null, ambMaster = null;
       /* 背景音与音效分两路：玩家各调各的，互不牵连 */
-      const AMB_MAX = 0.088;                 // 背景音 100% 时的目标增益
-      let ambVol = 0.55, sfxVol = 1;
+      const AMB_MAX = 0.096;                 // 背景音 100% 时的目标增益（50 档 ≈ 原来的响度）
+      let ambVol = 0.5, sfxVol = 1;
       try {
         const av = parseFloat(localStorage.getItem('cmo_amb_vol'));
         if (isFinite(av)) ambVol = Math.max(0, Math.min(1, av));
@@ -7050,6 +7051,8 @@
           toast('错题本已精读 · 综合 +0.1');
         }
       }
+      /* 上月没打的教练牌先作废：别让它占掉一张普通牌的名额 */
+      hand = hand.filter(c => !c.coach);
       while (hand.length < HAND_SIZE) {
         const c = drawCard();
         if (!c) break;
@@ -7058,8 +7061,7 @@
       while (hand.length > HAND_CAP) deck.unshift(hand.pop());
       ensureRest();
 
-      // 每月一张教练亲授牌，永远排在最前（上月未打的作废）
-      hand = hand.filter(c => !c.coach);
+      // 每月一张教练亲授牌，永远排在最前
       G.coachSkill = null;
       const cc = coachCard();
       if (cc) {
