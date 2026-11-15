@@ -1,0 +1,88 @@
+/* ===== 主题色 (统一) ===== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    /* ===== 顶栏 ===== */
+
+    /* ===== 头部 ===== */
+
+    /* ===== 主容器 ===== */
+
+    /* ===== M3 组件 ===== */
+    /* Chip 组 (模式选择) */
+
+    /* 文本域 & 标签 */
+
+    .field textarea::placeholder {
+      color: var(--on-surface-variant);
+      opacity: 0.6
+    }
+
+    /* 统计信息 */
+    .stats {
+      display: flex;
+      gap: 16px;
+      font-size: 0.8rem;
+      color: var(--on-surface-variant);
+      margin-bottom: 16px
+    }
+
+    .stats span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    /* 按钮 */
+
+    .btn--outline:hover {
+      background: var(--surface-container-high)
+    }
+
+    .btn--danger:hover {
+      background: color-mix(in srgb, var(--error) 88%, #000)
+    }
+
+    /* 结果框 */
+
+    .result-box:empty::before {
+      content: '结果将显示在这里';
+      color: var(--on-surface-variant);
+      opacity: 0.5
+    }
+
+    /* 信息卡片 */
+
+    .info-card p:last-child {
+      margin-bottom: 0
+    }
+
+    .info-card ul {
+      list-style: none;
+      padding: 0
+    }
+
+    .info-card li:last-child {
+      border-bottom: none
+    }
+
+    .info-card li .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--primary)
+    }
+
+    /* Footer */
+
+    /* 响应 */
+    @media(max-width:640px) {
+
+      .stats {
+        flex-wrap: wrap;
+        gap: 8px
+      }
+    }

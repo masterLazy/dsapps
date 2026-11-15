@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dsapps | 图论在线画图工具</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
+    rel="stylesheet">
+
+  <link rel="stylesheet" crossorigin href="./assets/graph-D-OdDaQj.css">
+  <link rel="stylesheet" crossorigin href="./assets/shared-CYqYfmlr.css">
+</head>
+
+<body>
+
+
+<div class="top-bar">
+    <div class="top-bar__left">
+        <a class="top-bar__title" href="./index.html">dsapps</a>
+        <a href="./index.html" class="top-link" aria-label="返回应用列表"
+            title="返回应用列表">
+            <span class="material-symbols-outlined">home</span>
+        </a>
+    </div>
+</div>
+
+<!-- dsapps:title-header-start -->
+<header class="header">
+    <h1>图论在线画图工具</h1>
+    <p class="desc">可视化创建和编辑图结构，支持有向图和无向图，可自定义节点和边的颜色</p>
+</header>
+<!-- dsapps:title-header-end -->
+
+  <!-- 主布局 -->
+  <div class="app-layout">
+
+    <!-- 左侧面板 -->
+    <div class="sidebar">
+      <div>
+        <div class="panel-title">图类型</div>
+        <div class="chip-group">
+          <button class="chip chip--selected" id="undirected-btn">无向图</button>
+          <button class="chip" id="directed-btn">有向图</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel-title">输入图结构</div>
+        <textarea id="graph-input"
+          placeholder="输入边，每行一条：&#10;1 2&#10;2 3&#10;3 1"></textarea>
+        <button id="apply-btn" class="btn btn--primary btn--full"
+          style="margin-top:10px">应用图结构</button>
+      </div>
+
+      <div>
+        <div class="panel-title">选中元素</div>
+        <div class="sel-info" id="selected-info">点击节点或边可选中并更改其颜色</div>
+      </div>
+
+      <div class="color-section">
+        <div class="sel-label">元素颜色</div>
+        <div class="preset-row" id="color-presets">
+          <div class="color-swatch active" style="background:#333"
+            data-color="#333333"></div>
+          <div class="color-swatch" style="background:#e74c3c"
+            data-color="#e74c3c"></div>
+          <div class="color-swatch" style="background:#3498db"
+            data-color="#3498db"></div>
+          <div class="color-swatch" style="background:#2ecc71"
+            data-color="#2ecc71"></div>
+          <div class="color-swatch" style="background:#f39c12"
+            data-color="#f39c12"></div>
+          <div class="color-swatch" style="background:#9b59b6"
+            data-color="#9b59b6"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel-title">操作</div>
+        <button id="clear-btn" class="btn btn--danger btn--full"
+          style="margin-bottom:8px">清空画布</button>
+        <button id="reset-view-btn"
+          class="btn btn--outline btn--full">重置视图</button>
+      </div>
+
+      <div class="info-card">
+        <h3>使用说明</h3>
+        <ul>
+          <li>通过文本输入创建图: 每行一条边 (如 "1 2")</li>
+          <li>拖拽节点可以重新布局</li>
+          <li>点击节点或边可以选中并更改其颜色</li>
+          <li>切换有向图/无向图模式</li>
+          <li>使用"重置视图"可将所有节点重新居中</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 右侧图区域 -->
+    <div class="graph-area">
+      <div class="graph-toolbar">
+        <button id="layout-btn" class="btn btn--outline">自动布局</button>
+        <button id="export-btn" class="btn btn--outline">导出为图片</button>
+      </div>
+      <svg id="graph-canvas"></svg>
+    </div>
+  </div>
+
+  <!-- Footer -->
+<footer class="footer">
+  <div class="footer__inner">
+    <p class="footer__copyright">&copy; 2025 masterLazy</p>
+    <div class="footer__meta">
+      <span>dsapps · 由 DeepSeek 开发</span>
+      <a href="https://github.com/masterlazy/dsapps/" target="_blank" rel="noopener noreferrer">
+        <span class="material-symbols-outlined" aria-hidden="true">code</span>
+        <span>GitHub</span>
+      </a>
+      <span class="footer__license">MIT License</span>
+    </div>
+  </div>
+</footer>
+
+  <script>
+    (function () {
+      let graphType = 'undirected', nodes = [], edges = [], nextNodeId = 1, selectedElement = null, selectedElementType = null, currentColor = '#333333';
+
+      const svg = d3.select('#graph-canvas');
+      const w = () => document.getElementById('graph-canvas').clientWidth;
+      const h = () => document.getElementById('graph-canvas').clientHeight;
+
+      const zoom = d3.zoom().scaleExtent([0.1, 4]).on('zoom', event => g.attr('transform', event.transform));
+      svg.call(zoom);
+      const g = svg.append('g');
+
+      const defs = svg.append('defs');
+
+      function createArrow(id, color = '#333') {
+        defs.selectAll(`#${id}`).remove();
+        if (graphType === 'directed') {
+          const m = defs.append('marker').attr('id', id).attr('viewBox', '0 -5 10 10').attr('refX', 25).attr('refY', 0).attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto');
+          m.append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', color);
+        }
+      }
+      function createAllArrows() { edges.forEach((e, i) => createArrow(`ah-${i}`, e.color || currentColor)) }
+      function createEdgeArrow(e, i) { createArrow(`ah-${i}`, e.color || currentColor) }
+
+      const sim = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(edges).id(d => d.id).distance(120))
+        .force('charge', d3.forceManyBody().strength(-100).distanceMax(300))
+        .force('center', d3.forceCenter(500, 350))
+        .force('collision', d3.forceCollide().radius(35))
+        .force('x', d3.forceX(500).strength(0.05))
+        .force('y', d3.forceY(350).strength(0.05))
+        .alphaDecay(0.02).velocityDecay(0.4);
+
+      function defGraph() {
+        const cw = w() || 700, ch = h() || 500;
+        nodes = [{ id: '1', label: '1', strokeColor: currentColor, x: cw / 2 - 100, y: ch / 2 - 50 }, { id: '2', label: '2', strokeColor: currentColor, x: cw / 2 + 100, y: ch / 2 - 50 }, { id: '3', label: '3', strokeColor: currentColor, x: cw / 2, y: ch / 2 + 50 }];
+        edges = [{ source: '1', target: '2', color: currentColor }, { source: '2', target: '3', color: currentColor }, { source: '3', target: '1', color: currentColor }];
+        nextNodeId = 4;
+      }
+      defGraph(); updateGraph();
+
+      // 图类型切换
+      document.getElementById('directed-btn').addEventListener('click', () => {
+        graphType = 'directed';
+        document.getElementById('directed-btn').classList.add('chip--selected');
+        document.getElementById('undirected-btn').classList.remove('chip--selected');
+        createAllArrows(); updateGraph();
+      });
+      document.getElementById('undirected-btn').addEventListener('click', () => {
+        graphType = 'undirected';
+        document.getElementById('undirected-btn').classList.add('chip--selected');
+        document.getElementById('directed-btn').classList.remove('chip--selected');
+        defs.selectAll('marker').remove(); updateGraph();
+      });
+
+      document.getElementById('apply-btn').addEventListener('click', applyInput);
+      document.getElementById('clear-btn').addEventListener('click', () => { nodes = []; edges = []; nextNodeId = 1; selectedElement = null; selectedElementType = null; document.getElementById('selected-info').textContent = '点击节点或边可选中并更改其颜色'; defs.selectAll('marker').remove(); updateGraph() });
+      document.getElementById('layout-btn').addEventListener('click', () => sim.alpha(1).restart());
+      document.getElementById('reset-view-btn').addEventListener('click', () => {
+        svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+        nodes.forEach(d => { d.x = w() / 2; d.y = h() / 2; d.vx = 0; d.vy = 0 });
+        sim.alpha(1).restart(); updateGraph();
+      });
+
+      document.getElementById('export-btn').addEventListener('click', () => {
+        const data = new XMLSerializer().serializeToString(svg.node());
+        const c = document.createElement('canvas'), ctx = c.getContext('2d'), img = new Image();
+        const blob = new Blob([data], { type: 'image/svg+xml;charset=utf-8' }), url = URL.createObjectURL(blob);
+        img.onload = function () { c.width = w(); c.height = h(); ctx.drawImage(img, 0, 0); URL.revokeObjectURL(url); const a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = 'graph.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a) };
+        img.src = url;
+      });
+
+      // 颜色预设
+      document.querySelectorAll('#color-presets .color-swatch').forEach(el => {
+        el.addEventListener('click', function () {
+          currentColor = this.dataset.color;
+          document.querySelectorAll('#color-presets .color-swatch').forEach(p => p.classList.remove('active'));
+          this.classList.add('active');
+          updateSelectedColor();
+        });
+      });
+
+      function applyInput() {
+        const input = document.getElementById('graph-input').value.trim();
+        if (!input) return;
+        nodes = []; edges = []; nextNodeId = 1; const nm = new Map();
+        const lines = input.split('\n');
+        lines.forEach(line => {
+          const parts = line.trim().split(/\s+/);
+          if (parts.length >= 2) {
+            const sId = parts[0], tId = parts[1];
+            if (!nm.has(sId)) { nm.set(sId, { id: nextNodeId.toString(), label: sId, strokeColor: currentColor, x: w() / 2 + (Math.random() - 0.5) * 100, y: h() / 2 + (Math.random() - 0.5) * 100 }); nodes.push(nm.get(sId)); nextNodeId++ }
+            if (!nm.has(tId)) { nm.set(tId, { id: nextNodeId.toString(), label: tId, strokeColor: currentColor, x: w() / 2 + (Math.random() - 0.5) * 100, y: h() / 2 + (Math.random() - 0.5) * 100 }); nodes.push(nm.get(tId)); nextNodeId++ }
+            edges.push({ source: nm.get(sId).id, target: nm.get(tId).id, color: currentColor });
+          }
+        });
+        createAllArrows(); updateGraph();
+      }
+
+      function updateSelectedColor() {
+        if (!selectedElement || !selectedElementType) return;
+        if (selectedElementType === 'node') {
+          selectedElement.strokeColor = currentColor;
+          d3.selectAll('.node').filter(d => d.id === selectedElement.id).select('circle').attr('stroke', currentColor).attr('stroke-width', 2);
+          document.getElementById('selected-info').textContent = `已选中节点 ${selectedElement.label}，轮廓颜色已更新`;
+        } else {
+          selectedElement.color = currentColor;
+          const idx = edges.findIndex(e => e.source === selectedElement.source && e.target === selectedElement.target);
+          if (idx !== -1) createEdgeArrow(selectedElement, idx);
+          d3.selectAll('.edge').filter((d, i) => i === idx).select('line').attr('stroke', currentColor).attr('marker-end', graphType === 'directed' ? `url(#ah-${idx})` : null).attr('stroke-width', 2);
+          document.getElementById('selected-info').textContent = `已选中边 ${selectedElement.source.label || selectedElement.source} → ${selectedElement.target.label || selectedElement.target}，颜色已更新`;
+        }
+      }
+
+      function updateGraph() {
+        g.selectAll('.edges,.nodes').remove();
+        const eg = g.append('g').attr('class', 'edges'), ng = g.append('g').attr('class', 'nodes');
+
+        // 边界
+        eg.append('rect').attr('class', 'boundary-indicator').attr('width', (w() || 700) - 80).attr('height', (h() || 500) - 80).attr('x', 40).attr('y', 40);
+
+        // 边
+        const es = eg.selectAll('.edge').data(edges, (d, i) => `${d.source.id || d.source}-${d.target.id || d.target}-${i}`);
+        const ee = es.enter().append('g').attr('class', 'edge').style('cursor', 'pointer').on('click', function (event, d) {
+          if (selectedElement) { if (selectedElementType === 'node') ng.selectAll('.node').select('circle').attr('stroke-width', 2); else eg.selectAll('.edge').select('line').attr('stroke-width', 2) }
+          selectedElement = d; selectedElementType = 'edge'; d3.select(this).select('line').attr('stroke-width', 4);
+          document.getElementById('selected-info').textContent = `已选中边 ${d.source.label || d.source} → ${d.target.label || d.target}`;
+        });
+        ee.append('line').attr('class', 'edge-line').attr('stroke', d => d.color || currentColor).attr('stroke-width', 2).attr('marker-end', (d, i) => graphType === 'directed' ? `url(#ah-${i})` : null);
+        const ea = es.merge(ee); ea.select('.edge-line').attr('stroke', d => d.color || currentColor).attr('marker-end', (d, i) => graphType === 'directed' ? `url(#ah-${i})` : null);
+
+        // 节点
+        const ns = ng.selectAll('.node').data(nodes, d => d.id);
+        const ne = ns.enter().append('g').attr('class', 'node').style('cursor', 'pointer').call(d3.drag().on('start', (event, d) => { if (!event.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y }).on('drag', (event, d) => { d.fx = event.x; d.fy = event.y }).on('end', (event, d) => { if (!event.active) sim.alphaTarget(0); d.fx = null; d.fy = null })).on('click', function (event, d) {
+          if (selectedElement) { if (selectedElementType === 'node') ng.selectAll('.node').select('circle').attr('stroke-width', 2); else eg.selectAll('.edge').select('line').attr('stroke-width', 2) }
+          selectedElement = d; selectedElementType = 'node'; d3.select(this).select('circle').attr('stroke-width', 4);
+          document.getElementById('selected-info').textContent = `已选中节点 ${d.label}`;
+        });
+        ne.append('circle').attr('r', 22).attr('fill', '#fff').attr('stroke', d => d.strokeColor || currentColor).attr('stroke-width', 2);
+        ne.append('text').attr('class', 'node-label').attr('dy', 5).text(d => d.label);
+
+        const na = ns.merge(ne); na.select('circle').attr('fill', '#fff').attr('stroke', d => d.strokeColor || currentColor);
+
+        sim.nodes(nodes);
+        sim.force('link').links(edges);
+        sim.alpha(1).restart();
+        sim.on('tick', () => {
+          const cw = w() || 700, ch = h() || 500;
+          nodes.forEach(d => { d.x = Math.max(30, Math.min(cw - 30, d.x)); d.y = Math.max(30, Math.min(ch - 30, d.y)) });
+          na.attr('transform', d => `translate(${d.x},${d.y})`);
+          ea.select('.edge-line').attr('x1', d => d.source.x).attr('y1', d => d.source.y).attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+        });
+      }
+
+      // 窗口 resize
+      window.addEventListener('resize', () => {
+        const cw = w() || 700, ch = h() || 500;
+        sim.force('center', d3.forceCenter(cw / 2, ch / 2)).force('x', d3.forceX(cw / 2).strength(0.05)).force('y', d3.forceY(ch / 2).strength(0.05));
+        sim.alpha(0.3).restart();
+      });
+    })();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dsapps | A1Z26 编码转换器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
+    rel="stylesheet">
+
+  <link rel="stylesheet" crossorigin href="./assets/a1z26-jvDwWypW.css">
+  <link rel="stylesheet" crossorigin href="./assets/shared-CYqYfmlr.css">
+</head>
+
+<body>
+
+
+<div class="top-bar">
+    <div class="top-bar__left">
+        <a class="top-bar__title" href="./index.html">dsapps</a>
+        <a href="./index.html" class="top-link" aria-label="返回应用列表"
+            title="返回应用列表">
+            <span class="material-symbols-outlined">home</span>
+        </a>
+    </div>
+</div>
+
+<!-- dsapps:title-header-start -->
+<header class="header">
+    <h1>A1Z26 编码转换器</h1>
+    <p class="desc">A1Z26 是一种简单的替换密码，其中字母 A=1，B=2，...，Z=26</p>
+</header>
+<!-- dsapps:title-header-end -->
+
+  <!-- 主内容 -->
+  <div class="container">
+    <!-- 模式切换 -->
+    <div class="chip-group" id="mode-group">
+      <button class="chip chip--selected" data-mode="numbers-to-letters">数字 →
+        字母</button>
+      <button class="chip" data-mode="letters-to-numbers">字母 → 数字</button>
+    </div>
+
+    <!-- 输入 -->
+    <div class="field">
+      <label id="input-label">输入数字 (用空格分隔):</label>
+      <input type="text" id="input-text" placeholder="例如: 1 2 3 4 5">
+      <div class="error" id="error-message"></div>
+    </div>
+
+    <!-- 转换按钮 -->
+    <button id="convert-btn" class="btn btn--primary btn--full">转换</button>
+
+    <!-- 结果 -->
+    <div class="field" style="margin-top:20px">
+      <label>结果:</label>
+      <div class="result-wrap">
+        <div class="result-box" id="result">结果将显示在这里</div>
+        <button class="copy-btn" id="copy-btn">复制</button>
+      </div>
+    </div>
+
+    <!-- 信息 -->
+    <div class="info-card">
+      <h3>使用示例</h3>
+      <p><strong>数字转字母:</strong> 输入 "8 5 12 12 15" 将得到 "hello"</p>
+      <p><strong>字母转数字:</strong> 输入 "World" 将得到 "23 15 18 12 4"</p>
+    </div>
+
+    <div class="info-card">
+      <h3>关于A1Z26编码</h3>
+      <p>A1Z26是一种简单的字母替换密码，每个字母被替换为其在字母表中的位置序号。A=1, B=2, ...,
+        Z=26。这种编码常用于谜题和简单的加密场景。</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+<footer class="footer">
+  <div class="footer__inner">
+    <p class="footer__copyright">&copy; 2025 masterLazy</p>
+    <div class="footer__meta">
+      <span>dsapps · 由 DeepSeek 开发</span>
+      <a href="https://github.com/masterlazy/dsapps/" target="_blank" rel="noopener noreferrer">
+        <span class="material-symbols-outlined" aria-hidden="true">code</span>
+        <span>GitHub</span>
+      </a>
+      <span class="footer__license">MIT License</span>
+    </div>
+  </div>
+</footer>
+
+  <script>
+    (function () {
+      const modeGroup = document.getElementById('mode-group');
+      const inputLabel = document.getElementById('input-label');
+      const inputText = document.getElementById('input-text');
+      const convertBtn = document.getElementById('convert-btn');
+      const resultDiv = document.getElementById('result');
+      const copyBtn = document.getElementById('copy-btn');
+      const errorMsg = document.getElementById('error-message');
+      let currentMode = 'numbers-to-letters';
+
+      // Chip 切换
+      modeGroup.querySelectorAll('.chip').forEach(chip => {
+        chip.addEventListener('click', function () {
+          modeGroup.querySelectorAll('.chip').forEach(c => c.classList.remove('chip--selected'));
+          this.classList.add('chip--selected');
+          currentMode = this.dataset.mode;
+          inputLabel.textContent = currentMode === 'numbers-to-letters' ? '输入数字 (用空格分隔):' : '输入字母 (自动过滤空格):';
+          inputText.placeholder = currentMode === 'numbers-to-letters' ? '例如: 1 2 3 4 5' : '例如: HELLO 或 hello';
+          inputText.value = ''; resultDiv.textContent = '结果将显示在这里'; errorMsg.style.display = 'none'; copyBtn.textContent = '复制'; copyBtn.classList.remove('copied');
+        });
+      });
+
+      function numbersToLetters(input) {
+        const nums = input.replace(/\s+/g, ' ').trim().split(' ');
+        let r = '';
+        for (let n of nums) {
+          if (!/^\d+$/.test(n)) throw new Error(`"${n}" 不是有效的数字`);
+          const v = parseInt(n, 10);
+          if (v < 1 || v > 26) throw new Error(`数字 ${v} 超出范围 (1-26)`);
+          r += String.fromCharCode(96 + v);
+        }
+        return r;
+      }
+
+      function lettersToNumbers(input) {
+        const letters = input.replace(/[^A-Za-z]/g, '').toUpperCase();
+        if (!letters) throw new Error('未找到有效字母');
+        return letters.split('').map(l => l.charCodeAt(0) - 64).join(' ');
+      }
+
+      function convert() {
+        errorMsg.style.display = 'none';
+        const val = inputText.value.trim();
+        if (!val) { errorMsg.textContent = '请输入文本'; errorMsg.style.display = 'block'; resultDiv.textContent = '转换失败'; copyBtn.textContent = '复制'; copyBtn.classList.remove('copied'); return }
+        try {
+          resultDiv.textContent = currentMode === 'numbers-to-letters' ? numbersToLetters(val) : lettersToNumbers(val);
+          copyBtn.textContent = '复制'; copyBtn.classList.remove('copied');
+        } catch (e) { errorMsg.textContent = e.message; errorMsg.style.display = 'block'; resultDiv.textContent = '转换失败'; copyBtn.textContent = '复制'; copyBtn.classList.remove('copied') }
+      }
+
+      convertBtn.addEventListener('click', convert);
+
+      inputText.addEventListener('input', function () {
+        if (!this.value.trim()) { resultDiv.textContent = '结果将显示在这里'; errorMsg.style.display = 'none'; copyBtn.textContent = '复制'; copyBtn.classList.remove('copied'); return }
+        try {
+          resultDiv.textContent = currentMode === 'numbers-to-letters' ? numbersToLetters(this.value) : lettersToNumbers(this.value);
+          errorMsg.style.display = 'none'; copyBtn.textContent = '复制'; copyBtn.classList.remove('copied');
+        } catch (e) { resultDiv.textContent = '输入中...'; copyBtn.textContent = '复制'; copyBtn.classList.remove('copied') }
+      });
+
+      copyBtn.addEventListener('click', function () {
+        const txt = resultDiv.textContent;
+        if (txt === '结果将显示在这里' || txt === '转换失败' || txt === '输入中...') return;
+        navigator.clipboard.writeText(txt).then(() => {
+          copyBtn.textContent = '已复制!'; copyBtn.classList.add('copied');
+          setTimeout(() => { copyBtn.textContent = '复制'; copyBtn.classList.remove('copied') }, 3000);
+        }).catch(() => {
+          const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); copyBtn.textContent = '已复制!'; copyBtn.classList.add('copied'); setTimeout(() => { copyBtn.textContent = '复制'; copyBtn.classList.remove('copied') }, 3000) } catch (e) { alert('复制失败，请手动复制') }
+          document.body.removeChild(ta);
+        });
+      });
+    })();
+  </script>
+</body>
+
+</html>

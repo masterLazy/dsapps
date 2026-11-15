@@ -1,0 +1,45 @@
+/* ===== 主题色 (同 index) ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0
+}
+
+/* ===== 顶栏 ===== */
+
+/* ===== 头部 ===== */
+
+/* ===== 主容器 ===== */
+
+/* ===== M3 组件 ===== */
+/* Chip 组 (模式选择) */
+
+/* 输入 & 标签 */
+
+/* 填充按钮 */
+
+/* 结果框 */
+
+/* 错误 */
+.error {
+  color: var(--error);
+  font-size: 0.85rem;
+  margin-top: 4px;
+  display: none
+}
+
+/* 信息卡片 */
+.info-card+.info-card {
+  margin-top: 16px
+}
+
+.info-card p:last-child {
+  margin-bottom: 0
+}
+
+/* Footer */
+
+/* 响应 */
+@media(max-width:640px) {}

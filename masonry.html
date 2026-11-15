@@ -13,531 +13,14 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
     rel="stylesheet">
-  <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0
-    }
 
-    :root {
-      --primary: #4f7c9e;
-      --on-primary: #fff;
-      --primary-container: #d1e4f5;
-      --on-primary-container: #1a3a4f;
-      --secondary: #6b7d8e;
-      --secondary-container: #d5e1eb;
-      --on-secondary-container: #1f2e3c;
-      --surface: #f8fafc;
-      --surface-dim: #dde3e9;
-      --surface-container: #edf1f5;
-      --surface-container-high: #e2e8ee;
-      --on-surface: #1b1c1e;
-      --on-surface-variant: #44474a;
-      --outline: #7b8086;
-      --outline-variant: #c2c7cd;
-      --elevation1: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-      --elevation2: 0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.04);
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --radius-full: 9999px;
-      --duration: 0.2s;
-      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
-    }
-
-    body {
-      font-family: var(--font);
-      background: var(--surface);
-      color: var(--on-surface);
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column
-    }
-
-    /* 顶栏 */
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 24px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--outline-variant);
-      position: sticky;
-      top: 0;
-      z-index: 100
-    }
-
-    .top-bar__left {
-      display: flex;
-      align-items: center;
-      gap: 12px
-    }
-
-    .top-bar__title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--on-surface);
-      letter-spacing: -0.01em
-    }
-
-    .top-bar__right {
-      display: flex;
-      align-items: center;
-      gap: 8px
-    }
-
-    .top-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--primary);
-      text-decoration: none;
-      padding: 6px 14px;
-      border-radius: var(--radius-full);
-      transition: background var(--duration)
-    }
-
-    .top-link:hover {
-      background: color-mix(in srgb, var(--primary) 10%, transparent)
-    }
-
-    .top-link .material-symbols-outlined {
-      font-size: 20px
-    }
-
-    /* 工具栏 */
-    .toolbar {
-      padding: 16px 24px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 12px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--outline-variant)
-    }
-
-    .toolbar-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap
-    }
-
-    .toolbar-right {
-      flex: 1;
-      min-width: 200px;
-      max-width: 400px;
-      margin-left: auto
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 9px 18px;
-      border: none;
-      border-radius: var(--radius-full);
-      font-size: 0.85rem;
-      font-weight: 500;
-      font-family: var(--font);
-      cursor: pointer;
-      transition: all var(--duration);
-      background: var(--surface-container-high);
-      color: var(--on-surface);
-      border: 1px solid var(--outline-variant)
-    }
-
-    .btn:hover {
-      background: var(--surface-dim);
-      box-shadow: var(--elevation1)
-    }
-
-    .btn:active {
-      transform: scale(0.97)
-    }
-
-    .btn--primary {
-      background: var(--primary);
-      color: var(--on-primary);
-      border-color: var(--primary)
-    }
-
-    .btn--primary:hover {
-      background: color-mix(in srgb, var(--primary) 88%, #000)
-    }
-
-    .counter {
-      font-size: 0.85rem;
-      color: var(--on-surface-variant);
-      background: var(--surface-container);
-      padding: 9px 16px;
-      border-radius: var(--radius-full);
-      border: 1px solid var(--outline-variant);
-      white-space: nowrap
-    }
-
-    /* 搜索 */
-    .search-wrap {
-      display: flex;
-      align-items: center;
-      background: var(--surface-container-high);
-      border-radius: var(--radius-full);
-      padding: 0 14px;
-      gap: 6px;
-      border: 1px solid var(--outline-variant);
-      transition: border-color var(--duration)
-    }
-
-    .search-wrap:focus-within {
-      border-color: var(--primary);
-      background: var(--surface)
-    }
-
-    .search-wrap input {
-      border: none;
-      background: transparent;
-      padding: 9px 0;
-      font-family: var(--font);
-      font-size: 0.875rem;
-      color: var(--on-surface);
-      outline: none;
-      flex: 1;
-      min-width: 0
-    }
-
-    .search-wrap input::placeholder {
-      color: var(--on-surface-variant);
-      opacity: 0.7
-    }
-
-    /* 瀑布流 */
-    .gallery {
-      padding: 24px;
-      column-width: 280px;
-      column-count: auto;
-      column-gap: 16px;
-      flex: 1
-    }
-
-    .gallery-item {
-      break-inside: avoid;
-      margin-bottom: 16px;
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      box-shadow: var(--elevation1);
-      transition: transform var(--duration), box-shadow var(--duration);
-      cursor: pointer;
-      background: var(--surface-container);
-      border: 1px solid var(--outline-variant)
-    }
-
-    .gallery-item:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--elevation2)
-    }
-
-    .gallery-item img {
-      width: 100%;
-      height: auto;
-      display: block;
-      background: var(--surface-dim)
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 80px 20px;
-      color: var(--on-surface-variant);
-      font-size: 0.95rem;
-      background: var(--surface-container);
-      margin: 24px;
-      border-radius: var(--radius-lg);
-      border: 1px dashed var(--outline-variant)
-    }
-
-    /* 模态框 */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(3px);
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 20px
-    }
-
-    .modal-card {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      max-width: 960px;
-      width: 90%;
-      max-height: 90vh;
-      display: flex;
-      flex-direction: row;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-      overflow: hidden;
-      animation: pop .2s ease
-    }
-
-    @keyframes pop {
-      0% {
-        opacity: .6;
-        transform: scale(.96)
-      }
-
-      100% {
-        opacity: 1;
-        transform: scale(1)
-      }
-    }
-
-    .modal-left {
-      flex: 1;
-      min-width: 0;
-      background: var(--surface-dim);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-      overflow: hidden
-    }
-
-    .modal-left img {
-      max-width: 100%;
-      max-height: calc(90vh - 80px);
-      object-fit: contain;
-      border-radius: var(--radius-md);
-      display: block
-    }
-
-    .modal-right {
-      flex: 0 0 340px;
-      padding: 24px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      overflow-y: auto
-    }
-
-    .modal-right h3 {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--on-surface);
-      word-break: break-word;
-      margin-bottom: 8px
-    }
-
-    .meta-row {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      border-bottom: 1px solid var(--outline-variant);
-      padding-bottom: 12px
-    }
-
-    .meta-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      color: var(--on-surface-variant);
-      display: flex;
-      align-items: center;
-      gap: 4px
-    }
-
-    .meta-label .material-symbols-outlined {
-      font-size: 14px
-    }
-
-    .meta-value {
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--on-surface);
-      background: var(--surface-container);
-      padding: 7px 12px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--outline-variant);
-      word-break: break-word
-    }
-
-    .close-btn {
-      width: 100%;
-      padding: 12px 0;
-      border: none;
-      border-radius: var(--radius-full);
-      font-size: 0.9rem;
-      font-weight: 500;
-      font-family: var(--font);
-      cursor: pointer;
-      background: var(--surface-container-high);
-      color: var(--on-surface);
-      transition: background var(--duration)
-    }
-
-    .close-btn:hover {
-      background: var(--surface-dim)
-    }
-
-    /* 标签模态 */
-    .tag-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-      gap: 10px;
-      padding: 4px
-    }
-
-    #tagContainer {
-      max-height: 55vh;
-      overflow-y: auto
-    }
-
-    .tag-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 6px;
-      border-radius: var(--radius-md);
-      font-size: 0.8rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all .1s;
-      border: 1px solid var(--outline-variant);
-      background: var(--surface-container);
-      color: var(--on-surface);
-      font-family: var(--font);
-      line-height: 1.4
-    }
-
-    .tag-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--elevation1)
-    }
-
-    .tag-btn.selected {
-      border: 2px solid var(--primary);
-      font-weight: 600
-    }
-
-    .tag-btn .tag-count {
-      font-size: 0.7rem;
-      opacity: .7;
-      margin-top: 2px
-    }
-
-    .tag-section {
-      margin-bottom: 12px
-    }
-
-    .tag-section:last-child {
-      margin-bottom: 0
-    }
-
-    .tag-section-header {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--on-surface-variant);
-      text-transform: uppercase;
-      letter-spacing: .04em;
-      padding: 6px 4px 8px;
-      border-bottom: 1px solid var(--outline-variant);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      grid-column: 1 / -1
-    }
-
-    .tag-section-header .material-symbols-outlined {
-      font-size: 16px
-    }
-
-    /* Footer */
-    .footer {
-      text-align: center;
-      padding: 16px 24px;
-      font-size: 0.8125rem;
-      color: var(--on-surface-variant);
-      border-top: 1px solid var(--outline-variant);
-      background: var(--surface)
-    }
-
-    @media(max-width:820px) {
-      .modal-card {
-        flex-direction: column
-      }
-
-      .modal-right {
-        flex: none;
-        padding: 16px;
-        gap: 10px
-      }
-
-      .modal-left {
-        max-height: 45vh;
-        padding: 8px
-      }
-
-      .modal-left img {
-        max-height: calc(45vh - 16px)
-      }
-    }
-
-    @media(max-width:740px) {
-
-      .top-bar,
-      .toolbar {
-        padding: 10px 16px
-      }
-
-      .gallery {
-        padding: 16px;
-        column-width: 200px
-      }
-
-      .toolbar-right {
-        max-width: 100%;
-        margin-left: 0
-      }
-    }
-
-    @media(max-width:480px) {
-      .gallery {
-        padding: 12px;
-        column-width: 1;
-        column-gap: 0
-      }
-
-      .gallery-item {
-        margin-bottom: 12px
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="./styles/pages/masonry.css">
+  <link rel="stylesheet" href="./styles/shared.css">
 </head>
 
 <body>
 
-  <!-- 顶栏 -->
-  <div class="top-bar">
-    <div class="top-bar__left">
-      <span class="top-bar__title">dsapps</span>
-      <a href="https://masterlazy.github.io/dsapps/" class="top-link"
-        aria-label="返回应用列表">
-        <span class="material-symbols-outlined">home</span>
-      </a>
-    </div>
-  </div>
+  <!-- dsapps:site-header -->
 
   <!-- 工具栏 -->
   <div class="toolbar">
@@ -545,6 +28,11 @@
       <button class="btn" id="selectFolderBtn"><span
           class="material-symbols-outlined" style="font-size:18px">folder</span>
         选择参考图文件夹</button>
+      <button class="btn" id="closeFolderBtn" disabled>
+        <span class="material-symbols-outlined"
+          style="font-size:18px">folder_off</span>
+        关闭
+      </button>
       <span class="counter" id="imageCounter">0 张图片</span>
       <button class="btn" id="showTagsBtn"><span
           class="material-symbols-outlined" style="font-size:18px">label</span>
@@ -606,22 +94,20 @@
         <button class="btn" id="clearTagsBtn"><span
             class="material-symbols-outlined"
             style="font-size:18px">clear_all</span> 清除</button>
-        <button class="btn" id="closeTagModalBtn"
-          style="flex:1">关闭</button>
+        <button class="btn" id="closeTagModalBtn" style="flex:1">关闭</button>
       </div>
     </div>
   </div>
 
   <!-- Footer -->
-  <div class="footer">
-    <p>dsapps &copy; 2025 masterLazy · 由 DeepSeek 开发 · MIT License</p>
-  </div>
+  <!-- dsapps:site-footer -->
 
   <script>
     (function () {
       if (!window.showDirectoryPicker) { alert('您的浏览器不支持 File System Access API，请使用最新版 Edge 或 Chrome 并确保在 HTTPS/localhost 下运行。') }
 
       const selectBtn = document.getElementById('selectFolderBtn');
+      const closeFolderBtn = document.getElementById('closeFolderBtn');
       const searchInput = document.getElementById('searchInput');
       const galleryDiv = document.getElementById('gallery');
       const imageCounter = document.getElementById('imageCounter');
@@ -640,6 +126,7 @@
       function openDB() { return new Promise((res, rej) => { const r = indexedDB.open(DB_NAME, DB_VERSION); r.onerror = () => rej(r.error); r.onsuccess = () => res(r.result); r.onupgradeneeded = e => { const d = e.target.result; if (!d.objectStoreNames.contains(STORE_NAME)) d.createObjectStore(STORE_NAME) } }) }
       async function saveHandle(h) { const db = await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const r = tx.objectStore(STORE_NAME).put(h, 'dirHandle'); r.onsuccess = () => res(); r.onerror = () => rej(r.error) }) }
       async function loadHandle() { const db = await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readonly'); const r = tx.objectStore(STORE_NAME).get('dirHandle'); r.onsuccess = () => res(r.result || null); r.onerror = () => rej(r.error) }) }
+      async function removeHandle() { const db = await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const r = tx.objectStore(STORE_NAME).delete('dirHandle'); r.onsuccess = () => res(); r.onerror = () => rej(r.error) }) }
 
       function isImg(f) { return /\.(jpg|jpeg|png|gif|bmp|webp|svg|avif)$/i.test(f) }
       function revokeAll() { currentObjectUrls.forEach(u => URL.revokeObjectURL(u)); currentObjectUrls = [] }
@@ -758,15 +245,40 @@
 
       async function pickDir() {
         try {
-          const handle = await window.showDirectoryPicker(); currentDirHandle = handle; await saveHandle(handle); await loadFromHandle(handle);
+          const handle = await window.showDirectoryPicker(); currentDirHandle = handle; closeFolderBtn.disabled = false; await saveHandle(handle); await loadFromHandle(handle);
         } catch (e) { if (e.name !== 'AbortError') console.error(e) }
+      }
+
+      async function closeCurrentFolder() {
+        if (!currentDirHandle) return;
+        closeFolderBtn.disabled = true;
+        try {
+          await removeHandle();
+        } catch (e) {
+          console.error(e);
+          closeFolderBtn.disabled = false;
+          alert('关闭文件夹失败，请重试。');
+          return;
+        }
+
+        closeModal();
+        modalImg.removeAttribute('src');
+        tagModal.style.display = 'none';
+        tagContainer.innerHTML = '';
+        currentDirHandle = null;
+        selectedTags = [];
+        window.tagData = null;
+        window.filteredTags = null;
+        searchInput.value = '';
+        resetGallery();
+        renderGallery();
       }
 
       async function restoreDir() {
         try {
           const handle = await loadHandle(); if (!handle) return;
           const perm = await handle.queryPermission({ mode: 'read' });
-          if (perm === 'granted') { currentDirHandle = handle; await loadFromHandle(handle) }
+          if (perm === 'granted') { currentDirHandle = handle; closeFolderBtn.disabled = false; await loadFromHandle(handle) }
         } catch (e) { console.warn(e) }
       }
 
@@ -791,6 +303,7 @@
 
       function closeModal() { modal.style.display = 'none'; currentModalData = null }
       selectBtn.addEventListener('click', pickDir);
+      closeFolderBtn.addEventListener('click', closeCurrentFolder);
       searchInput.addEventListener('input', e => filter(e.target.value));
       closeModalBtn.addEventListener('click', closeModal);
       modal.addEventListener('click', e => { if (e.target === modal) closeModal() });

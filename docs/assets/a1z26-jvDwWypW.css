@@ -1,0 +1,1 @@
+*,*:before,*:after{box-sizing:border-box;margin:0;padding:0}.error{color:var(--error);font-size:.85rem;margin-top:4px;display:none}.info-card+.info-card{margin-top:16px}.info-card p:last-child{margin-bottom:0}

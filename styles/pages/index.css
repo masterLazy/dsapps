@@ -1,0 +1,196 @@
+/* ===== 主题色 ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0
+}
+
+/* ===== 顶栏 ===== */
+
+/* ===== 头部 ===== */
+
+.home-page .header {
+  padding: 56px max(24px, calc((100% - 1100px) / 2)) 18px;
+  background: transparent;
+  border-bottom: 1px solid var(--outline-variant);
+  text-align: left
+}
+
+.home-page .header h1 {
+  font-size: 1.75rem
+}
+
+.home-page .header .desc {
+  margin: 0
+}
+
+.home-page .container {
+  padding-top: 20px
+}
+
+/* ===== 通用组件 ===== */
+
+.section {
+  margin-bottom: 32px
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--on-surface);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--outline-variant);
+  display: flex;
+  align-items: center;
+  gap: 8px
+}
+
+.section-title .material-symbols-outlined {
+  font-size: 22px;
+  color: var(--primary)
+}
+
+/* 卡片网格 */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px
+}
+
+.app-card {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-content: center;
+  align-items: start;
+  column-gap: 12px;
+  row-gap: 3px;
+  min-height: 84px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--duration), background var(--duration), transform var(--duration)
+}
+
+.app-card:hover {
+  border-color: var(--primary);
+  background: var(--surface-container);
+  transform: translateY(-1px)
+}
+
+.app-card:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px
+}
+
+.app-card .icon {
+  grid-row: 1 / span 2;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  margin-top: 1px;
+  border-radius: 8px;
+  background: var(--primary-container);
+  color: var(--primary);
+  font-size: 20px
+}
+
+.app-card .title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary);
+  line-height: 1.35
+}
+
+.app-card .desc {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.78rem;
+  color: var(--on-surface-variant);
+  line-height: 1.4
+}
+
+.app-grid--games {
+  grid-template-columns: repeat(auto-fill, minmax(230px, 260px))
+}
+
+.app-card.coming {
+  opacity: 0.6;
+  cursor: default
+}
+
+.app-card.coming:hover {
+  transform: none;
+  border-color: var(--outline-variant);
+  background: var(--surface)
+}
+
+/* 信息卡片 */
+
+.info-card ul {
+  list-style: none;
+  padding: 0
+}
+
+.info-card li:last-child {
+  border-bottom: none
+}
+
+.info-card li .check {
+  color: var(--primary);
+  font-weight: 700;
+  margin-right: 0.5rem;
+}
+
+/* 关于区域 */
+.about-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px
+}
+
+.about-section .info-card p {
+  margin-bottom: 8px
+}
+
+.about-section .info-card p:last-child {
+  margin-bottom: 0
+}
+
+/* Footer */
+
+/* 响应 */
+@media(max-width:740px) {
+  .app-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+  }
+}
+
+@media(max-width:640px) {
+  .home-page .header {
+    padding: 24px 16px 16px
+  }
+
+  .home-page .header h1 {
+    font-size: 1.5rem
+  }
+
+  .home-page .container {
+    padding-top: 18px
+  }
+
+}
+
+@media(max-width:480px) {
+  .app-grid {
+    grid-template-columns: 1fr
+  }
+}

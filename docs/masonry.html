@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dsapps | 瀑布视图</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
+    rel="stylesheet">
+
+  <link rel="stylesheet" crossorigin href="./assets/masonry-BQOWCnuS.css">
+  <link rel="stylesheet" crossorigin href="./assets/shared-CYqYfmlr.css">
+</head>
+
+<body>
+
+
+<div class="top-bar">
+    <div class="top-bar__left">
+        <a class="top-bar__title" href="./index.html">dsapps</a>
+        <a href="./index.html" class="top-link" aria-label="返回应用列表"
+            title="返回应用列表">
+            <span class="material-symbols-outlined">home</span>
+        </a>
+    </div>
+</div>
+
+
+
+  <!-- 工具栏 -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <button class="btn" id="selectFolderBtn"><span
+          class="material-symbols-outlined" style="font-size:18px">folder</span>
+        选择参考图文件夹</button>
+      <button class="btn" id="closeFolderBtn" disabled>
+        <span class="material-symbols-outlined"
+          style="font-size:18px">folder_off</span>
+        关闭
+      </button>
+      <span class="counter" id="imageCounter">0 张图片</span>
+      <button class="btn" id="showTagsBtn"><span
+          class="material-symbols-outlined" style="font-size:18px">label</span>
+        标签</button>
+    </div>
+    <div class="toolbar-right">
+      <div class="search-wrap">
+        <span class="material-symbols-outlined"
+          style="font-size:18px;color:var(--on-surface-variant)">search</span>
+        <input type="text" id="searchInput" placeholder="搜索文件名..."
+          autocomplete="off">
+      </div>
+    </div>
+  </div>
+
+  <!-- 瀑布流 -->
+  <div id="gallery" class="gallery"></div>
+
+  <!-- 图片模态框 -->
+  <div id="modal" class="modal">
+    <div class="modal-card">
+      <div class="modal-left">
+        <img id="modalImage" src="" alt="preview">
+      </div>
+      <div class="modal-right">
+        <h3 id="modalFileName">filename.jpg</h3>
+        <div class="meta-row">
+          <span class="meta-label"><span
+              class="material-symbols-outlined">folder</span> 相对路径</span>
+          <span class="meta-value" id="modalFilePath">—</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label"><span
+              class="material-symbols-outlined">photo_size_select_actual</span>
+            分辨率</span>
+          <span class="meta-value" id="modalResolution">加载中…</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label"><span
+              class="material-symbols-outlined">aspect_ratio</span> 比例</span>
+          <span class="meta-value" id="modalAspectRatio">—</span>
+        </div>
+        <button class="close-btn" id="closeModalBtn">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 标签模态框 -->
+  <div id="tagModal" class="modal">
+    <div class="modal-card"
+      style="max-width:620px;flex-direction:column;padding:24px">
+      <h3
+        style="margin-bottom:16px;font-size:1.15rem;font-weight:600;display:flex;align-items:center;gap:8px">
+        <span class="material-symbols-outlined"
+          style="font-size:22px;color:var(--primary)">label</span> 所有标签
+      </h3>
+      <div id="tagContainer"></div>
+      <div style="display:flex;gap:12px;margin-top:16px">
+        <button class="btn" id="clearTagsBtn"><span
+            class="material-symbols-outlined"
+            style="font-size:18px">clear_all</span> 清除</button>
+        <button class="btn" id="closeTagModalBtn" style="flex:1">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+<footer class="footer">
+  <div class="footer__inner">
+    <p class="footer__copyright">&copy; 2025 masterLazy</p>
+    <div class="footer__meta">
+      <span>dsapps · 由 DeepSeek 开发</span>
+      <a href="https://github.com/masterlazy/dsapps/" target="_blank" rel="noopener noreferrer">
+        <span class="material-symbols-outlined" aria-hidden="true">code</span>
+        <span>GitHub</span>
+      </a>
+      <span class="footer__license">MIT License</span>
+    </div>
+  </div>
+</footer>
+
+  <script>
+    (function () {
+      if (!window.showDirectoryPicker) { alert('您的浏览器不支持 File System Access API，请使用最新版 Edge 或 Chrome 并确保在 HTTPS/localhost 下运行。') }
+
+      const selectBtn = document.getElementById('selectFolderBtn');
+      const closeFolderBtn = document.getElementById('closeFolderBtn');
+      const searchInput = document.getElementById('searchInput');
+      const galleryDiv = document.getElementById('gallery');
+      const imageCounter = document.getElementById('imageCounter');
+      const modal = document.getElementById('modal');
+      const modalImg = document.getElementById('modalImage');
+      const modalFileName = document.getElementById('modalFileName');
+      const modalFilePath = document.getElementById('modalFilePath');
+      const modalResolution = document.getElementById('modalResolution');
+      const modalAspect = document.getElementById('modalAspectRatio');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      let imagesData = [], currentObjectUrls = [], currentModalData = null, pendingRes = false, currentDirHandle = null, selectedTags = [];
+      const tagModal = document.getElementById('tagModal'), tagContainer = document.getElementById('tagContainer');
+      const showTagsBtn = document.getElementById('showTagsBtn'), closeTagModalBtn = document.getElementById('closeTagModalBtn');
+
+      const DB_NAME = 'FolderPickerDB', STORE_NAME = 'handles', DB_VERSION = 1;
+      function openDB() { return new Promise((res, rej) => { const r = indexedDB.open(DB_NAME, DB_VERSION); r.onerror = () => rej(r.error); r.onsuccess = () => res(r.result); r.onupgradeneeded = e => { const d = e.target.result; if (!d.objectStoreNames.contains(STORE_NAME)) d.createObjectStore(STORE_NAME) } }) }
+      async function saveHandle(h) { const db = await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const r = tx.objectStore(STORE_NAME).put(h, 'dirHandle'); r.onsuccess = () => res(); r.onerror = () => rej(r.error) }) }
+      async function loadHandle() { const db = await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readonly'); const r = tx.objectStore(STORE_NAME).get('dirHandle'); r.onsuccess = () => res(r.result || null); r.onerror = () => rej(r.error) }) }
+      async function removeHandle() { const db = await openDB(); return new Promise((res, rej) => { const tx = db.transaction(STORE_NAME, 'readwrite'); const r = tx.objectStore(STORE_NAME).delete('dirHandle'); r.onsuccess = () => res(); r.onerror = () => rej(r.error) }) }
+
+      function isImg(f) { return /\.(jpg|jpeg|png|gif|bmp|webp|svg|avif)$/i.test(f) }
+      function revokeAll() { currentObjectUrls.forEach(u => URL.revokeObjectURL(u)); currentObjectUrls = [] }
+      function resetGallery() { galleryDiv.innerHTML = ''; imagesData = []; revokeAll(); imageCounter.textContent = '0 张图片' }
+
+      const aspectMap = [
+        { r: 1, n: '1:1 - 方形' }, { r: 4 / 3, n: '4:3' }, { r: 3 / 2, n: '3:2' }, { r: 16 / 9, n: '16:9' },
+        { r: 2, n: '2:1' }, { r: 21 / 9, n: '21:9' }, { r: 1.618, n: '1.618:1 - 黄金比例' }, { r: 1.414, n: '1.414:1 - 白银比例' }
+      ];
+      function closestAspect(w, h) {
+        if (!w || !h) return null;
+        const r = Math.max(w, h) / Math.min(w, h);
+        let best = aspectMap[0], min = Math.abs(r - best.r);
+        for (let i = 1; i < aspectMap.length; i++) { const d = Math.abs(r - aspectMap[i].r); if (d < min) { min = d; best = aspectMap[i] } }
+        const pct = Math.min(100, Math.max(0, Math.round((1 - min / best.r) * 100 * 10) / 10));
+        return { name: best.n, percent: pct };
+      }
+
+      // 从文件名解析标签，支持 [class]tag 格式
+      function parseTags(fileName) {
+        const base = fileName.replace(/\.[^/.]+$/, '');
+        return base.split('-').map(s => s.trim()).filter(s => s && !/^\d+$/.test(s)).map(s => {
+          const m = s.match(/^\[(.+?)\](.+)$/);
+          if (m) return { raw: s, tag: m[2], cls: m[1] };
+          return { raw: s, tag: s };
+        });
+      }
+
+      function tagDisplayKey(item) {
+        return item.cls ? `[${item.cls}]${item.tag}` : item.tag;
+      }
+
+      function filter(keyword) {
+        const kw = keyword.trim().toLowerCase();
+        let vis = 0;
+        imagesData.forEach(item => {
+          let match = true;
+          if (selectedTags.length > 0) {
+            const tags = parseTags(item.name);
+            const tagNames = tags.map(t => t.tag);
+            match = selectedTags.every(key => {
+              const m = key.match(/^\[(.+?)\](.+)$/);
+              const actualTag = m ? m[2] : key;
+              return tagNames.includes(actualTag);
+            });
+          }
+          if (match && kw) match = item.name.toLowerCase().includes(kw);
+          if (item.element) item.element.style.display = match ? '' : 'none';
+          if (match) vis++;
+        });
+        imageCounter.textContent = `${vis} / ${imagesData.length} 张图片`;
+        updateTagStats();
+      }
+
+      function updateTagStats() {
+        if (!window.tagData) return;
+        const visible = imagesData.filter(i => i.element && i.element.style.display !== 'none');
+        const cnt = {};
+        visible.forEach(i => {
+          parseTags(i.name).forEach(({ tag, cls }) => {
+            const key = cls ? `${cls}::${tag}` : tag;
+            if (!cnt[key]) cnt[key] = { tag, cls: cls || null, count: 0 };
+            cnt[key].count++;
+          });
+        });
+        window.filteredTags = Object.values(cnt).sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+        if (tagModal.style.display === 'flex') renderTags();
+      }
+
+      function renderGallery() {
+        galleryDiv.innerHTML = '';
+        if (!imagesData.length) { galleryDiv.innerHTML = '<div class="empty-state">✨ 点击上方按钮，选择你的参考图文件夹</div>'; imageCounter.textContent = '0 张图片'; return }
+        const frag = document.createDocumentFragment();
+        imagesData.forEach((item, i) => {
+          const card = document.createElement('div'); card.className = 'gallery-item'; card.dataset.index = i;
+          const img = document.createElement('img'); img.src = item.url; img.alt = item.name; img.loading = 'lazy';
+          img.onload = function () { if (this.naturalW && this.naturalH) { item.width = this.naturalW; item.height = this.naturalH } if (item.element) item.element.style.minHeight = 'auto' };
+          card.appendChild(img);
+          card.addEventListener('click', () => openModal(item, img));
+          frag.appendChild(card); item.element = card; item.imgElement = img;
+        });
+        galleryDiv.appendChild(frag);
+        imageCounter.textContent = `${imagesData.length} / ${imagesData.length} 张图片`;
+      }
+
+      async function readDir(dir, base = '') {
+        let res = [];
+        for await (const e of dir.values()) {
+          if (e.kind === 'file') { if (isImg(e.name)) { const f = await e.getFile(); res.push({ handle: e, file: f, name: f.name, path: base ? base + '/' + f.name : f.name, displayPath: base ? base + '/' + f.name : f.name, width: null, height: null, element: null, imgElement: null }) } }
+          else if (e.kind === 'directory') { const sub = base ? base + '/' + e.name : e.name; res = res.concat(await readDir(e, sub)) }
+        }
+        return res;
+      }
+
+      async function loadFromHandle(dir) {
+        resetGallery();
+        const perm = await dir.requestPermission({ mode: 'read' });
+        if (perm !== 'granted') { alert('需要读取权限'); return }
+        let entries = await readDir(dir);
+        // 随机打乱
+        for (let i = entries.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[entries[i], entries[j]] = [entries[j], entries[i]] }
+        if (!entries.length) { alert('该文件夹内没有图片'); return }
+        for (const e of entries) { const url = URL.createObjectURL(e.file); currentObjectUrls.push(url); e.url = url }
+        imagesData = entries; renderGallery(); searchInput.value = '';
+        // 统计标签（含分类）
+        const cnt = {};
+        entries.forEach(i => {
+          parseTags(i.name).forEach(({ tag, cls }) => {
+            const key = cls ? `${cls}::${tag}` : tag;
+            if (!cnt[key]) cnt[key] = { tag, cls: cls || null, count: 0 };
+            cnt[key].count++;
+          });
+        });
+        window.tagData = Object.values(cnt).sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+      }
+
+      async function pickDir() {
+        try {
+          const handle = await window.showDirectoryPicker(); currentDirHandle = handle; closeFolderBtn.disabled = false; await saveHandle(handle); await loadFromHandle(handle);
+        } catch (e) { if (e.name !== 'AbortError') console.error(e) }
+      }
+
+      async function closeCurrentFolder() {
+        if (!currentDirHandle) return;
+        closeFolderBtn.disabled = true;
+        try {
+          await removeHandle();
+        } catch (e) {
+          console.error(e);
+          closeFolderBtn.disabled = false;
+          alert('关闭文件夹失败，请重试。');
+          return;
+        }
+
+        closeModal();
+        modalImg.removeAttribute('src');
+        tagModal.style.display = 'none';
+        tagContainer.innerHTML = '';
+        currentDirHandle = null;
+        selectedTags = [];
+        window.tagData = null;
+        window.filteredTags = null;
+        searchInput.value = '';
+        resetGallery();
+        renderGallery();
+      }
+
+      async function restoreDir() {
+        try {
+          const handle = await loadHandle(); if (!handle) return;
+          const perm = await handle.queryPermission({ mode: 'read' });
+          if (perm === 'granted') { currentDirHandle = handle; closeFolderBtn.disabled = false; await loadFromHandle(handle) }
+        } catch (e) { console.warn(e) }
+      }
+
+      function openModal(item, img) {
+        currentModalData = item;
+        modalFileName.textContent = item.name.replace(/\.[^/.]+$/, '');
+        modalFilePath.textContent = item.displayPath || item.path || '—';
+        modalImg.src = item.url;
+        function setRes(t) { modalResolution.textContent = t }
+        function setAspect() {
+          const w = currentModalData.width, h = currentModalData.height;
+          if (w && h) { const m = closestAspect(w, h); modalAspect.innerHTML = `<span>${m.name}</span><span style="margin-left:auto;opacity:.7">${m.percent.toFixed(1)}%</span>`; modalAspect.style.display = 'flex' } else { modalAspect.textContent = '等待加载…' }
+        }
+        if (item.width && item.height) { setRes(`${item.width} x ${item.height}`); setAspect() }
+        else if (img && img.complete && img.naturalWidth) { item.width = img.naturalWidth; item.height = img.naturalHeight; setRes(`${item.width} x ${item.height}`); setAspect() }
+        else {
+          setRes('读取中…');
+          if (!pendingRes) { pendingRes = true; const ld = new Image(); ld.src = item.url; ld.onload = () => { if (currentModalData === item) { item.width = ld.naturalWidth; item.height = ld.naturalHeight; setRes(`${item.width} x ${item.height}`); setAspect() } pendingRes = false }; ld.onerror = () => { if (currentModalData === item) setRes('无法读取'); pendingRes = false } }
+        }
+        modal.style.display = 'flex';
+      }
+
+      function closeModal() { modal.style.display = 'none'; currentModalData = null }
+      selectBtn.addEventListener('click', pickDir);
+      closeFolderBtn.addEventListener('click', closeCurrentFolder);
+      searchInput.addEventListener('input', e => filter(e.target.value));
+      closeModalBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', e => { if (e.target === modal) closeModal() });
+      window.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.style.display === 'flex') closeModal() });
+
+      function renderTags() {
+        const data = selectedTags.length ? window.filteredTags : window.tagData;
+        if (!data) return;
+        tagContainer.innerHTML = '';
+
+        // 按 cls 分组
+        const groups = {};
+        data.forEach(item => {
+          const g = item.cls || '';
+          if (!groups[g]) groups[g] = [];
+          groups[g].push(item);
+        });
+
+        // 排序：有分类的在前，按分类名排序
+        const groupKeys = Object.keys(groups).sort((a, b) => {
+          if (!a) return 1;
+          if (!b) return -1;
+          return a.localeCompare(b);
+        });
+
+        groupKeys.forEach(cls => {
+          const items = groups[cls];
+          // 新建一个包裹容器，用 CSS grid 保持与 tag-grid 一致
+          const section = document.createElement('div');
+          section.className = 'tag-section';
+
+          if (cls) {
+            const header = document.createElement('div');
+            header.className = 'tag-section-header';
+            header.innerHTML = `<span class="material-symbols-outlined">category</span> ${cls}`;
+            section.appendChild(header);
+          }
+
+          // 每个 section 内部用 grid
+          const grid = document.createElement('div');
+          grid.className = 'tag-grid';
+
+          items.forEach(({ tag, cls: c, count }) => {
+            const key = c ? `[${c}]${tag}` : tag;
+            const btn = document.createElement('button');
+            btn.className = 'tag-btn';
+            if (selectedTags.includes(key)) btn.classList.add('selected');
+            const h = Math.abs((tag.split('').reduce((a, c) => ((a << 5) - a) + c.charCodeAt(0), 0)) % 360);
+            btn.style.background = `hsl(${h},30%,87%)`;
+            btn.innerHTML = `<span style="font-weight:600">${tag}</span><span class="tag-count">${count}</span>`;
+            btn.addEventListener('click', () => {
+              const idx = selectedTags.indexOf(key);
+              idx === -1 ? selectedTags.push(key) : selectedTags.splice(idx, 1);
+              filter(searchInput.value); renderTags();
+            });
+            grid.appendChild(btn);
+          });
+
+          section.appendChild(grid);
+          tagContainer.appendChild(section);
+        });
+      }
+
+      showTagsBtn.addEventListener('click', () => { renderTags(); tagModal.style.display = 'flex' });
+      closeTagModalBtn.addEventListener('click', () => { tagModal.style.display = 'none' });
+      tagModal.addEventListener('click', e => { if (e.target === tagModal) tagModal.style.display = 'none' });
+      document.getElementById('clearTagsBtn').addEventListener('click', () => { selectedTags = []; filter(searchInput.value) });
+
+      resetGallery(); restoreDir();
+    })();
+  </script>
+</body>
+
+</html>

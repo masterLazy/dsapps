@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dsapps | 格式清理工具</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
+    rel="stylesheet">
+
+  <link rel="stylesheet" crossorigin href="./assets/format-tW3PdONr.css">
+  <link rel="stylesheet" crossorigin href="./assets/shared-CYqYfmlr.css">
+</head>
+
+<body>
+
+
+<div class="top-bar">
+    <div class="top-bar__left">
+        <a class="top-bar__title" href="./index.html">dsapps</a>
+        <a href="./index.html" class="top-link" aria-label="返回应用列表"
+            title="返回应用列表">
+            <span class="material-symbols-outlined">home</span>
+        </a>
+    </div>
+</div>
+
+<!-- dsapps:title-header-start -->
+<header class="header">
+    <h1>格式清理工具</h1>
+    <p class="desc">去除文本中的连续换行符，一键清理从网页或 Markdown 复制时产生的多余空行</p>
+</header>
+<!-- dsapps:title-header-end -->
+
+  <!-- 主内容 -->
+  <div class="container">
+    <!-- 模式切换 -->
+    <div class="chip-group" id="mode-group">
+      <button class="chip chip--selected" data-mode="compress">压缩连续换行</button>
+      <button class="chip" data-mode="remove-all">移除所有换行</button>
+      <button class="chip" data-mode="single-line">压缩全部空白</button>
+    </div>
+
+    <!-- 输入 -->
+    <div class="field">
+      <label for="input-text">粘贴文本</label>
+      <textarea id="input-text" placeholder="在此粘贴文本…"></textarea>
+    </div>
+
+    <!-- 统计 -->
+    <div class="stats" id="stats">
+      <span><span class="material-symbols-outlined"
+          style="font-size:16px">text_fields</span> 字符: <strong
+          id="char-count">0</strong></span>
+      <span><span class="material-symbols-outlined"
+          style="font-size:16px">format_line_spacing</span> 行数: <strong
+          id="line-count">0</strong></span>
+      <span><span class="material-symbols-outlined"
+          style="font-size:16px">space_bar</span> 空行: <strong
+          id="blank-count">0</strong></span>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div style="display:flex;gap:12px;margin-bottom:20px">
+      <button id="format-btn" class="btn btn--primary" style="flex:1">
+        <span class="material-symbols-outlined"
+          style="font-size:20px">auto_fix</span> 清理格式
+      </button>
+      <button id="clear-btn" class="btn btn--outline">
+        <span class="material-symbols-outlined"
+          style="font-size:20px">delete</span> 清空
+      </button>
+    </div>
+
+    <!-- 结果 -->
+    <div class="field">
+      <label>清理结果</label>
+      <div class="result-wrap">
+        <div class="result-box" id="result"></div>
+        <button class="copy-btn" id="copy-btn">
+          <span class="material-symbols-outlined"
+            style="font-size:16px">content_copy</span> 复制
+        </button>
+      </div>
+    </div>
+
+    <!-- 说明 -->
+    <div class="info-card">
+      <h3>功能介绍</h3>
+      <ul>
+        <li>
+          <span class="material-symbols-outlined">compress</span>
+          <strong>压缩连续换行</strong> — 将连续 2 个及以上的换行替换为 1 个，保留正常段落分隔
+        </li>
+        <li>
+          <span class="material-symbols-outlined">format_clear</span>
+          <strong>移除所有换行</strong> — 移除所有换行符但保留空格，文字连为一段
+        </li>
+        <li>
+          <span class="material-symbols-outlined">short_text</span>
+          <strong>压缩全部空白</strong> — 将所有空白字符（换行/空格/缩进）压缩为单个空格
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer -->
+<footer class="footer">
+  <div class="footer__inner">
+    <p class="footer__copyright">&copy; 2025 masterLazy</p>
+    <div class="footer__meta">
+      <span>dsapps · 由 DeepSeek 开发</span>
+      <a href="https://github.com/masterlazy/dsapps/" target="_blank" rel="noopener noreferrer">
+        <span class="material-symbols-outlined" aria-hidden="true">code</span>
+        <span>GitHub</span>
+      </a>
+      <span class="footer__license">MIT License</span>
+    </div>
+  </div>
+</footer>
+
+  <script>
+    (function () {
+      const modeGroup = document.getElementById('mode-group');
+      const inputText = document.getElementById('input-text');
+      const formatBtn = document.getElementById('format-btn');
+      const clearBtn = document.getElementById('clear-btn');
+      const resultBox = document.getElementById('result');
+      const copyBtn = document.getElementById('copy-btn');
+      const charCount = document.getElementById('char-count');
+      const lineCount = document.getElementById('line-count');
+      const blankCount = document.getElementById('blank-count');
+      let currentMode = 'compress';
+
+      // ---- Chip 切换 ----
+      modeGroup.querySelectorAll('.chip').forEach(chip => {
+        chip.addEventListener('click', function () {
+          modeGroup.querySelectorAll('.chip').forEach(c => c.classList.remove('chip--selected'));
+          this.classList.add('chip--selected');
+          currentMode = this.dataset.mode;
+          // 如果已有输入且结果框非空，可自动重新格式化
+          if (inputText.value.trim() && resultBox.textContent.trim()) {
+            format();
+          }
+        });
+      });
+
+      // ---- 统计 ----
+      function updateStats(text) {
+        const chars = text.length;
+        const lines = text ? text.split('\n') : [];
+        const lineCnt = lines.length;
+        // 空行：仅含空白字符或完全为空
+        const blankCnt = lines.filter(l => l.trim() === '').length;
+        charCount.textContent = chars;
+        lineCount.textContent = lineCnt;
+        blankCount.textContent = blankCnt;
+      }
+
+      inputText.addEventListener('input', function () {
+        updateStats(this.value);
+      });
+
+      // ---- 格式化核心 ----
+      function format() {
+        const raw = inputText.value;
+        if (!raw.trim()) {
+          resultBox.innerHTML = '';
+          return;
+        }
+
+        let result = raw;
+
+        switch (currentMode) {
+          case 'compress':
+            // 将连续 2 个及以上的换行替换为 1 个换行
+            result = result.replace(/\n{2,}/g, '\n');
+            // 去除首尾换行
+            result = result.replace(/^\n+/, '').replace(/\n+$/, '');
+            break;
+          case 'remove-all':
+            // 移除所有换行符，保留空格
+            result = result.replace(/\n/g, ' ');
+            // 压缩多余空格
+            result = result.replace(/ +/g, ' ');
+            break;
+          case 'single-line':
+            // 将所有空白字符（换行、空格、制表符等）压缩为单个空格
+            result = result.replace(/\s+/g, ' ');
+            break;
+        }
+
+        resultBox.textContent = result;
+        copyBtn.textContent = '复制';
+        copyBtn.classList.remove('copied');
+      }
+
+      formatBtn.addEventListener('click', format);
+
+      // ---- Ctrl+Enter 快速格式化 ----
+      inputText.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          format();
+        }
+      });
+
+      // ---- 清空 ----
+      clearBtn.addEventListener('click', function () {
+        inputText.value = '';
+        resultBox.innerHTML = '';
+        updateStats('');
+        copyBtn.textContent = '复制';
+        copyBtn.classList.remove('copied');
+      });
+
+      // ---- 复制 ----
+      copyBtn.addEventListener('click', function () {
+        const txt = resultBox.textContent;
+        if (!txt) return;
+
+        navigator.clipboard.writeText(txt).then(() => {
+          copyBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">check</span> 已复制!';
+          copyBtn.classList.add('copied');
+          setTimeout(() => {
+            copyBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">content_copy</span> 复制';
+            copyBtn.classList.remove('copied');
+          }, 3000);
+        }).catch(() => {
+          // Fallback
+          const ta = document.createElement('textarea');
+          ta.value = txt;
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+            copyBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">check</span> 已复制!';
+            copyBtn.classList.add('copied');
+            setTimeout(() => {
+              copyBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">content_copy</span> 复制';
+              copyBtn.classList.remove('copied');
+            }, 3000);
+          } catch (e) {
+            alert('复制失败，请手动选择文本复制');
+          }
+          document.body.removeChild(ta);
+        });
+      });
+    })();
+  </script>
+</body>
+
+</html>

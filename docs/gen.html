@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dsapps | 发疯文学生成器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0"
+    rel="stylesheet">
+
+  <link rel="stylesheet" crossorigin href="./assets/gen-DE7hYow_.css">
+  <link rel="stylesheet" crossorigin href="./assets/shared-CYqYfmlr.css">
+</head>
+
+<body>
+
+
+<div class="top-bar">
+    <div class="top-bar__left">
+        <a class="top-bar__title" href="./index.html">dsapps</a>
+        <a href="./index.html" class="top-link" aria-label="返回应用列表"
+            title="返回应用列表">
+            <span class="material-symbols-outlined">home</span>
+        </a>
+    </div>
+</div>
+
+<!-- dsapps:title-header-start -->
+<header class="header">
+    <h1>发疯文学生成器</h1>
+    <p class="desc">输入对象名称，一键生成发疯文学</p>
+</header>
+<!-- dsapps:title-header-end -->
+
+  <div class="container">
+    <div class="field">
+      <label for="target-name">发疯对象</label>
+      <input type="text" id="target-name" placeholder="例如：老板、甲方、作业、生活">
+    </div>
+
+    <div class="field">
+      <label for="template-select">文学模板</label>
+      <select id="template-select"></select>
+    </div>
+
+    <button id="generate-btn" class="btn btn--primary btn--full">生成发疯文学</button>
+
+    <div class="field" style="margin-top:20px">
+      <label>结果</label>
+      <div class="result-wrap">
+        <div class="result-box" id="result">点击「生成发疯文学」看看效果</div>
+        <button class="copy-btn" id="copy-btn">复制</button>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <p>发疯文学是一种互联网表达方式，通过夸张、重复、情绪化的语言来宣泄情感。本工具仅用于娱乐，请勿用于骚扰他人。</p>
+    </div>
+  </div>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <p class="footer__copyright">&copy; 2025 masterLazy</p>
+    <div class="footer__meta">
+      <span>dsapps · 由 DeepSeek 开发</span>
+      <a href="https://github.com/masterlazy/dsapps/" target="_blank" rel="noopener noreferrer">
+        <span class="material-symbols-outlined" aria-hidden="true">code</span>
+        <span>GitHub</span>
+      </a>
+      <span class="footer__license">MIT License</span>
+    </div>
+  </div>
+</footer>
+
+  <script>
+    // ===== 模板数据 — 在此处添加/修改模板 =====
+    const TEMPLATES = [
+      {
+        id: '1',
+        name: '常年…的人都目光炯炯有神',
+        text: '常年{name}的人都目光炯炯有神，非常自信，且智商逐年上升，最后完全成为天才。{name}会改造身体结构，预防各种不治之症。人一旦开始{name}就说明这个人的智慧品行样貌通通都是上等，这辈子都能在任何地方风姿飒爽，具有强烈的社会正义感，对治安稳定有巨大的贡献，保护普通人的生命。'
+      },
+      {
+        id: '2',
+        name: '我刚刚在喝水',
+        text: '我刚刚在喝水，闻到一股焦味，但是锅和热水壶都没开，奇怪，会不会是电路烧了，我把电线全都拿掉了，我以为是线的问题，我还在想要不要叫宿管，然后，我突然发现了，{name}你猜怎么着，原来是我的心在为你燃烧。'
+      },
+      {
+        id: '3',
+        name: '可爱的，乖孩子，纯洁的…',
+        text: '啊啊啊啊~可爱的{name}~乖孩子{name}~纯洁的{name}~美丽的{name}~善良的{name}~好可爱呀~{name}……{name}……怎么可能忘得掉啊！这颗脑袋里早就被她塞满了，每一根神经都在尖叫她的名字！要是没撞见{name}，我这条命早就烂在哪个阴暗的角落里了，她偏要撞进来，带着一身光，把我这堆烂泥都给照亮了——凭什么啊？凭她可爱到让人发疯啊！离了{name}我可怎么活？早晨要是没听见她带着刚睡醒的鼻音说“早安”，这眼睛不如焊死在眼眶里！晚上要是听不到她做噩梦时抽抽噎噎的哭腔，这一天结束得也太没滋没味了吧？她那双眼睛，转来转去的，像装了星星，可凭什么映的不是我？她笑起来的时候，嘴角弯弯的，像月牙，凭什么要分给别人看？还有她的头发，摸着肯定像丝绸，凭什么不能让我抓在手里揉来揉去？{name}这样的小可爱，真的能存在吗？不会是什么魔鬼派来勾人的吧？可就算是勾魂，我也认了啊！现在光是念着“{name}”这几个字，舌尖都发甜，心脏跳得像要炸开——我一定是被她施了魔法，变成了全世界最幸福的疯子……我的{name}……'
+      }
+    ];
+
+    (function () {
+      const sel = document.getElementById('template-select');
+      const nameInput = document.getElementById('target-name');
+      const genBtn = document.getElementById('generate-btn');
+      const resultBox = document.getElementById('result');
+      const copyBtn = document.getElementById('copy-btn');
+
+      // 填充模板下拉
+      TEMPLATES.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.name;
+        sel.appendChild(opt);
+      });
+
+      function generate() {
+        const name = nameInput.value.trim();
+        if (!name) { resultBox.textContent = '请先输入发疯对象的名字'; return; }
+        const tpl = TEMPLATES.find(t => t.id === sel.value);
+        if (!tpl) { resultBox.textContent = '请选择一个模板'; return; }
+        resultBox.textContent = tpl.text.replace(/\{name\}/g, name);
+        copyBtn.textContent = '复制';
+        copyBtn.classList.remove('copied');
+      }
+
+      genBtn.addEventListener('click', generate);
+      nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') generate(); });
+
+      copyBtn.addEventListener('click', function () {
+        const txt = resultBox.textContent;
+        if (!txt || txt === '点击「生成发疯文学」看看效果' || txt === '请先输入发疯对象的名字' || txt === '请选择一个模板') return;
+        navigator.clipboard.writeText(txt).then(() => {
+          copyBtn.textContent = '已复制!';
+          copyBtn.classList.add('copied');
+          setTimeout(() => { copyBtn.textContent = '复制'; copyBtn.classList.remove('copied'); }, 3000);
+        }).catch(() => {
+          const ta = document.createElement('textarea');
+          ta.value = txt; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); copyBtn.textContent = '已复制!'; copyBtn.classList.add('copied'); setTimeout(() => { copyBtn.textContent = '复制'; copyBtn.classList.remove('copied'); }, 3000); } catch (e) { alert('复制失败'); }
+          document.body.removeChild(ta);
+        });
+      });
+    })();
+  </script>
+</body>
+
+</html>
